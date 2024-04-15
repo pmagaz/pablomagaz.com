@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    name: Build and deploy Gatsby site
+    name: Deploy Static site 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
