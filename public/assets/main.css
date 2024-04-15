@@ -24,10 +24,10 @@ body:before {
 	transform: scale(1);
 	width: 100vw;
 	z-index: 0;
-	background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201024%201024%22%20width%3D%221024%22%20height%3D%221024%22%20preserveAspectRatio%3D%22none%22%3E%20%3Cstyle%3E%20circle%20%7B%20fill%3A%20transparent%3B%20%7D%20%3C%2Fstyle%3E%20%3Ccircle%20cx%3D%22256%22%20cy%3D%22256%22%20r%3D%222.01%25%22%20%2F%3E%20%3Ccircle%20cx%3D%22768%22%20cy%3D%22768%22%20r%3D%222.01%25%22%20%2F%3E%3C%2Fsvg%3E'), linear-gradient(to top, rgba(29,53,87,0.949), rgba(29,53,87,0.949)), url('images/bg.jpg');
-	background-size: 256px, auto, cover;
-	background-position: center, 0% 0%, center;
-	background-repeat: repeat, repeat, no-repeat;
+	background-image: linear-gradient(to top, rgba(29,53,87,0.949), rgba(29,53,87,0.949)), url('images/bg.jpg');
+	background-position: 0% 0%, center;
+	background-repeat: repeat, no-repeat;
+	background-size: auto, cover;
 	background-color: #FFFFFF;
 }
 
@@ -169,7 +169,7 @@ deferred-script {
 	position: relative;
 	text-align: var(--alignment);
 	z-index: 1;
-	transition: opacity 0.625s ease 0.375s,transform 0.625s ease 0.375s;
+	transition: opacity 0.625s ease 0.5s,transform 0.625s ease 0.5s;
 }
 
 #main > .inner {

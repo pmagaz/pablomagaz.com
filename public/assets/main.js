@@ -550,7 +550,7 @@
 							// Mark as ready.
 								$body.classList.add('is-ready');
 		
-						}, 1000);
+						}, 1125);
 		
 				}, 100);
 			};
