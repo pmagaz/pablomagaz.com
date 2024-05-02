@@ -20,12 +20,13 @@ En el imaginario colectivo existe una especie de mantra, probablemente gracias a
 
 El equipo de Vue ha llegado a [conclusiones](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#logic-composition) muy parecidas a las que debió llegar el equipo de React cuando se ¨calzó¨ las clases. Cada librería lógicamente tiene sus matices y diferencias y quizás en Vue el cambio es algo menos drástico ya que los componentes van a seguir siendo bastante parecidos a como lo son actualmente y no pasan a ser funciones, pero se introduce el mismo concepto de [composición de lógica](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#logic-composition) mediante funciones que definen lógica dentro de ellas y que pueden ser reutilizadas entre componentes.
 
-Como veremos a lo largo del post algunas de estas funciones ofrecen  funcionalidad nueva, mientras que otras, son la equivalencia a funcionalidades ya existentes en Vue 2.x. Aunque la Composition API está aún en fase de RFC, el equipo de Vue ha publicado un [plugin](https://github.com/vuejs/composition-api) que permite probar  esta Api con la versión actual de Vue (2.x) así que podemos ir calentando motores. Nota: Se han eliminado los tags <script> de los [SFC](https://vuejs.org/v2/guide/single-file-components.html) de ejemplo ya que evitan el highlight correcto del código.
+Como veremos a lo largo del post algunas de estas funciones ofrecen funcionalidad nueva, mientras que otras, son la equivalencia a funcionalidades ya existentes en Vue 2.x. Aunque la Composition API está aún en fase de RFC, el equipo de Vue ha publicado un [plugin](https://github.com/vuejs/composition-api) que permite probar esta Api con la versión actual de Vue (2.x) así que podemos ir calentando motores. Nota: Se han eliminado los tags `<script>` de los [SFC](https://vuejs.org/v2/guide/single-file-components.html) de ejemplo ya que evitan el highlight correcto del código.
 
 ### Setup
 
 El primer cambio importante en esta Composition Api es el nuevo método [setup](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#the-setup-function), que cobra una gran importancia y pasa a ser el centro 'neurálgico' donde residirá toda la lógica del componente y que se ejecutará cuando se cree la instancia de dicho componente, recibiendo como primer parámetro las props y como segundo context:
 
+```
     export default {
       props: {
         count: Number
@@ -35,13 +36,15 @@ El primer cambio importante en esta Composition Api es el nuevo método [setup](
         ...
       }
     };
+```
 
 Setup funciona de la misma forma que el actual [data()](https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function), devolviendo un objeto con las propiedades que serán usadas en el template:
 
+```
     <template>
       <div>{{ totalCount }}</div>
     </template>
-    
+
     export default {
       props: {
         count: Number
@@ -53,11 +56,13 @@ Setup funciona de la misma forma que el actual [data()](https://vuejs.org/v2/gui
         };
       }
     };
+```
 
 Desde la función setup podremos tener acceso a todos los eventos de [ciclo de vida](https://vuejs.org/v2/api/#Options-Lifecycle-Hooks) de un componente como hacemos normalmente con la única diferencia de que cada evento pasa a llevar el prefijo ['on'](https://vue-composition-api-rfc.netlify.com/#lifecycle-hooks) antes de su nombre:
 
+```
     import { onMounted, onUpdated, onUnmounted } from '@vue/composition-api';
-    
+
     export default {
       setup() {
         onMounted(() => {
@@ -71,17 +76,19 @@ Desde la función setup podremos tener acceso a todos los eventos de [ciclo de v
         });
       }
     };
+```
 
 ### Ref
 
 Otra de las novedades es [ref()](https://vue-composition-api-rfc.netlify.com/#computed-state-and-refs), una función de composición para el manejo de valores y que actúa como wrapper de valores **reactivos**. Ref devuelve un objeto con la propiedad .value y que nos permite mutar el valor pasado a dicha función usando dicha propiedad. Es importante entender que los [tipos primitivos](https://vue-composition-api-rfc.netlify.com/#computed-state-and-refs) en Js son pasados por valor y no por referencia por lo tanto con ref podemos crear una "referencia mutable" de valor único:
 
+```
     <template>
       <div @click="increment">{{ count }}</div>
     </template>
-    
+
     import { ref } from '@vue/composition-api';
-    
+
     export default {
       setup() {
         // count es un valor reactivo
@@ -94,29 +101,33 @@ Otra de las novedades es [ref()](https://vue-composition-api-rfc.netlify.com/#co
         return { count, increment };
       }
     };
+```
 
 ### Reactive
 
 Reactive funciona de forma similar a ref con la diferencia de que los valores reactivos no son 'wrappeados', por lo que podremos acceder al valor directamente sin el wrapper de ref(). Realmente es el equivalente de [Vue.observable](https://vuejs.org/v2/api/index.html#Vue-observable) de la actual versión 2.x:
 
+```
     import { reactive } from '@vue/composition-api';
-    
+
     const state = reactive({
       count: 0
     })
-    
+
     state.count++;
+```
 
 ### Computed
 
 El equivalente a las [computed properties](https://vuejs.org/v2/guide/computed.html) de la versión 2.x también está presente en esta nueva y renovada API. Como su nombre indica, [computed()](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#computed-values) nos permite componer propiedades computadas que han podido ser definidas mediante un value o cualquier otro valor:
 
+```
     <template>
        <div>{{ square }}</div>
     </template>
-    
+
     import { ref, computed } from '@vue/composition-api';
-    
+
     export default {
       setup() {
        const num = ref(0);
@@ -124,13 +135,15 @@ El equivalente a las [computed properties](https://vuejs.org/v2/guide/computed.h
        return { square };
       }
     };
+```
 
 ### Watch
 
 Con [watch](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#watchers) podemos observar cambios en las propiedades de un componente y ejecutar side effects como llamadas asíncronas, etc en base a estos cambios. Funcionan de forma muy similar a los [watchers](https://it.vuejs.org/v2/guide/computed.html#Watchers) de la versión 2.x pero amplían un poco su funcionamiento. Como primer argumento recibimos el 'source' pudiendo ser éste, un getter, un wrapper devuelto por ref() / computed() o un array con ambos elementos. Como segundo argumento, seguimos teniendo un callback con el nuevo y viejo valor, que se ejecutará después del render y en el que podremos ejecutar los side effect:
 
+```
     import { ref, watch } from '@vue/composition-api';
-    
+
     export default {
       props: {
         userId: Number
@@ -145,8 +158,9 @@ Con [watch](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-fu
         })
       }
     };
+```
 
-Cabe destacar que el comportamiento del callback puede ser  [configurado](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#watcher-callback-timing) para determinar en que momento se ejecuta: Después del render (comportamiento por defecto), antes de este o de forma síncrona.
+Cabe destacar que el comportamiento del callback puede ser [configurado](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#watcher-callback-timing) para determinar en que momento se ejecuta: Después del render (comportamiento por defecto), antes de este o de forma síncrona.
 
 ### Probando la nueva API.
 
@@ -154,6 +168,7 @@ Despues de haber visto los principales cambios que llegarán en la nueva Composi
 
 Imaginemos que queremos realizar la llamada a una API para, por ejemplo, recuperar los posts de un blog. También queremos mostrar un mensaje de carga mientras la petición se realiza. Para todo ello, vamos a usar ref, watch y computed:
 
+```
     <template>
       <div>
         <div v-if="loading">
@@ -170,11 +185,11 @@ Imaginemos que queremos realizar la llamada a una API para, por ejemplo, recuper
         </div>
       </div>
     </template>
-    
+
     import { ref, watch, computed } from '@vue/composition-api';
-    
+
     export default {
-    
+
     setup(props) {
         const posts = ref([]);
         const loading = ref(true);
@@ -187,18 +202,20 @@ Imaginemos que queremos realizar la llamada a una API para, por ejemplo, recuper
             posts.value = data.posts;
             loading.value = false;
           });
-      
+
         return { count, posts, loading };
-    
-      } 
+
+      }
     };
+```
 
 Dentro de la función setup hemos definido dos values, uno para el array de posts y otro como booleano para determinar cuando ha finalizado la carga (loading). Adicionalmente estamos usando computed para obtener el número total de posts. La función watch nos permite observar esta computed property (source) y en su callback realizamos la llamada al servicio y el seteo de la respuesta mediante posts.value.
 
 Sin embargo, nuestro ejemplo no está fino del todo. Una de las grandes ventajas de las funciones de composición es que permiten reusar lógica a lo largo de diversos componentes, sin embargo en nuestro ejemplo poco vamos a poder reusar ya que todo es encuentra dentro del propio componente. Una aproximación más acertada sería aislar toda la lógica de recuperación de los posts en una función que siguiendo un poco la nomenclatura de los hooks de React vamos a llamar useGetPosts:
 
+```
     import { ref, watch, computed } from '@vue/composition-api';
-    
+
     export const useGetPosts = () => {
       const posts = ref([]);
       const loading = ref(true);
@@ -211,12 +228,14 @@ Sin embargo, nuestro ejemplo no está fino del todo. Una de las grandes ventajas
           posts.value = data.posts;
           loading.value = false;
         });
-    
+
       return { count, posts, loading };
     };
+```
 
 Ahora podemos usar nuestra función de composición useGetPosts en cualquier componente, pudiendo reutilizar su lógica.
 
+```
     <template>
       <div>
         <div v-if="loading">
@@ -233,25 +252,27 @@ Ahora podemos usar nuestra función de composición useGetPosts en cualquier com
         </div>
       </div>
     </template>
-    
+
     import { useGetPosts } from './useGetPosts';
-    
+
     export default {
       setup() {
         const { count, posts, loading } = useGetPosts();
         return { count, posts, loading };
         //o directamente return { ...useGetPosts() };
-      } 
+      }
     };
+```
 
 No existe mucha diferencia entre el empleo de ref o de reactive, de hecho la version del mismo ejemplo usando reactive es practicamente igual, con la única salvedad de que con reactive se devuelve el state completo en lugar de cada una de las propiedades creadas con ref:
 
+```
     import { reactive, watch, computed } from '@vue/composition-api';
-    
+
     export const useGetPostsReactive = () => {
       const state = reactive({
         posts: [],
-        loading: true, 
+        loading: true,
       })
       const count = computed(() => state.posts.length);
       watch(
@@ -262,12 +283,12 @@ No existe mucha diferencia entre el empleo de ref o de reactive, de hecho la ver
           state.posts = data.posts;
           state.loading = false;
         });
-    
+
         return state;
       };
-      
+
       ....
-      
+
     <template>
       <div>
         <div v-if="state.loading">
@@ -284,18 +305,18 @@ No existe mucha diferencia entre el empleo de ref o de reactive, de hecho la ver
         </div>
       </div>
     </template>
-    
+
     import { useGetPostsReactive } from '../compositions/useGetPostsReactive';
-    
+
     export default {
       setup() {
         const state = useGetPostsReactive();
         return { state };
-      } 
+      }
     };
-    
+```
 
-Como conclusión final, no ha lugar a dudas de que esta Composition API está fuertemente influenciada por los Hooks de React, algo que el equipo de Vue tampoco [esconde](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#this-looks-like-react-why-dont-i-just-use-react)  pues al final Vue y React son dos librerías con muchos más parecidos que diferencias y parece bastante obvio que ambos equipos han llegado a conclusiones bastantes parecidas y es que en un entorno orientado a componentes, las clases y la orientación a objetos no acaban de ayudar del todo a la hora de reutilizar lógica, por lo que me alegro enormemente que Vue siga por ese camino.
+Como conclusión final, no ha lugar a dudas de que esta Composition API está fuertemente influenciada por los Hooks de React, algo que el equipo de Vue tampoco [esconde](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#this-looks-like-react-why-dont-i-just-use-react) pues al final Vue y React son dos librerías con muchos más parecidos que diferencias y parece bastante obvio que ambos equipos han llegado a conclusiones bastantes parecidas y es que en un entorno orientado a componentes, las clases y la orientación a objetos no acaban de ayudar del todo a la hora de reutilizar lógica, por lo que me alegro enormemente que Vue siga por ese camino.
 
 Como hemos visto en los ejemplos, es una API fácil, sencilla y como casi todo en Vue, simple. Por cierto, cabe destacar de que esta API no va a suponer ningún breaking change por lo que no será un [Angular 2](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#is-this-like-python-3--angular-2--do-i-have-to-rewrite-all-my-code) aunque si optaste por el empleo de [class components](https://github.com/vuejs/vue-class-component) en tus proyectos quizás se te esté arqueando una ceja... ;)
 

@@ -18,11 +18,13 @@ Oak se basa en 3 simples conceptos, que nos van a ser muy familiares pues los po
 
 Empezando por arriba tendríamos Application y que como sucede en la mayoría de los frameworks es simplemente un wrapper del servidor http del runtime, en este caso Deno. Application tiene un método listen que nos permite levantar dicho servidor http en el puerto que indiquemos:
 
+```
     import { Application } from "https://deno.land/x/oak/mod.ts";
-    
+
     const app = new Application();
-    
+
     await app.listen({ port: 8000 });
+```
 
 Algo que destacar es el [top level await](https://github.com/tc39/proposal-top-level-await) que vemos en el ejemplo y que permite usar await sin async, ya que recordemos, el lenguaje por defecto de Deno es [Typescript](https://www.typescriptlang.org/) y por tanto podemos usar las features de TypeScript, que soporta top level await desde hace tiempo.
 
@@ -30,29 +32,33 @@ Algo que destacar es el [top level await](https://github.com/tc39/proposal-top-l
 
 En la propia definición de Oak podemos ver que es un **middleware framework** por lo que en Oak todo gira entorno al middleware y de hecho, en Oak, todo es un middleware. Para clarificar esto un poco, el middlweare en Oak no es más que un stack de funciones asíncronas que se van a ejecutar con cada petición. Para registrar un middleware tan solo hemos de utilizar el metodo use y pasar nuestra función de middleware. Para ilustrarlo un poco mejor, vamos con el tradicional hello world que queremos mostrar por consola con cada petición que llegue a nuestra aplicación:
 
+```
     import { Application } from "https://deno.land/x/oak/mod.ts";
-    
+
     const app = new Application();
-    
+
     app.use((context) => {
       console.log("Hello World!");
     });
-    
+
     await app.listen({ port: 8000 });
+```
 
 ### Context
 
 Probablemente te habrás dado cuenta del parámetro context de nuestra función. Es el tercer concepto importante en Oak y sirve para acceder a la request y poder enviar el response. Si quisiéramos responder con nuestro hello world a todas las peticiones, en lugar de simplemente enviar la salida por consola, solo tenemos que añadir la salida a la propiedad response.body que hay en context.
 
+```
     import { Application } from "https://deno.land/x/oak/mod.ts";
-    
+
     const app = new Application();
-    
+
     app.use((context) => {
       context.response.body = "Hello World!";
     });
-    
+
     await app.listen({ port: 8000 });
+```
 
 Como te puedes imaginar, context es un objeto muy grande que entre otras cosas nos va a permitir acceder a la request con todos los parámetros enviados y manejar distintos parámetros del response como el contenido del body, el status code, que salvo que se indique lo contrario es 200, etc.
 
@@ -60,18 +66,20 @@ Como te puedes imaginar, context es un objeto muy grande que entre otras cosas n
 
 Como era de esperar, en Oak tenemos un router que nos va a permitir definir las rutas de nuestra API REST, pero a efectos el router de Oak es también un middleware con la salvedad de que en él podemos definir el método (GET, POST, DELETE, PATCH, etc) al que el middleware va responder, la ruta especifica y lógicamente un handler o función que se va a ejecutar cuando una petición se realice a dicha ruta/método:
 
+```
     import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-    
+
     const app = new Application();
     const router = new Router();
-    
+
     // GET request to "/api/helloworld"
     router.get("/api/helloworld", (ctx) => {
       ctx.response.body = "Hello World!";
       ctx.response.status = 201;
     });
-    
+
     await app.listen({ port: 8000 });
+```
 
 Sencillo verdad? Pues estos son los conceptos básicos de Oak así que vamos a ponernos manos a la obra con un ejemplo un poquito más de mundo real y lógicamente un código algo más complejo como lo es un CRUD de creación de usuarios mediante API REST y con conexión "fake" a una base de datos.
 
@@ -79,40 +87,42 @@ Sencillo verdad? Pues estos son los conceptos básicos de Oak así que vamos a p
 
 A fin de que nuestro proyecto sea un poquito más elaborado y sobre todo, mas escalable vamos a separar en distintas entidades, más pequeñas la lógica de nuestra aplicación:
 
-*** src/server** El servidor de Oak!
-*** src/routes** Rutas de nuestra API
-*** src/handlers** Route handlers, es decir las funciones que van a responder a cada ruta definida en routes.
-*** src/db** Directorio que contendrá la conexión fake/queries a la base de datos.
-*** src/middleware** Middleware propios.
-*** src/types** Types de TypeScript
+**\* src/server** El servidor de Oak!
+**\* src/routes** Rutas de nuestra API
+**\* src/handlers** Route handlers, es decir las funciones que van a responder a cada ruta definida en routes.
+**\* src/db** Directorio que contendrá la conexión fake/queries a la base de datos.
+**\* src/middleware** Middleware propios.
+**\* src/types** Types de TypeScript
 
 ### Modelo
 
 El modelo que vamos a manejar es realmente simple. Una interface con 3 parámetros: Uuid que será el identificador del usuario, el nombre y la fecha de nacimiento. El objetivo de nuestra API como es lógico será la de buscar, crear y actualizar usuarios.
 
+```
     export type Uuid = string;
-    
+
     export interface User {
       uuid: Uuid;
       name: string;
       birthDate: Date;
     }
-    
+```
 
 ### Routes
 
 En este fichero importamos el router de Oak y definimos que método responde a cada ruta mediante los metodos get, post, delete y patch y las rutas para cada método de nuestra aplicación. Aunque podemos implementar la lógica para cada ruta directamente es buena idea tenerlo separado por capas:
 
+```
     import { Router } from "https://deno.land/x/oak/mod.ts";
     import { createUser, deleteUser,findUser, updateUser } from "../handlers/user.ts";
-    
+
     export const router = new Router()
       //User routes
       .get("/api/users/:userId", findUser)
       .delete("/api/users/:userId", deleteUser)
       .patch("/api/users", updateUser)
       .post("/api/users", createUser);
-    
+```
 
 ### Handlers
 
@@ -120,10 +130,11 @@ Los handlers son simplemente las funciones que responden a cada ruta
 
 y que como vemos hemos llamado findUser, deleteUser, updateUser y createUser por lo que es fácil identificarlos. Lógicamente cuando llamemos al método GET para obtener un determinado usuario será necesario acceder a los parámetros GET de la url. Esto en Oak se realiza mediante el helper getQuery que nos permite acceder a los slugs de la url, parámetros queryString etc. En el caso de los parámetros POST, en la propiedad request existe un método body que nos devuelve los valores pasados en el mismo. Estos valores serán pasados a nuestras queries para buscar dicho usuario y devolver en la response o en caso de no encontrarlo, devolver un 404 y un mensaje de error:
 
+```
     import { Context, helpers } from "https://deno.land/x/oak/mod.ts";
     import type { User } from "../types/user.ts";
     import * as db from "../db/index.ts";
-    
+
     export const findUser = async (ctx: Context) => {
       const { userId } = helpers.getQuery(ctx, { mergeParams: true });
       try {
@@ -134,7 +145,7 @@ y que como vemos hemos llamado findUser, deleteUser, updateUser y createUser por
         ctx.response.body = { msg: err.message };
       }
     };
-    
+
     export const createUser = async (ctx: Context) => {
       const { name, birthDate } = await ctx.request.body().value;
       try {
@@ -146,15 +157,16 @@ y que como vemos hemos llamado findUser, deleteUser, updateUser y createUser por
       }
     };
     ...
-    
+```
 
 ### Queries
 
 Con los datos que hemos recogido en los handlers, queremos ejecutar queries y aunque en este ejemplo no vamos a implementar una conexión a base de datos real vamos a simular una que implementa los métodos findUserById y que recibe el uuid del usuario y createUser que recibe los parámetros name y birthdate para "crear" un nuevo usuario, asignarle un uuid autogenerado y devolver el objeto:
 
+```
     import type { User, Uuid } from "../types/user.ts";
     import { v4 } from "https://deno.land/std@0.77.0/uuid/mod.ts";
-    
+
     //Fake Db Queries
     export const findUserById = async (uuid: Uuid): Promise<User> => (
       new Promise((resolve, reject) => {
@@ -170,7 +182,7 @@ Con los datos que hemos recogido en los handlers, queremos ejecutar queries y au
         }, 50);
       })
     );
-    
+
     export const createUser = async (
       name: string,
       birthDate: Date,
@@ -185,7 +197,7 @@ Con los datos que hemos recogido en los handlers, queremos ejecutar queries y au
         }, 50);
       })
     );
-    
+```
 
 En ambos casos hemos utilizado una promesa con un timeout para simular una petición totalmente asíncrona con cualquier base de datos.
 
@@ -195,46 +207,51 @@ Una cosa que seguramente queramos hacer y que es tradicional en cualquier API qu
 
 En nuestro logger queremos mostrar por consola todas las peticiones que nos lleguen, el método de dicha petición mediante la propiedad method y los parámetros que ésta recibe cuando es una petición POST (por ejemplo) algo que podemos hacer de forma sencilla accediendo al body como vimos anteriormente:
 
+```
     import type { Context } from "https://deno.land/x/oak/mod.ts";
-    
+
     export const logger = async (ctx: Context, next: () => any) => {
       await next();
       const body = await ctx.request.body().value;
       let params = body ? `with params ${JSON.stringify(body)}` : "";
       console.log(`${ctx.request.method} request to ${ctx.request.url} ${params}`);
     };
-    
+```
 
 ### Server
 
 Pues ya tenemos las rutas, los handlers, las querie a la base de datos y hasta un logger custom, así que ya lo único que nos quedaría sería el server que como vimos al prinipio no es más que una instancia de Application al que pasamos todos los middlewares que queremos usar, sean estos el router o nuestro logger. Para hacerlo un poquito mejor hemos usado ficheros .env gracias al paquete [dotenv](https://deno.land/x/dotenv@v2.0.0), y donde hemos guardado la configuración y que podemos recuperar mediante config();
 
+```
     import { config } from "https://deno.land/x/dotenv/mod.ts";
     import { Application } from "https://deno.land/x/oak/mod.ts";
-    
+
     import { router } from "./routes/index.ts";
     import { logger } from "./middleware/logger.ts";
-    
+
     const { PORT } = config();
     const app = new Application();
-    
+
     app.use(logger);
     app.use(router.routes());
     app.use(router.allowedMethods());
-    
+
     console.log(`Server up on port ${PORT}`);
-    
+
     await app.listen({ port: Number(PORT) });
+```
 
 Pues ya lo tendríamos todo listo para ejecutar nuestro server. Es importante recordar que debido a las políticas de seguridad de Deno, tenemos que ser explícitos en cuanto a los permisos que requiere nuestra aplicación, como acceso a la red, lectura de disco o variables de entorno por lo que para poder ejecutar nuestro server debemos ejecutar:
 
+```
     deno run --allow-net --allow-read --allow-env src/server.ts
-    
+```
 
 Adicionalmente, y si has desarollado con NodeJs, probablemente conozcas NodeMon, una popular aplicación que permite hotreload y facilita el desarollo. En Deno no existe NodeMon pero existe [Denon](https://deno.land/x/denon@2.4.6), que al caso viene a ser lo mismo. Es necesario instalar Denon previamente mediante cargo u otro sistema, pero una vez instalado solo necesitamos este script para tener un entorno de desarollo totalmente óptimo:
 
+```
     import type { DenonConfig } from "https://deno.land/x/denon@2.4.4/mod.ts";
-    
+
     const config: DenonConfig = {
       watch: true,
       scripts: {
@@ -245,8 +262,9 @@ Adicionalmente, y si has desarollado con NodeJs, probablemente conozcas NodeMon,
         },
       },
     };
-    
+
     export default config;
+```
 
 Pues esto ha sido todo. Como hemos visto a lo largo del post crear APIS REST con Oak es realmente fácil, sencillo y sobre todo productivo ya que con muy poco código/esfuerzo obtenemos mucho. Oak aún es joven pero todo parece indicar que puede ser a Deno lo que Express ha sido a NodeJs, y no es precisamente, decir poco.
 

@@ -16,9 +16,9 @@ Los [microservicios](https://microservices.io/patterns/microservices.html) o las
 
 Los microservicios se suelen organizan en torno a las funcionalidades de negocio donde cada servicio representa un proceso con una responsabilidad delimitada. En una tienda online, por ejemplo, la gestión del stock podría ser un Microservicio, los usuarios otro y los envíos otro.
 
-Con esto se elimina el acoplamiento permitiendo que cada microservicio pueda no solo estar en [nodos](https://moleculer.services/docs/0.12/nodes.html) o  servidores diferentes, si no incluso, usar technologías diferentes donde un Microservicio puede estar escrito en NodeJs y otro en Java por ejemplo. Además, siendo ortodoxos, los microservicios no deberían compartir base de datos entre ellos. A esto se le conoce como [base de datos por servicio](https://microservices.io/patterns/data/database-per-service.html) donde cada servicio tiene su propia base de datos (stock, clientes, envíos). Moleculer sigue el principio de base de datos por servicio pero
+Con esto se elimina el acoplamiento permitiendo que cada microservicio pueda no solo estar en [nodos](https://moleculer.services/docs/0.12/nodes.html) o servidores diferentes, si no incluso, usar technologías diferentes donde un Microservicio puede estar escrito en NodeJs y otro en Java por ejemplo. Además, siendo ortodoxos, los microservicios no deberían compartir base de datos entre ellos. A esto se le conoce como [base de datos por servicio](https://microservices.io/patterns/data/database-per-service.html) donde cada servicio tiene su propia base de datos (stock, clientes, envíos). Moleculer sigue el principio de base de datos por servicio pero
 
-Lógicamente hace falta una vía de comunicación entre microservicios y para ello los Microservivicios pueden exponer su propia API (REST, GraphQl, etc) como vía de comunicación pero también es posible la comunicación  mediante sistemas de mensajería [AMQP](https://www.amqp.org/) o sistemas más modernos  como [Nats](https://docs.nats.io/) y que es el que veremos en este post, pues simplifica enormente la comunicación entre microservicios.
+Lógicamente hace falta una vía de comunicación entre microservicios y para ello los Microservivicios pueden exponer su propia API (REST, GraphQl, etc) como vía de comunicación pero también es posible la comunicación mediante sistemas de mensajería [AMQP](https://www.amqp.org/) o sistemas más modernos como [Nats](https://docs.nats.io/) y que es el que veremos en este post, pues simplifica enormente la comunicación entre microservicios.
 
 ### Moleculer
 
@@ -28,8 +28,9 @@ Después de haber visto, de forma básica, que son los microservicios, está cla
 
 De cara a facilitar el seguimiento del post, como siempre podéis encontrar todo el código del ejemplo en el repositorio [moleculer-microservices](https://github.com/pmagaz/moleculer-microservices) y que ya viene con todo lo necesario para desarollar tus Microsevicios usando [Moleculer](hhttps://moleculer.services/), [TypeScript](https://www.typescriptlang.org/), [Eslint](https://eslint.org/) y [dotenv](https://www.npmjs.com/package/dotenv) pero también puedes instalarlo desde 0.
 
+```
     $ yarn add moleculer moleculer-repl moleculer-web nats typescript ts-node @types/node nats
-    
+```
 
 ### Estructura del proyecto
 
@@ -37,24 +38,26 @@ Moleculer usa un sistema realmente simple y sencillo a la hora de organizar, lev
 
 ### Hello World!
 
-Vamos a escribir nuestro primer Microservicio y como no podía ser de otra forma vamos a hacer el clásico HelloWorld. Un Microservicio en Moleculer es denominado [service](https://moleculer.services/docs/0.12/service.html) y dispone de un [schema](https://moleculer.services/docs/0.12/service.html) que define las propiedades, como el nombre del servicio (helloWorld), acciones/métodos de dicho servicio, asi como los distintos eventos del ciclo de vida que tiene el servicio. Para nuestro hello world vamos a añadir un método en el objeto actions, que es el objeto donde se encuentran todos los métodos o funciones de los servicios. Nuestro action simplemente se llamará  "sayHello" y devolverá el clásico "Hello World!"
+Vamos a escribir nuestro primer Microservicio y como no podía ser de otra forma vamos a hacer el clásico HelloWorld. Un Microservicio en Moleculer es denominado [service](https://moleculer.services/docs/0.12/service.html) y dispone de un [schema](https://moleculer.services/docs/0.12/service.html) que define las propiedades, como el nombre del servicio (helloWorld), acciones/métodos de dicho servicio, asi como los distintos eventos del ciclo de vida que tiene el servicio. Para nuestro hello world vamos a añadir un método en el objeto actions, que es el objeto donde se encuentran todos los métodos o funciones de los servicios. Nuestro action simplemente se llamará "sayHello" y devolverá el clásico "Hello World!"
 
+```
     import { ServiceSchema } from "moleculer";
-    
+
     const helloWorld: ServiceSchema = {
       name: "helloWorld",
       actions: {
         sayHello(): string {
           return "Hello World!";
         },
-    
+
         async started(): Promise<void> {
           this.logger.info("HelloWorld microservice started!");
         }
       }
     };
-    
+
     export = helloWorld;
+```
 
 Adicionalmente dentro del método started, evento del ciclo de vida que se ejecuta cuando se levanta el microservicio hemos usado el [logger](https://moleculer.services/docs/0.12/logger.html) de Moleculer y que nos permite utilizar las configuraciones habituales de los logger para mostrar la salida en la consola. Nuestro Microservicio Hello World ésta listo.
 
@@ -66,9 +69,10 @@ Moleculer dispone de API Gateway por defecto gracias a los [Mixins](hhttps://mol
 
 En el ejemplo anterior hemos creado un servicio llamado "helloWorld" y que tenía un método llamado "sayHello". Ahora, en el API Gateway vamos a definir un alias para acceder al método de dicho microservicio, por lo que el API Gateway se encargará de que las peticiones GET que lleguen a [http://localhost:8000/api/helloWorld](http://localhost:8000/api/helloWorld) ejecuten el método sayHello de nuestro microservio helloWorld.
 
+```
     import { ServiceSchema } from "moleculer";
     import ApiGwService from "moleculer-web";
-    
+
     const ApiGateWayService: ServiceSchema = {
       name: "ApiGateway",
       mixins: [ApiGwService],
@@ -93,8 +97,9 @@ En el ejemplo anterior hemos creado un servicio llamado "helloWorld" y que tení
         this.logger.info("ApiGateway started!");
       }
     };
-    
+
     export = ApiGateWayService;
+```
 
 Con esto ya tendriamos todo lo necesario, un Microservicio con un método que devuelve el HelloWorld y el API Gataway que redirecciona a dicho método, por lo que cuando levantemos el servidor y accedamos a la url [http://localhost:8000/api/helloWorld](http://localhost:8000/api/helloWorld) veremos un bonito Hello World!.
 
@@ -102,33 +107,36 @@ Con esto ya tendriamos todo lo necesario, un Microservicio con un método que de
 
 El paso de parámetros es algo fundamental y con Moleculer el paso de parámetros vía GET, POST, etc es realmente sencillo gracias a [Context](https://moleculer.services/docs/0.12/context.html). Cada vez que un action (metodo de nuestro microservicio) es ejecutado, Moleculer pasa una instancia de Context con toda la informacion de la request a dicho action por lo que podemos acceder a él desde el primer argumento de la función. Ahora lo que queremos hacer es, mediante POST, pasar el nombre de la persona a la que queremos decir hello y para ello definimos un nuevo método llamado sayHelloTo que recibe el context (ctx) como primer argumento y a través del cual tenemos acceso a la propiedad params que recoge todos los parámetros de la request.
 
+```
     import { ServiceSchema, Context } from "moleculer";
-    
+
     const helloWorld: ServiceSchema = {
       name: "helloWorld",
       actions: {
         sayHello(): string {
           return "Hello World!";
         },
-    
+
         sayHelloTo(ctx: Context): string {
           const { name } = ctx.params;
           return `Hello ${ name }!`;
         },
-    
+
         async started(): Promise<void> {
           this.logger.info("HelloWorld microservice started!");
         }
       }
     };
-    
+
     export = helloWorld;
+```
 
 Lógicamente tenemos que habilitar el action en nuestro API Gateway y como podemos ver, podemos habilitar dicho método para GET y POST:
 
+```
     import { ServiceSchema } from "moleculer";
     import ApiGwService from "moleculer-web";
-    
+
     const ApiGateWayService: ServiceSchema = {
       name: "ApiGateway",
       mixins: [ApiGwService],
@@ -156,16 +164,18 @@ Lógicamente tenemos que habilitar el action en nuestro API Gateway y como podem
         this.logger.info("ApiGateway started!");
       }
     };
-    
+
     export = ApiGateWayService;
+```
 
 ### Peticiones asíncronas.
 
 Algo que será habitual es el consumo de otras APIS, Servicios o Bases de datos cuya respuesta será asíncrona. En Moleculer podemos utilizar async/await con total normalidad para indicar que actions van a devolver una respuesta asíncrona. Para ello vamos a crear un Microservicio llamado 'posts' con un action llamado "getNumPosts" y que devuelve el número de posts de este blog.
 
+```
     import { ServiceSchema } from "moleculer";
     import fetch from "node-fetch";
-    
+
     const posts: ServiceSchema = {
       name: "posts",
       actions: {
@@ -180,15 +190,17 @@ Algo que será habitual es el consumo de otras APIS, Servicios o Bases de datos 
         this.logger.info("Posts microservice started!");
       }
     };
-    
+
     export = posts;
+```
 
 ### Comunicando microservicios
 
-Como hemos comentado al principio del post, la comunicación entre microservicios es fundamental en cualquier arquitectura orientada a microservicios. Moleculer dispone de un amplio catálogo de [transporters](https://moleculer.services/docs/0.12/transporters.html) que permiten la comunicación entre los distintos microservicios mediante distintos protocolos o sistemas de comunicación como  [AMQP](https://moleculer.services/docs/0.12/transporters.html) y que utilizarían sistemas de mensajería como [RabbitMQ](https://www.rabbitmq.com/), [Apache Kafka](https://moleculer.services/docs/0.12/transporters.html#Kafka-Transporter) o incluso mediante [Redis](https://moleculer.services/docs/0.12/transporters.html#Redis-Transporter) que es un Key/Value en memoria, pero lo que nos interesa en este post es  [Nats](https://docs.nats.io/nats-concepts/intro) que es un sistema open source de comunicación pub/sub distribuida, ligera y de alto rendimiento, perfecta para microservicios.
+Como hemos comentado al principio del post, la comunicación entre microservicios es fundamental en cualquier arquitectura orientada a microservicios. Moleculer dispone de un amplio catálogo de [transporters](https://moleculer.services/docs/0.12/transporters.html) que permiten la comunicación entre los distintos microservicios mediante distintos protocolos o sistemas de comunicación como [AMQP](https://moleculer.services/docs/0.12/transporters.html) y que utilizarían sistemas de mensajería como [RabbitMQ](https://www.rabbitmq.com/), [Apache Kafka](https://moleculer.services/docs/0.12/transporters.html#Kafka-Transporter) o incluso mediante [Redis](https://moleculer.services/docs/0.12/transporters.html#Redis-Transporter) que es un Key/Value en memoria, pero lo que nos interesa en este post es [Nats](https://docs.nats.io/nats-concepts/intro) que es un sistema open source de comunicación pub/sub distribuida, ligera y de alto rendimiento, perfecta para microservicios.
 
 Aunque nosotros vamos a utilizar Nats, elegir un transporter u otro en Moleculer es realmente sencillo. Tan solo tenenemos que indicarlo en la configuración en nuestro fichero .env, con el resto de [configuracion](https://moleculer.services/docs/0.12/broker.html) y que luego pasaremos desde el script de arranque con --envfile path al .env.
 
+```
     NODE_ENV=development
     APIGATEWAY_PORT=8000
     HOTRELOAD=true
@@ -196,40 +208,42 @@ Aunque nosotros vamos a utilizar Nats, elegir un transporter u otro en Moleculer
     LOGLEVEL=info
     TRANSPORTER_TYPE=NATS
     TRANSPORTER_OPTIONS_URL=nats://localhost:422
-    
+```
 
 En nuestro caso vamos a especificar NATS en TRANSPORTER_TYPE y vamos a especificar que Moleculer se encarge de levantar el servidor de NATS en el puerto 422.
 
 Vamos a comunicar microservicios y vamos a suponer que en nuestro servicio helloWorld queremos recuperar también el número de posts que devuelve el Microservicio de posts que acabamos de crear. Para ello vamos a crear un método llamado sayHelloWithPosts que recibe el nombre del usuario por parámetro, pero adicionalmente llama de forma "interna" (mediante NATS) al microservicio de posts para recuperar el numero de posts, usando el método [call](https://moleculer.services/docs/0.12/broker#Call-services) del context, pasando el nombre del microservicio (posts) y el action que queremos ejecutar (getNumPosts).
 
+```
     import { ServiceSchema, Context } from "moleculer";
-    
+
     const helloWorld: ServiceSchema = {
       name: "helloWorld",
       actions: {
         sayHello(): string {
           return "Hello World!";
         },
-    
+
         sayHelloTo(ctx: Context): string {
           const { name } = ctx.params;
           return `Hello ${ name }!`;
         },
-    
+
         async sayHelloWithPosts(ctx: Context): Promise<string> {
           const { name } = ctx.params;
           //LLamamos al action getNumPosts del microservicio posts mediante Nats
           const numPosts = await ctx.call('posts.getNumPosts');
           return `Hello ${ name }!. There are ${ numPosts } posts in this blog.`;
         },
-    
+
         async started(): Promise<void> {
           this.logger.info("HelloWorld microservice started!");
         }
       }
     };
-    
+
     export = helloWorld;
+```
 
 Una vez añadido el método sayHelloWithPosts al Api Gateway cuando llamemos a este método, para el consumidor será totalmente transparente lo que sucede detrás,él simplemente llama a un único método. Obviamente es un ejemplo muy sencillo pero pensemos en ejemplos un poco más elaborados que pueden implicar las llamadas a varias APIS o distintas consultas a bases de datos para mostrar un determinado dato. Para el consumidor todo esto es transparente.
 

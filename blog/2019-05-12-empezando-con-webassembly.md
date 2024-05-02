@@ -42,26 +42,30 @@ WebAssembly es código de tipado seguro y solo dispone de [4 tipos](https://weba
 
 WebAssembly dispone de 2 formatos: Uno, [binario](https://webassembly.github.io/spec/core/binary/index.html) compilado a un nivel cercano al de ensamblador y que puede ser generado desde otros lenguajes de programación y otro que es [WebAssembly Text Format](https://webassembly.github.io/spec/core/text/index.html) o WAT y que es la representación textual del código binario actuando como estado intermedio más amigable con los humanos. Y que aspecto tiene WAT? Pues un hello world tendría el siguiente aspecto
 
+```
     (module
       (func (result i32)
         (i32.const 42)
       )
       (export "helloWorld" (func 0)))
+```
 
-No mola mucho verdad…? Wat es una representación textual del binario de Wasm y es bi-direccional, esto quiere decir que podemos compilar Wasm desde Wat y que cuando debugeemos un. wasm en el navegador veremos su Wat. Wat hace uso intensivo de las [S expressions](hhttps://es.wikipedia.org/wiki/Expresi%C3%B3n_S) que es un sistema para representar instrucciones en estructuras en árbol por lo que es ideal para representar el conjunto de instrucciones de WebAssembly pero la realidad es que no es apenas usado como lenguaje base porque sencillamente Wasm ha sido diseñado  para ser objetivo de compilación de otros lenguajes de programación como iremos viendo en próximos posts, pero por simplificación en este post usaremos solamente Wat.
+No mola mucho verdad…? Wat es una representación textual del binario de Wasm y es bi-direccional, esto quiere decir que podemos compilar Wasm desde Wat y que cuando debugeemos un. wasm en el navegador veremos su Wat. Wat hace uso intensivo de las [S expressions](hhttps://es.wikipedia.org/wiki/Expresi%C3%B3n_S) que es un sistema para representar instrucciones en estructuras en árbol por lo que es ideal para representar el conjunto de instrucciones de WebAssembly pero la realidad es que no es apenas usado como lenguaje base porque sencillamente Wasm ha sido diseñado para ser objetivo de compilación de otros lenguajes de programación como iremos viendo en próximos posts, pero por simplificación en este post usaremos solamente Wat.
 
 ### Ejemplo práctico
 
-Bien, después de toda la teoría, vamos a la práctica y vamos a ponernos manos a la obra. De cara a facilitar al máximo posible todo, te recomiendo utilizar [WebAssembly Studio](https://webassembly.studio/) que es un editor online de WebAssembly  y que nos permite crear proyectos WASM, con soporte para WAT, Rust o C y que te evitará tener que instalar nada para poder empezar con WebAssembly y compilar módulos wasm.
+Bien, después de toda la teoría, vamos a la práctica y vamos a ponernos manos a la obra. De cara a facilitar al máximo posible todo, te recomiendo utilizar [WebAssembly Studio](https://webassembly.studio/) que es un editor online de WebAssembly y que nos permite crear proyectos WASM, con soporte para WAT, Rust o C y que te evitará tener que instalar nada para poder empezar con WebAssembly y compilar módulos wasm.
 
-Para nuestro ejemplo práctico vamos a imaginar que tenemos una aplicación JavaScript que, entre otras cosas, realiza diferentes operaciones matemáticas como sumas, restas o multiplicaciones y queremos mejorar el rendimiento de estas operaciones delegándolas en WebAssembly. Lo primero que tendremos que hacer es escribir una de estas funciones, la de multiplicación por ejemplo, para que  multiplique 2 enteros en WebAssembly usando Wat:
+Para nuestro ejemplo práctico vamos a imaginar que tenemos una aplicación JavaScript que, entre otras cosas, realiza diferentes operaciones matemáticas como sumas, restas o multiplicaciones y queremos mejorar el rendimiento de estas operaciones delegándolas en WebAssembly. Lo primero que tendremos que hacer es escribir una de estas funciones, la de multiplicación por ejemplo, para que multiplique 2 enteros en WebAssembly usando Wat:
 
+```
     (module
       (func $multiply (param $x i32) (param $y i32) (result i32)
         get_local $x
         get_local $y
         i32.mul)
       (export "multiply" (func $multiply)))
+```
 
 Aquí tenemos un módulo en WAT con una función que se llama multiply y que recibe dos enteros de 32 bit ($x y $y) y devuelve el resultado de su multiplicación (i32.mul). Adicionalmente vemos como el módulo exporta la función multiply (export "multiply") que la hará visible para nuestro código JavaScript más adelante. Tanto si estas usando [WebAssembly Studio](https://webassembly.studio/) como si lo estás haciendo en local, hay que compilar el wat en su versión binaria .wasm para poder ser cargado desde nuestro código JavaScript.
 
@@ -71,21 +75,26 @@ WebAssembly ha sido diseñado para ser usado con JavaScript y dispone de una [AP
 
 Para poder hacer uso de esa [API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly), lo primero que vamos a hacer es cargar nuestro fichero wasm como si fuera un recurso más. Para eso no necesitamos nada especial, tan solo el tradicional fetch:
 
+```
     (async () => {
       const res = await fetch(‘main.wasm');
       ...
     })();
+```
 
 Que nuestro fichero. wasm sea un binario no quiere decir que el navegador no tenga que [compilarlo](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compile). De hecho, durante este proceso el código es validado para ver la integridad de dicho módulo. La Api de WebAssembly ha cambiado y evolucionado con el tiempo y existen muchos ejemplos en internet que hacen referencia al método [compile](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compile) al que se le pasa la respuesta en arrayBuffer una vez que el .wasm se ha descargado del todo pero actualmente no es necesario ya que con el método [compileStreaming](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compileStreaming) podemos comenzar la descarga y la compilación en paralelo, lo cual agilizará la carga del módulo.
 
+```
     (async () => {
       const res = await fetch('main.wasm');
       const module = await WebAssembly.compileStreaming(res);
       ...
     })();
+```
 
 De la compilación del módulo obtenemos la instancia del mismo, que es la que nos dará acceso a todos los elementos que haya exportado nuestro wasm. ¿Recuerdas que en los pasos previos habíamos creado un WAT con una función multiply que recibía dos enteros y devolvía el resultado de su multiplicación?
 
+```
     (async () => {
       const res = await fetch('main.wasm');
       const module = await WebAssembly.compileStreaming(res);
@@ -94,9 +103,11 @@ De la compilación del módulo obtenemos la instancia del mismo, que es la que n
       const result = multiply(5,5);
       console.log(result);// 25
     })();
+```
 
 Como vemos, desde el método exports de la propia [instancia](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiate) del módulo ya tenemos acceso al método que exportamos en nuestro wasm y que era “multiply” y que podemos utilizar como una función normal y corriente de JavaScript aunque realmente no lo es, es una función en WebAssembly. No obstante, podemos mejorar un poquito este ejemplo:
 
+```
     (async () => {
       const res = await fetch('main.wasm');
       const { instance } = await WebAssembly.instantiateStreaming(res);
@@ -104,6 +115,7 @@ Como vemos, desde el método exports de la propia [instancia](https://developer.
       const result = multiply(5,5);
         console.log(result);// 25
     })();
+```
 
 Ahora, en lugar de llamar al método compileStreaming, obtener el módulo y después su instancia podemos pasar directamente al método [instantiateStreaming](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiateStreaming) la promesa del fetch. Este es el método más óptimo para compilar e instanciar cualquier módulo de Wasm.
 
@@ -111,20 +123,23 @@ Ahora, en lugar de llamar al método compileStreaming, obtener el módulo y desp
 
 WebAssembly supone un fuerte impulso en términos de performance nuestras aplicaciones Js, por su carácter de código binario, pudiendo delegar en WebAssembly tareas críticas que requieren un alto performance y no lógicamente una simple multiplicación pero como siempre es positivo sacar conclusiones por uno mismo, vamos a medir el resultado de lo que hemos hecho y vamos a comparar la diferencia de rendimiento entre nuestra función de multiplicación en WebAssembly y su versión en JavaScript:
 
+```
     const multiplyJs = (x, y) => x * y;
+```
 
 Para la comparativa, vamos a crear una función muy sencilla que nos permita medir de forma más o menos aproximada la diferencia de tiempo de ejecución entre multiply y multiplyJS (la versión en JavaScript) utilizando el método time y timeEnd de la consola:
 
+```
     const perf = (fn, ...args) => {
       const [x,y] = args;
       console.time("perf");
       fn(x, y);
       console.timeEnd("perf");
     }
-    
+
     perf(multiply, 5, 5); // perf 0.00390625ms
     perf(multiplyJs, 5, 5); // perf 0.02880859375ms
-    
+```
 
 A lo largo de distintas ejecuciones iremos obteniendo resultados que irán variando como es lógico, pero podremos observar como la versión Wasm es desde un **70% hasta un 87%** mas rápida que la versión puramente de JavaScript lo cual es una cifra muy importante como para ser obviada aunque esto no quiere decir que todo lo que hagamos en WebAssembly vaya a tener siempre estas diferencias de performance.
 
@@ -132,6 +147,7 @@ A lo largo de distintas ejecuciones iremos obteniendo resultados que irán varia
 
 En el ejemplo previo hemos accedido a funciones de módulos. wasm desde JavaScript, pero a medida que queramos hacer cosas más complejas será necesario que desde nuestros módulos Wasm también podamos acceder a las APIS del navegador como el DOM, etc. WebAssembly permite esa comunicación bi-direccional. Vamos a suponer que queremos acceder a la consola desde un módulo Wasm. Para ello cuando hagamos la compilación/instanciación del módulo Wasm, podemos pasar un objeto con opciones de importación.
 
+```
     (async () => {
       const importObject = {
         imports: { console: arg => console.log(arg) }
@@ -140,17 +156,21 @@ En el ejemplo previo hemos accedido a funciones de módulos. wasm desde JavaScri
       const { instance } = await WebAssembly.instantiateStreaming(res, importObject);
       ...
     })();
+```
 
 En el nodo imports hemos definido una propiedad llamada ¨console¨ y cuyo valor es una llamada al console.log y sus argumentos. Desde un módulo Wat podemos importar esta propiedad y después exportar la llamada a la misma (console_call) cuyo valor retornado será 1200 pero teniendo en cuenta que la ejecución de ese console.log(1200) lo realiza WebAssembly, no JavaScript.
 
+```
     (module
       (func $i (import "imports" "console") (param i32))
       (func (export "console_call")
         i32.const 1200
         call $i))
+```
 
 Ahora lo único que nos quedaría seria importar la función que ejecuta la llamada al console.log y que hemos llamado console_call:
 
+```
     (async () => {
       const importObject = {
         imports: { console: arg => console.log(arg) }
@@ -160,6 +180,7 @@ Ahora lo único que nos quedaría seria importar la función que ejecuta la llam
       const { console_call } = instance.exports;
       console_call(); // es lo mismo que console.log(1200)
     })();
+```
 
 Como vemos WebAssembly permite una interacción y comunicación totalmente bi-direccional, donde desde JavaScript podemos llamar a módulos Wasm y beneficiarnos de su alto rendimiento y desde módulos Wasm podemos tener acceso a las APIS del navegador. Parece poco probable que nos vayamos a poner a escribir formularios y aplicaciones de gestión que consumen una API en WebAssembly, pero sí que tenemos que tener en cuenta que WebAssembly puede suponer un chute de performance muy importante en ciertas áreas del desarrollo con JavaScript como puede ser acceso a la Webcam, detección de elementos, audio, video, proceso de gráficos, etc.
 

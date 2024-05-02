@@ -16,21 +16,23 @@ A lo largo de este post, vamos a realizar un ejemplo sencillo, tratando de acerc
 
 Create Context es el nuevo método que está accesible en el paquete 'react'. Es una simple función que al ejecutarla nos devuelve un objeto del que vamos a poder extraer varios elementos fundamentales en la nueva context API, el Provider y el Consumer:
 
+```
     import React, { createContext } from 'react'
-    
+
     const AplicationContext = createContext({ data... }) // Creamos el contexto
     const { Provider, Consumer } = AplicationContext // Obtenemos el provider y el consumer
-    
+```
 
 ### Provider
 
 Tal y como indica su nombre, es el encargado de proveer el mecanismo de paso de los valores a los componentes hijos en la jerarquía mediante la propiedad value. Si estamos intentando emular Redux, sin usar Redux, está claro que vamos a necesitar un store, que al final es un simple objeto y un initial state como valor inicial del store:
 
+```
     import React, { Component, createContext } from 'react'
-    
-    const { Provider, Consumer } = createContext() 
+
+    const { Provider, Consumer } = createContext()
     const initialState = { count: 0 } // definimos un estado inicial
-    
+
     class App extends Component {
       render() {
         return (
@@ -40,16 +42,17 @@ Tal y como indica su nombre, es el encargado de proveer el mecanismo de paso de 
         )
       }
     }
-    
+```
 
 ### Consumer
 
 El consumer, es el consumidor del context provisto por el Provider. Para poder acceder a los datos del context desde cualquier componente, necesitamos "wrappear" nuestra jerarquía de componentes con el consumer:
 
+```
     import React, { Component, createContext } from 'react'
     const { Provider, Consumer } = createContext()
-    const initialState = { count: 0 } 
-    
+    const initialState = { count: 0 }
+
     export const MyComponent = props => (
       <Consumer>
         { context => { // context = { count: 0 }
@@ -58,10 +61,10 @@ El consumer, es el consumidor del context provisto por el Provider. Para poder a
               Count: { context.count }
             </div>
           )}
-        }       
+        }
       </Consumer>
     )
-    
+
     class App extends Component {
       render() {
         return (
@@ -71,26 +74,27 @@ El consumer, es el consumidor del context provisto por el Provider. Para poder a
         )
       }
     }
-    
+```
 
 Al ejecutar todo esto podremos ver en pantalla: "count: 0". Sin embargo, no estamos obligados a utilizar el provider, ya que esté es una pieza "opcional", no así el consumer. Si obviamos el provider, podemos pasar los valores de nuestro "initialState" directamente al crear el contexto, obteniendo el mismo resultado:
 
+```
     import React, { Component, createContext } from 'react'
-    
+
     const { Consumer } = createContext({ count: 0 }) // pasamos los valores por defecto directamente a createContext
-    
+
     export const MyComponent = props => (
       <Consumer>
-        { context => { 
+        { context => {
           return (
             <div>
               Count: { context.count } // Accedemos al contexto sin provider
             </div>
           )}
-        }       
+        }
       </Consumer>
     )
-    
+
     class App extends Component {
       render() { // Sin provider, solo nuestro componente "wrapeado" como consumer
         return (
@@ -98,38 +102,39 @@ Al ejecutar todo esto podremos ver en pantalla: "count: 0". Sin embargo, no esta
         )
       }
     }
-    
+```
 
 ### Consumer Wrapper
 
 Es buena idea disponer de un Wrapper que envuelva nuestros componentes con el consumer, especialmente en el caso de los containers ya que tradicionalmente en Redux, los componentes que tienen acceso a la instancia del store son los containers (salvo excepciones), y son éstos los que pasan los valores del store a los componentes hijos. Aquí vamos a hacer lo mismo, vamos a crear un wrapper que nos dé acceso al context para ese componente de "primer nivel" o container:
 
+```
     import React, { Component, createContext } from 'react'
-    
+
     const { Consumer } = createContext({ count: 0 })
-    
+
     // Envuelve nuestros componentes con el consumer, ideal para containers
-    export const createConsumer = MyComponent => props => ( 
+    export const createConsumer = MyComponent => props => (
       <Consumer>
-        { context => <MyComponent { ...context } />  }       
+        { context => <MyComponent { ...context } />  }
       </Consumer>
     )
-    
+
     // Componente hijo que recibirá el state a través de las props
     const ChildComponent = props => (
       <div>
-        Count: { props.count } 
+        Count: { props.count }
       </div>
     )
-    
+
     // Nuestro componente Container
     const ContainerComponent = context => (
       <MyChildComponent { ...context } /> // Paso de los datos del context a los componentes hijos
     )
-    
+
     //Creamos el container
     const MyContainer = createConsumer(ContainerComponent)
-    
+
     class App extends Component {
       render() {
         return (
@@ -137,7 +142,7 @@ Es buena idea disponer de un Wrapper que envuelva nuestros componentes con el co
         )
       }
     }
-    
+```
 
 ### Reemplazando Redux
 
@@ -147,97 +152,103 @@ Nuestro ejemplo por ahora es bastante sencillo y limitado, está muy lejos de po
 
 Como hemos dicho, necesitamos un mecanismo de actualización del store. Aquí vamos a definir acciones que tienen acceso al state de nuestra aplicación y que, ya que no tenemos Redux, será el state "interno" de nuestro componente App. El mecanismo de actualización será, por tanto, el método setState:
 
+```
     export const createActions = store => ({
       increment: (num) => store.setState({ count: store.state.count + num }), // Acción de incremento
       decrement: (num) => store.setState({ count: store.state.count - num }) // Acción de decremento
     })
-    
+```
 
 #### createStore.js
 
 Funciona de una forma parecida al createStore de Redux, con la única diferencia que devuelve el state del componente APP y las acciones devueltas por createActions en un mismo objeto (por simplificación)
 
+```
     import { createActions } from './createActions'
-    
+
     export const createStore = (state) => {
       const actions = createActions(state)
       return { ...state, actions }
     }
-    
+```
 
 #### createConsumer.js
 
 Es el encargado de generar tanto el Provider como el Consumer mediante createContext. Actúa como wrapper envolviendo cualquier componente con el consumer, por lo que es ideal para la creación de containers que necesitan acceso al store consumido por el consumer:
 
+```
     import React, { createContext } from 'react'
     const { Provider, Consumer } = createContext()
-    
+
     const createConsumer = Component => () => (
       <Consumer>
-        { context => <Component { ...context } />  }  // Consumer wrapper  
+        { context => <Component { ...context } />  }  // Consumer wrapper
       </Consumer>
     )
-    
+
     export { Provider, createConsumer }
-    
+```
 
 #### MyContainer.jsx
 
 El container generado por createConsumer y que propaga los valores del store y las acciones de cambio a sus hijos (en este caso ChildComponent) por medio de sus props.
 
+```
     import React from 'react'
     import { createConsumer } from './createConsumer'
     import ChildComponent from './ChildComponent'
-    
+
     const ContainerComponent = context => (
       <ChildComponent { ...context } />
     )
-    
+
     const MyContainer = createConsumer(ContainerComponent)
-    
+
     export default MyContainer
-    
+```
 
 #### ChildComponent.jsx
 
 El componente hijo que recibe por props el store y las acciones que realizan cambios en el mismo, con esto nos aseguramos que cualquier componente de la jerarquía pueda modificar el state:
 
+```
     import React from 'react'
-    
+
     const ChildComponent = props => {
       return (<div>
-        <button onClick={ () => props.actions.increment(1) }>increment</button> 
-        <button onClick={ () => props.actions.decrement(1) }>decrement</button> 
-        count: { props.state.count } 
+        <button onClick={ () => props.actions.increment(1) }>increment</button>
+        <button onClick={ () => props.actions.decrement(1) }>decrement</button>
+        count: { props.state.count }
       </div>)
     }
-    
+
     export default ChildComponent
-    
+```
 
 #### App.js
 
 Es el archivo básico de nuestra aplicación y en él se define el initialState y se pasa el store creado con el state de la App y sus acciones al provider devuelto por createContext:
 
+```
     import { createStore } from './createStore'
     import { Provider } from './createConsumer'
     import MyContainer from './MyContainer'
-    
+
     class App extends Component {
       state = { count: 0 } // initialState
       render() {
         return (
-          <Provider value={ createStore(this) }> 
+          <Provider value={ createStore(this) }>
             <MyContainer />
           </Provider>
         )
       }
     }
-    
-    export default App;
-    
 
-Pues esto es todo en nuestro ejemplo reemplazando Redux con Context API y que logicamente no debería ser usado en producción. Todo el código  está disponible en [github](https://github.com/pmagaz/react-context-api-example)
+    export default App;
+```
+
+Pues esto es todo en nuestro ejemplo reemplazando Redux con Context API y que logicamente no debería ser usado en producción. Todo el código está disponible en [github](https://github.com/pmagaz/react-context-api-example)
 
 ### Conclusiones
 
