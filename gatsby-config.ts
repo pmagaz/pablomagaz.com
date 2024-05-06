@@ -17,7 +17,7 @@ const config: GatsbyConfig = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        icon: "src/assets/favicon.ico",
+        icon: "src/assets/images/favicon.ico",
       },
     },
     "gatsby-plugin-sharp",
