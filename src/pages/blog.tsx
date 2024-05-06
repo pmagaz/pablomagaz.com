@@ -28,7 +28,7 @@ const Blog = ({ data }: PageProps<any>) => {
 
 export const query = graphql`
   query {
-    allMdx {
+    allMdx(sort: { frontmatter: { date_published: DESC } }, limit: 1000) {
       nodes {
         id
         frontmatter {

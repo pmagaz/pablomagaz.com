@@ -17,7 +17,7 @@ const config: GatsbyConfig = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        icon: "src/assets/images/bg.jpg",
+        icon: "src/assets/favicon.ico",
       },
     },
     "gatsby-plugin-sharp",
@@ -39,16 +39,19 @@ const config: GatsbyConfig = {
       __key: "pages",
     },
     {
-      resolve: "gatsby-plugin-mdx",
+      resolve: "gatsby-source-filesystem",
       options: {
-        extensions: [".mdx", ".md"],
+        name: "posts",
+        path: `${__dirname}/blog`,
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: "gatsby-plugin-mdx",
       options: {
-        name: `posts`,
-        path: `${__dirname}/blog`,
+        extensions: [".mdx", ".md"],
+        mdxOptions: {
+          gatsbyRemarkPlugins: ["gatsby-plugin-mdx-code-demo"],
+        },
       },
     },
   ],

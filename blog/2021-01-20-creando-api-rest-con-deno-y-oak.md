@@ -18,12 +18,40 @@ Oak se basa en 3 simples conceptos, que nos van a ser muy familiares pues los po
 
 Empezando por arriba tendríamos Application y que como sucede en la mayoría de los frameworks es simplemente un wrapper del servidor http del runtime, en este caso Deno. Application tiene un método listen que nos permite levantar dicho servidor http en el puerto que indiquemos:
 
+```jsx codeDemo
+import React from "react";
+import Button from "@material-ui/core/Button";
+
+function OutlinedButtons() {
+  return (
+    <>
+      <Button variant="outlined">Default</Button>
+      <Button variant="outlined" color="primary">
+        Primary
+      </Button>
+      <Button variant="outlined" color="secondary">
+        Secondary
+      </Button>
+      <Button variant="outlined" disabled>
+        Disabled
+      </Button>
+      <Button variant="outlined" href="#outlined-buttons">
+        Link
+      </Button>
+    </>
+  );
+}
+
+// Demos must be default exported
+export default OutlinedButtons;
 ```
-    import { Application } from "https://deno.land/x/oak/mod.ts";
 
-    const app = new Application();
+```js
+import { Application } from "https://deno.land/x/oak/mod.ts";
 
-    await app.listen({ port: 8000 });
+const app = new Application();
+
+await app.listen({ port: 8000 });
 ```
 
 Algo que destacar es el [top level await](https://github.com/tc39/proposal-top-level-await) que vemos en el ejemplo y que permite usar await sin async, ya que recordemos, el lenguaje por defecto de Deno es [Typescript](https://www.typescriptlang.org/) y por tanto podemos usar las features de TypeScript, que soporta top level await desde hace tiempo.

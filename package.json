@@ -16,20 +16,22 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^3.0.1",
-    "@mdx-js/react": "^2.3.0",
     "@parcel/watcher": "^2.4.1",
     "autoprefixer": "^10.4.19",
-    "gatsby": "^5.13.3",
+    "gatsby": "^5.13.4",
     "gatsby-plugin-google-gtag": "^5.13.1",
     "gatsby-plugin-image": "^3.13.1",
     "gatsby-plugin-manifest": "^5.13.1",
     "gatsby-plugin-mdx": "^5.13.1",
+    "gatsby-plugin-mdx-code-demo": "^2.0.0",
     "gatsby-plugin-page-creator": "^5.13.1",
     "gatsby-plugin-postcss": "^6.13.1",
     "gatsby-plugin-sharp": "^5.13.1",
     "gatsby-plugin-sitemap": "^6.13.1",
+    "gatsby-remark-copy-linked-files": "^6.13.1",
     "gatsby-remark-images": "^7.13.1",
+    "gatsby-remark-prismjs": "^7.13.1",
+    "gatsby-remark-vscode": "^3.3.1",
     "gatsby-source-filesystem": "^5.13.1",
     "gatsby-transformer-sharp": "^5.13.1",
     "postcss": "^8.4.38",
@@ -41,6 +43,7 @@
     "@types/node": "^20.11.19",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "gatsby-remark-pre-content": "^0.1.0",
     "typescript": "^5.3.3"
   }
 }
