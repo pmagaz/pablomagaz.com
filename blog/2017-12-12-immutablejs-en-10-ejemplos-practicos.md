@@ -16,137 +16,133 @@ ImmutableJs posee muchas estructuras de datos y dispone, además, de una API mu
 
 Podemos considerar [Record](https://facebook.github.io/immutable-js/docs/#/Record) como el modelo básico de datos en ImmutableJs. A efectos es un Objeto normal y corriente pero que dispone de métodos y funcionalidades ampliadas. Para usar el record de ImmutableJs debemos crear una nueva instancia, utilizando new:
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title'
-    });
-    const post = new Post({ title: 'New Title' });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+});
+const post = new Post({ title: "New Title" });
 
-    console.log(post.toJS())
-    //OUTPUT >> { id: 0, title: 'New Title' }
+console.log(post.toJS());
+//OUTPUT >> { id: 0, title: 'New Title' }
 ```
 
 #### Recuperando propiedades
 
 [Get](https://facebook.github.io/immutable-js/docs/#/Record/get) es el método por el cual vamos a poder recuperar una propiedad, pero también podemos acceder a ella como una propiedad normal y corriente de un Objeto:
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title'
-    });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+});
 
-    const post = new Post();
-    const title = post.get('title');
-    console.log(title); // OUTPUT >> 'Old Title'
-    console.log(post.title); // OUTPUT >> 'Old Title'
+const post = new Post();
+const title = post.get("title");
+console.log(title); // OUTPUT >> 'Old Title'
+console.log(post.title); // OUTPUT >> 'Old Title'
 ```
 
 #### Escribiendo propiedades
 
 Si con get obtenemos una propiedad, con [Set](https://facebook.github.io/immutable-js/docs/#/Record/set) la sobrescribimos, pero ojo, son datos inmutables y por tanto no podemos hacer el set sobre una instancia y esperar que los valores de dicha instancia hayan cambiado, así que para ello la tenemos que asignar a otra variable:
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title'
-    });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+});
 
-    const post = new Post();
-    post.set('title','New Title');
-    console.log(post.get('title'));/* OUTPUT >> 'Old title'
+const post = new Post();
+post.set("title", "New Title");
+console.log(post.get("title")); /* OUTPUT >> 'Old title'
     Es una estructura immutable, por tanto, no la podemos mutar, tenemos que devolver una nueva con los valores cambiados */
 
-    const title = post.set('title', 'New Title').get('title');
-    console.log(title); // OUTPUT >> 'New title'
+const title = post.set("title", "New Title").get("title");
+console.log(title); // OUTPUT >> 'New title'
 
-    //Podemos cambiar varias propiedades al mismo tiempo, haciendo chaining
-    const post2 = new Post()
-      .set('id', 234)
-      .set('title', 'Other Title');
+//Podemos cambiar varias propiedades al mismo tiempo, haciendo chaining
+const post2 = new Post().set("id", 234).set("title", "Other Title");
 
-    console.log(post2.toJS())
-    //OUTPUT >> { id: 234, title: 'Other Title' }
+console.log(post2.toJS());
+//OUTPUT >> { id: 234, title: 'Other Title' }
 ```
 
 #### Escribiendo varias propiedades (2) / Mezclando propiedades
 
 Set es útil cuando tenemos que cambiar pocas propiedades, pero cuando necesitamos actualizar un número elevado de propiedades se hace un poco tedioso. En lugar de eso podemos utilizar [merge](https://facebook.github.io/immutable-js/docs/#/Record/merge), que combina las propiedades de dos objetos, sobrescribiendo las existentes con nuevos valores. Como apunte, set es [más rápido](https://jsperf.com/immutable-set-vs-merge-vs-mergedeep) que merge así que si tenemos pocas propiedades (2-3), mejor set que merge.
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title'
-    });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+});
 
-    const post = new Post()
-      .merge({
-        id: 123,
-        title: 'New Title'
-    });
+const post = new Post().merge({
+  id: 123,
+  title: "New Title",
+});
 
-    console.log(post.toJS())
-    //OUTPUT >> { id: 123, title: 'New Title' }
+console.log(post.toJS());
+//OUTPUT >> { id: 123, title: 'New Title' }
 ```
 
 #### Anidando Records
 
 ImmutableJs permite, como es lógico, estructuras anidadas con objetos de objetos, donde la propiedad de un Record, puede ser, otro Record y para leer o escribir esas propiedades del Record, podemos usar [getIn](https://facebook.github.io/immutable-js/docs/#/getIn) y [setIn](https://facebook.github.io/immutable-js/docs/#/setIn):
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Author = Record({
-      name: 'Paul',
-      age: 33
-    })
+const Author = Record({
+  name: "Paul",
+  age: 33,
+});
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title',
-      author: new Author()
-    });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+  author: new Author(),
+});
 
-    const post = new Post({ title: 'New Title'});
-    console.log(post.getIn(['author','age']));
-    // OTPUT >> '33'
-    console.log(post.setIn(['author','age'], 44))
-    // OTPUT >> { "id": 0, "title": "New Title", "author": Record { "name": "Paul", "age": 44 } }
+const post = new Post({ title: "New Title" });
+console.log(post.getIn(["author", "age"]));
+// OTPUT >> '33'
+console.log(post.setIn(["author", "age"], 44));
+// OTPUT >> { "id": 0, "title": "New Title", "author": Record { "name": "Paul", "age": 44 } }
 ```
 
 #### Actualizando Nodos
 
 Update es un método muy útil para realizar actualizaciones en nodos completos, especialmente cuando estos, además, son estructuras de ImmutableJs. Además, nos permite aplicar funciones que nos van a ayudar en el control de la lógica de actualización. Vamos a suponer que queremos actualizar el nombre del author del blog -que es un Record- solo en los casos en los que, este, sea mayor de 30.
 
-```
-    import { Record } from 'immutable';
+```js
+import { Record } from "immutable";
 
-    const Author = Record({
-      name: 'Paul',
-      age: 33
-    })
+const Author = Record({
+  name: "Paul",
+  age: 33,
+});
 
-    const Post = Record({
-      id: 0,
-      title: 'Old Title',
-      author: new Author()
-    });
+const Post = Record({
+  id: 0,
+  title: "Old Title",
+  author: new Author(),
+});
 
-    const post = new Post()
-      .update('author', author => (
-        author.get('age') > 30 ? author.set('name', 'Peter') : author)
-      );
+const post = new Post().update("author", (author) =>
+  author.get("age") > 30 ? author.set("name", "Peter") : author
+);
 
-    console.log(post.getIn(['author','name'])); // OTPUT >> 'Peter'
+console.log(post.getIn(["author", "name"])); // OTPUT >> 'Peter'
 ```
 
 ### List
@@ -157,73 +153,78 @@ Las lists son como los Arrays y ellos podemos guardar cualquier cosa. En ocasion
 
 Insertando en una lista es igual de fácil que hacerlo en un Array normal y corriente:
 
-```
-    import { List } from 'immutable';
+```js
+import { List } from "immutable";
 
-    const Post = Record({
-      id: 0,
-      title: 'Post Title',
-    });
+const Post = Record({
+  id: 0,
+  title: "Post Title",
+});
 
-    const newList = List()
-    .push(new Post());
+const newList = List().push(new Post());
 
-    console.log(list.toJS());
-    // OUTPUT >> [ { id: 0, title: 'Post title' }]
+console.log(list.toJS());
+// OUTPUT >> [ { id: 0, title: 'Post title' }]
 ```
 
 #### Vaciando una lista
 
 Con [clear](https://facebook.github.io/immutable-js/docs/#/List/clear), podemos vaciar una lista:
 
-```
-    import { List } from 'immutable';
+```js
+import { List } from "immutable";
 
-    const clearList = List([1,2,3])
-    .clear();
+const clearList = List([1, 2, 3]).clear();
 
-    console.log(clearList.toJS())
-    // OUTPUT >> []
+console.log(clearList.toJS());
+// OUTPUT >> []
 ```
 
 #### Borrando de la lista según criterios
 
 En muchas ocasiones vaciar una lista no será suficiente y tendremos que eliminar elementos de dicha lista, según ciertos criterios. ¿Cómo hacerlo?
 
-```
-    import { Record, List } from 'immutable';
+```js
+import { Record, List } from "immutable";
 
-    const data = [{ id: 11, title: 'One post' }, { id: 22, title: 'Another Post' }];
+const data = [
+  { id: 11, title: "One post" },
+  { id: 22, title: "Another Post" },
+];
 
-    const Post = Record({
-      id: 0,
-      title: ''
-    })
+const Post = Record({
+  id: 0,
+  title: "",
+});
 
-    const updatedList = List(data.map(item => new Post(item)))
-    .filter(post => post.get('id') !== 11 )
+const updatedList = List(data.map((item) => new Post(item))).filter(
+  (post) => post.get("id") !== 11
+);
 
-    console.log(updatedList.toJS())
-    // OUTPUT >> [ { id: 22, title: 'Another Post' } ]
+console.log(updatedList.toJS());
+// OUTPUT >> [ { id: 22, title: 'Another Post' } ]
 ```
 
 #### De Array a Lista de Records/Maps
 
 Algo habitual manejando ImmutableJs es que tengamos que poblar un List con Records o Maps con los datos de un servicio, por ejemplo, de tal forma que tendremos una lista de Records o Maps:
 
-```
-    import { Record, List } from 'immutable';
+```js
+import { Record, List } from "immutable";
 
-    const data = [{ id: 11, title: 'One post' }, { id: 22, title: 'Another Post' }];
+const data = [
+  { id: 11, title: "One post" },
+  { id: 22, title: "Another Post" },
+];
 
-    const Post = Record({
-      id: 0,
-      title: ''
-    })
+const Post = Record({
+  id: 0,
+  title: "",
+});
 
-    const newList = List(data.map(item => new Post(item)));
-    console.log(newList.toJS());
-    // OUTPUT >> [ { id: 11, title: 'One post' }, { id: 22, title: 'Another Post' } ]
+const newList = List(data.map((item) => new Post(item)));
+console.log(newList.toJS());
+// OUTPUT >> [ { id: 11, title: 'One post' }, { id: 22, title: 'Another Post' } ]
 ```
 
 Pues esto es todo. 10 ejemplos prácticos con Record y List que nos permiten cubrir gran parte de las operaciones del "día a día" con ImmutableJs, una librería que entornos React / Redux se hace indispensable, especialmente cuando el proyecto alcanza cierto tamaño.

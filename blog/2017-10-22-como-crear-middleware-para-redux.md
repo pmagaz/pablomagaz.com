@@ -18,10 +18,10 @@ Como sabemos, en Redux, tenemos [actions](http://redux.js.org/docs/basics/Action
 
 Un middleware de Redux no es más que una función, o mejor dicho 3 funciones anidadas y su estructura más básica es la siguiente:
 
-```
-    const myMiddleware = store => next => action => {
-      console.log('my first middleware');
-    };
+```js
+const myMiddleware = (store) => (next) => (action) => {
+  console.log("my first middleware");
+};
 ```
 
 #### Store
@@ -38,24 +38,24 @@ La acción que ha sido disparada, con su payload (si lo llevará) por lo cual po
 
 Bien, pues ya tenemos todos los elementos necesarios para crear nuestro middleware así que vamos a plantear un ejemplo sencillo. Imaginemos que queremos hacer un middleware que saque por consola información del action que sido disparada.
 
-```
-    export const myMiddleware = store => next => action => {
-      // Mostramos en la consola el type de la accción y el timestamp
-      console.log(`Action dispatched: ${action.type}, Time: ${+new Date()}`);
-      // Devolvemos la acción para que continue el flujo habitual
-      return next(action);
-    };
+```js
+export const myMiddleware = (store) => (next) => (action) => {
+  // Mostramos en la consola el type de la accción y el timestamp
+  console.log(`Action dispatched: ${action.type}, Time: ${+new Date()}`);
+  // Devolvemos la acción para que continue el flujo habitual
+  return next(action);
+};
 ```
 
 Ahora como es lógico, necesitamos añadir nuestro middleware al store y el lugar para hacerlo es en el createStore de Redux, cuyo tercer parámetro son los middleware que queremos que actúen en nuestro store.
 
-```
-    // configureStore.js...
-    import { createStore,  applyMiddleware } from 'redux';
-    import { myMiddleware } from './myMiddlewarePath';
+```js
+// configureStore.js...
+import { createStore, applyMiddleware } from "redux";
+import { myMiddleware } from "./myMiddlewarePath";
 
-    const middleware = applyMiddleware(myMiddleware);
-    const store = createStore(rootReducer, initialState, middleware);
+const middleware = applyMiddleware(myMiddleware);
+const store = createStore(rootReducer, initialState, middleware);
 ```
 
 Pues ya tenemos creado nuestro middleware y añadido al store de Redux. A partir de este momento, cada vez que cualquier acción sea disparada podremos ver la salida en la consola algo parecido a esto:
@@ -68,48 +68,48 @@ En cualquier aplicación es necesario el consumo de servicios REST y sabemos que
 
 Cuando lanzamos la request, cuando llega la respuesta o cuando llega el error. Tener que manejar y disparar a mano las acciones que correspondan es un proceso tedioso y en puntos como este es donde un middleware nos viene al dedo. Existen [muchos](https://www.npmjs.com/search?q=redux%20middleware&page=1&ranking=optimal) middleware para Redux que realizan tareas muy similares, pero vamos a hacernos uno propio, por ejemplo para que nuestras acciones puedan llevar un parámetro con una promesa asociada y delegar en nuestro middleware la ejecución de dicha promesa que será una llamada a un servicio:
 
-```
-    export const getDataAction = params => ({
-      // Una acción que nos indica que estamos ante una llamada a un servicio
-      type: 'DATA_REQUEST',
-      // llamada a servicio
-      request: fetchData(params)
-    });
+```js
+export const getDataAction = (params) => ({
+  // Una acción que nos indica que estamos ante una llamada a un servicio
+  type: "DATA_REQUEST",
+  // llamada a servicio
+  request: fetchData(params),
+});
 ```
 
 El objetivo ahora es conseguir que cuando se dispare esta acción nuestro middleware sea capaz, primero de ejecutar la promesa asociada a ese servicio y segundo de devolvernos una nueva acción de tipo 'SUCCESS' con la respuesta del servicio o una nueva acción de tipo 'ERROR' si se ha producido un error, lo que nos ahorrará una enorme cantidad de trabajo:
 
-```
-    const myMiddleware = store => next => action => {
-      const { request, type } = action;
-      // Devolvemos la acción que ha sido disparada
-      next({ type: type });
-      //Ejecutamos la promesa del parámetro request de nuestro action
-        return request.then(
-          // Devolvemos una nueva acción de tipo sucess con la response
-          res => next({ res, type: 'DATA_SUCCESS' }),
-          // Si ha habido un error devolvemos una nueva acción de tipo Error
-          err => next({ err, type: 'DATA_ERROR' })
-        );
-    };
+```js
+const myMiddleware = (store) => (next) => (action) => {
+  const { request, type } = action;
+  // Devolvemos la acción que ha sido disparada
+  next({ type: type });
+  //Ejecutamos la promesa del parámetro request de nuestro action
+  return request.then(
+    // Devolvemos una nueva acción de tipo sucess con la response
+    (res) => next({ res, type: "DATA_SUCCESS" }),
+    // Si ha habido un error devolvemos una nueva acción de tipo Error
+    (err) => next({ err, type: "DATA_ERROR" })
+  );
+};
 ```
 
 Bien, pues ya tenemos nuestro middleware, sin embargo, este tiene algunos defectos que necesitamos mejorar ya que si lo usamos tal cual es probable que nos carguemos el flujo de la aplicación. Lo primero que necesitamos es, filtrar las acciones sobre las que queremos que actúe este middleware ya que solo queremos que actúe sobre acciones que lleven el parámetro request en el action y además devolver el success con el prefijo del action, es decir, si nuestra acción es "DATA_REQUEST" tenemos que poder devolver "DATA_SUCCESS".
 
-```
-    const myMiddleware = store => next => action => {
-      // Recuperamos el resto de propiedades del action
-      const { request, type  } = action;
-      // Si el action no lleva parámetro request, devolvemos el next
-      if (!request) return next(action);
-      // Lleva request, por lo que ejecutamos next del action en curso
-      next({ type: type });
-      // Devolvemos la nueva acción de tipo *_SUCCESS o *_ERROR
-      return request.then(
-        res => next({ res, type:  type.replace('_REQUEST','_SUCCESS') }),
-        err => next({ err, type: type.replace('_REQUEST','_ERROR') })
-       );
-    };
+```js
+const myMiddleware = (store) => (next) => (action) => {
+  // Recuperamos el resto de propiedades del action
+  const { request, type } = action;
+  // Si el action no lleva parámetro request, devolvemos el next
+  if (!request) return next(action);
+  // Lleva request, por lo que ejecutamos next del action en curso
+  next({ type: type });
+  // Devolvemos la nueva acción de tipo *_SUCCESS o *_ERROR
+  return request.then(
+    (res) => next({ res, type: type.replace("_REQUEST", "_SUCCESS") }),
+    (err) => next({ err, type: type.replace("_REQUEST", "_ERROR") })
+  );
+};
 ```
 
 Con esto tenemos ya listo nuestro middleware. Es un ejemplo básico y algo rudimentario en algunos puntos, pero aun así nos puede ahorrar grandes cantidades de código ya que estamos delegando en apenas 10-15 líneas de código la ejecución de promesas asociadas a acciones y la devolución de nuevas acciones con el resultado de la llamada al servicio.

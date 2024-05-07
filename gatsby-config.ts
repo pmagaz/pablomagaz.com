@@ -49,9 +49,14 @@ const config: GatsbyConfig = {
       resolve: "gatsby-plugin-mdx",
       options: {
         extensions: [".mdx", ".md"],
-        mdxOptions: {
-          gatsbyRemarkPlugins: ["gatsby-plugin-mdx-code-demo"],
-        },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 400,
+            },
+          },
+        ],
       },
     },
   ],

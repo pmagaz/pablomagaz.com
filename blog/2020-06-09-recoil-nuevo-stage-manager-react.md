@@ -26,35 +26,37 @@ Aunque inicialmente era un poco escéptico a "otro" sistema de stage management 
 
 En Recoil todo gira entorno a un concepto muy sencillo: Los [atoms](https://recoiljs.org/docs/introduction/core-concepts#atoms) son unidades o partes de nuestro state y podemos ver los atoms como los nodos de nuestro típico state de Redux y lógicamente pueden ser objetos, arrays o cualquier otro tipo. Los atoms pueden ser usados en uno o mas componentes, compartiendo el mismo state en todos ellos y como veremos más adelante, reaccionando a sus cambios. Definir un atom es realmente sencillo, solo hay que indicar una key, y un valor por defecto, que sería como el estado inicial del atom.
 
-```
-    import { atom } from "recoil";
+```ts
+import { atom } from "recoil";
 
-    const myState = atom({
-      key: "name",
-      default: "Peter",
-    });
+const myState = atom({
+  key: "name",
+  default: "Peter",
+});
 ```
 
 Nuestros componentes se suscriben a uno o mas atoms, de la misma forma que lo haríamos en Redux y cuando el valor del atom cambia, el componente, se vuelve a renderizar. ¿Como nos subscribimos a un atom? Pues mediante el hook [useRecoilState()](https://recoiljs.org/docs/api-reference/core/useRecoilState) que recibe como argumento la instancia del atom al que queremos suscribirnos (en nuestro caso myState). Mediante este hook podremos recibir el dato actualizado del atom y también podremos modificarlo sin necesidad de reducers, actions o dispatchers:
 
-```
-    import { useRecoilState } from "recoil";
-    import { myState } from "../state"; // Import the atom
+```ts
+import { useRecoilState } from "recoil";
+import { myState } from "../state"; // Import the atom
 
-    export const MyComponent: React.FC = () => {
-      // Pass the atom instance to useRecoilState
-      const [name, setName] = useRecoilState(myState);
+export const MyComponent: React.FC = () => {
+  // Pass the atom instance to useRecoilState
+  const [name, setName] = useRecoilState(myState);
 
-      const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let newName = e.target.value;
-        setMyName(newName);
-      };
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let newName = e.target.value;
+    setMyName(newName);
+  };
 
-       return (<div>
-          <input type="text" onChange={onChange} />
-          { name }
-        </div>);
-    }
+  return (
+    <div>
+      <input type="text" onChange={onChange} />
+      {name}
+    </div>
+  );
+};
 ```
 
 Como es lógico, todos los componentes que usen useRecoilState para suscribirse a "myState" se volverán a renderizar cuando alguno de ellos modifique su valor mediante setMyName. useRecoilState tiene algunas variaciones. Si no queremos modificar el valor del atom y solo queremos subscribirnos a sus posibles cambios, podemos utilizar [useRecoilValue](https://recoiljs.org/docs/api-reference/core/useRecoilValue) o [useSetRecoilState](https://recoiljs.org/docs/api-reference/core/useSetRecoilState) que no nos suscribe al atom pero nos permite modificarlo, ampliando las posibilidades de suscripción. ¿Sencillo verdad?
@@ -63,22 +65,22 @@ Como es lógico, todos los componentes que usen useRecoilState para suscribirse 
 
 El otro destacable en Recoil son los [Selectors](https://recoiljs.org/docs/introduction/core-concepts#selectors). ¿Te acuerdas de [Reselect](https://github.com/reduxjs/reselect)? Reselect es una librería muy popular que permite generar valores computados que permiten reducir el tamaño de la información del store además de implementar mecanismos de memorización. Los selectors de Recoil funcionan de forma muy similar, reciben atoms como parámetros y devuelven valores computados mediante el método "get" a los que podremos acceder mediante su key:
 
-```
-    import { selector, useRecoilValue } from "recoil";
-    import { myState } from "../state"; // Import the atom
+```ts
+import { selector, useRecoilValue } from "recoil";
+import { myState } from "../state"; // Import the atom
 
-    export const myComputedState = selector({
-      key: 'upperCaseName',
-      get: ({ get }) => {
-        let name = get(myState);
-        return name.toUpperCase();
-      }
-    });
+export const myComputedState = selector({
+  key: "upperCaseName",
+  get: ({ get }) => {
+    let name = get(myState);
+    return name.toUpperCase();
+  },
+});
 
-    export const UpperCaseName: React.FC = () => {
-      const upperName = useRecoilValue(myComputedState);
-      return <div>UpperCase Name: {upperCaseName}</div>;
-    }
+export const UpperCaseName: React.FC = () => {
+  const upperName = useRecoilValue(myComputedState);
+  return <div>UpperCase Name: {upperCaseName}</div>;
+};
 ```
 
 Pues estos son los conceptos básicos de Recoil. Realmente todo gira entorno a los atoms y los distintos hoooks que Recoil provee para subscribirse y modificar sus valores. Como vemos, nada de actions, nada de reducers, ni nada de dispatchers. Simple y sencillo.
@@ -87,147 +89,153 @@ Pues estos son los conceptos básicos de Recoil. Realmente todo gira entorno a l
 
 Vamos a probar Recoil con un ejeplo un poquito mas elaborado: El clásico Todo list en el que podemos añadir y borrar todo's de nuestra lista. Para ello vamos a usar Recoil y TypeScript y como siempre, puedes encontrar el código en mi [github](https://github.com/pmagaz/recoil-typescript). Vamos a tener 3 componentes: NewTodo que sera desde donde introduciremos nuevos todos en el state, TodoList que será la lista de todo's y NumTodos que será un tercer componente para contabilizar el numero de todos activos.
 
-```
-    import React from 'react';
+```ts
+import React from "react";
 
-    import { NewTodo } from './components/NewTodo';
-    import { TodoList } from './components/TodoList';
-    import { NumTodos } from './components/NumTodos';
+import { NewTodo } from "./components/NewTodo";
+import { TodoList } from "./components/TodoList";
+import { NumTodos } from "./components/NumTodos";
 
-    const App = () => {
-      return (
-        <div>
-          <NewTodo />
-          <TodoList />
-          <NumTodos />
-        </div>
-      );
-    }
+const App = () => {
+  return (
+    <div>
+      <NewTodo />
+      <TodoList />
+      <NumTodos />
+    </div>
+  );
+};
 
-    export default App;
+export default App;
 ```
 
 Todos los componentes van a tener acceso al state ya sea para introducir, leer o computar valores de él. Nuestro state es realmente simple ya que solo necesitamos un único atom y que será un Array donde ir metiéndo los todo's. Cada todo será un simple objeto con id, el nombre y si está completo o no:
 
-```
-    import { atom } from "recoil";
+```ts
+import { atom } from "recoil";
 
-    export interface Todo {
-      id: string,
-      name: string;
-      completed: boolean;
-    }
+export interface Todo {
+  id: string;
+  name: string;
+  completed: boolean;
+}
 
-    const initialState: Todo[] = [];
+const initialState: Todo[] = [];
 
-    export const todosState = atom({
-      key: 'todos',
-      default: initialState,
-    });
+export const todosState = atom({
+  key: "todos",
+  default: initialState,
+});
 ```
 
 NewTodo es un pequeño formulario con un campo de texto y un botón de guardar y el handler que se encarga de insertar el nuevo todo en el atom. Como solo necesitamos escribir en el state [useSetRecoilState](https://recoiljs.org/docs/api-reference/core/useSetRecoilState) es el hook adecuado.
 
-```
-    import React, { ChangeEvent, MouseEvent, useState } from 'react';
-    import { useSetRecoilState } from "recoil";
-    import { todosState } from '../state';
+```ts
+import React, { ChangeEvent, MouseEvent, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { todosState } from "../state";
 
-    export const NewTodo: React.FC = () => {
-      const [todoName, setTodoName] = useState("");
-      const setTodos = useSetRecoilState(todosState);
+export const NewTodo: React.FC = () => {
+  const [todoName, setTodoName] = useState("");
+  const setTodos = useSetRecoilState(todosState);
 
-      const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let todoName = e.target.value;
-        setTodoName(todoName);
-      };
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let todoName = e.target.value;
+    setTodoName(todoName);
+  };
 
-      const onSave = (e: MouseEvent<HTMLInputElement>): void => {
-        setTodos(todoList => [...todoList, {
-          //Random Autogenerated ID
-          id: Math.random().toString(32).substr(2, 9),
-          name: todoName,
-          completed: false
-        }]);
-      };
+  const onSave = (e: MouseEvent<HTMLInputElement>): void => {
+    setTodos((todoList) => [
+      ...todoList,
+      {
+        //Random Autogenerated ID
+        id: Math.random().toString(32).substr(2, 9),
+        name: todoName,
+        completed: false,
+      },
+    ]);
+  };
 
-      return (
-        <div>
-          <input type="text" onChange={onChange} />
-          <input type="button" value="Add" onClick={onSave} />
-        </div>
-      );
-    }
+  return (
+    <div>
+      <input type="text" onChange={onChange} />
+      <input type="button" value="Add" onClick={onSave} />
+    </div>
+  );
+};
 ```
 
 Como vemos en el ejemplo estamos usando de forma simultánea el hook useState, con el state interno del componente y useSetRecoilState con el state global. Se integran a la perfección ¿verdad? Bien ahora que ya tenemos todo´s guardados en nuestro atom, podemos mostrarlos en el componente TodoList que será el encargado de mostrar la lista de todo´s con un checkbox que nos permite marcarlo como completo para que ya no salga en la lista. Como vamos a leer y modificar el atom, [useRecoilState](https://recoiljs.org/docs/api-reference/core/useRecoilState) es el hook adecuado.
 
-```
-    import React, { ChangeEvent } from 'react';
-    import { useRecoilState } from "recoil";
-    import { Todo, todosState } from "../state";
+```ts
+import React, { ChangeEvent } from "react";
+import { useRecoilState } from "recoil";
+import { Todo, todosState } from "../state";
 
-    export const TodoList: React.FC = () => {
-      const [todos, setTodo] = useRecoilState(todosState);
+export const TodoList: React.FC = () => {
+  const [todos, setTodo] = useRecoilState(todosState);
 
-      const completeTodo = (e: ChangeEvent<HTMLInputElement>) => {
-        let id = e.target.value;
-        let index = todos.findIndex(todo => todo.id == id);
-        let todoList = [...todos];
-        todoList[index] = { ...todoList[index], completed: !todoList[index].completed }
-        setTodo(todoList);
-      };
+  const completeTodo = (e: ChangeEvent<HTMLInputElement>) => {
+    let id = e.target.value;
+    let index = todos.findIndex((todo) => todo.id == id);
+    let todoList = [...todos];
+    todoList[index] = {
+      ...todoList[index],
+      completed: !todoList[index].completed,
+    };
+    setTodo(todoList);
+  };
 
-      const todoList = todos
-        .filter(todo => !todo.completed)
-        .map((todo) =>
-          <li key={todo.id}>
-            {todo.name}
-            <input type="checkbox" value={todo.id} onChange={completeTodo} />
-          </li>
-        );
-      return (<ul>{todoList} </ul>);
-    }
+  const todoList = todos
+    .filter((todo) => !todo.completed)
+    .map((todo) => (
+      <li key={todo.id}>
+        {todo.name}
+        <input type="checkbox" value={todo.id} onChange={completeTodo} />
+      </li>
+    ));
+  return <ul>{todoList} </ul>;
+};
 ```
 
 Es hora de probar los selectors para poder devolver valores computados, por lo que en el componente NumTodos podemos contabilizar los todo´s activos (completed: false) y devolver ese resultado. Como solo queremos leer el atom y no modificarlo, [useRecoilValue()](https://recoiljs.org/docs/api-reference/core/useRecoilValue) es el hook adecuado:
 
-```
-    import React from 'react';
-    import { selector, useRecoilValue } from "recoil";
-    import { todosState } from "../state";
+```ts
+import React from "react";
+import { selector, useRecoilValue } from "recoil";
+import { todosState } from "../state";
 
-    export const numTodosState = selector({
-      key: 'numTodos',
-      get: ({ get }) => {
-        let todos = get(todosState);
-        return todos.filter(todo => !todo.completed).length;
-      }
-    });
+export const numTodosState = selector({
+  key: "numTodos",
+  get: ({ get }) => {
+    let todos = get(todosState);
+    return todos.filter((todo) => !todo.completed).length;
+  },
+});
 
-    export const NumTodos: React.FC = () => {
-      const numTodos = useRecoilValue(numTodosState);
-      return <div>Active todos: {numTodos}</div>;
-    }
+export const NumTodos: React.FC = () => {
+  const numTodos = useRecoilValue(numTodosState);
+  return <div>Active todos: {numTodos}</div>;
+};
 ```
 
 Para finalizar, un pequeño apunte. Para poder usar Recoil, nuestra app tiene que estar bajo [RecoilRoot](https://recoiljs.org/docs/api-reference/core/RecoilRoot) que es el wrapper que provee del contexto y acceso a los atoms:
 
-```
-    import React from "react";
-    import ReactDOM from "react-dom";
-    import { RecoilRoot } from "recoil";
+```ts
+import React from "react";
+import ReactDOM from "react-dom";
+import { RecoilRoot } from "recoil";
 
-    import App from "./App";
+import App from "./App";
 
-    ReactDOM.render(
-      <React.StrictMode>
-        <RecoilRoot>
-          <App />
-        </RecoilRoot>
-      </React.StrictMode>,
-      document.getElementById("root")
-    );
+ReactDOM.render(
+  <React.StrictMode>
+    <RecoilRoot>
+      <App />
+    </RecoilRoot>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
 ```
 
 ### Conclusiones

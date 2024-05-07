@@ -48,25 +48,25 @@ Evidentemente también puedes usar el command line y herramientas como [Wasm-Pac
 
 La naturaleza de WebAssembly lo hace ideal para delegar cálculos pesados en él y para ello lógicamente es necesario poder pasar valores de JavaScript a Rust/WebAssembly y viceversa. Imaginemos que una simple función de multiplicación es una función realmente pesada que requiere un notable esfuerzo computacional. Delegando estas tareas en WebAssembly nuestra aplicación se puede beneficiar de un incremento muy notable en el performane. Gracias al ecosistema de Rust, tareas como estas y otras son realmente simples y sencillas, lo primero va a ser crear esa función de multiplicación "pesada" en Rust:
 
-```
-    //../crate/src/multiply.rs';
-    #[wasm_bindgen]
-    // Multiple recibe dos enteros (usize)
-    pub fn multiply(a: usize, b: usize) -> usize {
-        a * b
-    }
+```rust
+//../crate/src/multiply.rs';
+#[wasm_bindgen]
+// Multiple recibe dos enteros (usize)
+pub fn multiply(a: usize, b: usize) -> usize {
+    a * b
+}
 ```
 
 Seguramente te haya llamado la atención "#[wasm_bindgen]". Esto es una [macro](https://doc.rust-lang.org/1.7.0/book/macros.html/) de Rust y son notaciones que se pueden añadir a las funciones o los Structs para dotarlas de funcionalidad extra. En este caso, la macro de wasm_bindgen sirve para exponer esta función como módulo exportado de WebAssembly por lo que ahora ya podemos usar esa función de multiplicación en JavaScript como una función normal y corriente pero que será ejecutada en WebAssembly.
 
-```
-    // index.js
-    import { multiply } from '../crate/src/multiply.rs';
+```js
+// index.js
+import { multiply } from "../crate/src/multiply.rs";
 
-    // Pasamos los dos enteros que queremos multiplicar
-    let result = multiply(10,10);
-    console.log(result);
-    // OUTPUT: 100
+// Pasamos los dos enteros que queremos multiplicar
+let result = multiply(10, 10);
+console.log(result);
+// OUTPUT: 100
 ```
 
 Como puedes oberservar es realmente sencillo comunicar Rust/WebAssembly con nuestra aplicación JavaScript gracias a las características únicas de Rust y el amplio ecosistema para WebAssembly.
@@ -75,107 +75,107 @@ Como puedes oberservar es realmente sencillo comunicar Rust/WebAssembly con nues
 
 De la misma forma que podemos pasar valores de JavaScript a Rust, podemos hacer la inversa, pasar valores de Rust a JavaScript. Vamos a suponer que tenemos un Struct en Rust, que es el equivalente a los objetos en JavaScript y que implementa 2 métodos:
 
-```
-    //../crate/src/rust_struct.rs';
-    #[wasm_bindgen]
-    pub struct RustStruct {
-        id: i32,
+```rust
+//../crate/src/rust_struct.rs';
+#[wasm_bindgen]
+pub struct RustStruct {
+    id: i32,
+}
+
+#[wasm_bindgen]
+impl RustStruct {
+    //Esta macro nos permite usar el metodo new como constructor en JavaScript para hacer un new RustStruct
+    #[wasm_bindgen(constructor)]
+    pub fn new(val: i32) -> Self {
+        Self { id: val }
     }
 
-    #[wasm_bindgen]
-    impl RustStruct {
-        //Esta macro nos permite usar el metodo new como constructor en JavaScript para hacer un new RustStruct
-        #[wasm_bindgen(constructor)]
-        pub fn new(val: i32) -> Self {
-            Self { id: val }
-        }
-
-        pub fn get_id(&self) -> i32 {
-            self.id
-        }
+    pub fn get_id(&self) -> i32 {
+        self.id
     }
+}
 ```
 
 En Rust, aunque existe POO muy inteligentemente no existen las clases y el concepto de constructor es diferente a JavaScript ya que realmente es un método estático sin más, pero wasm_bidgen transformará este Struct en una clase de JavaScript que vamos a poder instanciar y utilizar como si una clase normal y corriente (con su construcor real) se tratara:
 
-```
-    // index.js
-    import { RustStruct } from '../crate/src/rust_struct.rs';
+```js
+// index.js
+import { RustStruct } from "../crate/src/rust_struct.rs";
 
-    const rustStruct = new RustStruct(12345);
-    const id = rustStruct.get_id();
-    console.log(id);
-    // OUTPUT: 12345!
+const rustStruct = new RustStruct(12345);
+const id = rustStruct.get_id();
+console.log(id);
+// OUTPUT: 12345!
 ```
 
 ### Accediendo al DOM
 
 El acceso al DOM desde Rust es bastante sencillo y sobre todo familiar, ya que web_sys nos provee de una API muy extensa para realizar casi cualquier tipo de operación sobre el DOM manteniendo practicamente la misma nomenclatura a la que estamos acostumbrados (aunque en [Snake case](https://en.wikipedia.org/wiki/Snake_case)). Acceder a Window, Document, crear elementos HTMl o incluso dar estilos es realmente sencillo. Vamos a crear un div en el Dom desde Rust e insertar en dicho div un string que sera pasado desde JavaScript:
 
-```
-    // ../crate/src/hello_dom.rs';
-    //Importamos websys para acceder al DOM
-    use web_sys::window;
+```rust
+// ../crate/src/hello_dom.rs';
+//Importamos websys para acceder al DOM
+use web_sys::window;
 
-    #[wasm_bindgen]
-    pub fn hello_dom(value: &str) -> Result<(), JsValue> {
-      let window = window().expect("Window not found!");
-      let document = window.document().expect("Document not found!");
-      let body = document.body().expect("Body not found!");
-      let div = document.create_element("div")?;
-      div.set_inner_html(value);
-      body.append_child(&div)?;
-      Ok(())
-    }
+#[wasm_bindgen]
+pub fn hello_dom(value: &str) -> Result<(), JsValue> {
+  let window = window().expect("Window not found!");
+  let document = window.document().expect("Document not found!");
+  let body = document.body().expect("Body not found!");
+  let div = document.create_element("div")?;
+  div.set_inner_html(value);
+  body.append_child(&div)?;
+  Ok(())
+}
 ```
 
 Ahora desde nuestro codigo JavaScript le pasamos el valor que queremos insertar en el div que creamos desde Rust:
 
-```
-    // index.js
-    import { hello_dom } from '../crate/src/hello_dom.rs';
+```js
+// index.js
+import { hello_dom } from "../crate/src/hello_dom.rs";
 
-    hello_dom("Hello DOM!");
+hello_dom("Hello DOM!");
 ```
 
 ### Pintando en Canvas
 
 Como hemos comentado, un escenario donde WebAssembly resulta muy idóneo es como capa de cálculos pesados como por ejemplo la lógica de un videojuego que podemos pintar en Canvas. Esto se puede afrontar desde diversas maneras sobre todo teniendo en cuenta la memoria linear de WebAssembly, pero Rust y wasm_bindgen simplifican enormemente las cosas por lo que interactuar directamente sobre Canvas con Rust es muy sencillo. Vamos a pintar un simple cuadrado que rellenaremos de un color:
 
-```
-    //../crate/src/draw_canvas.rs
-    use web_sys::window;
+```rust
+//../crate/src/draw_canvas.rs
+use web_sys::window;
 
-    #[wasm_bindgen]
-    pub fn draw_canvas() {
-      //Accedemos a Document
-      let document = web_sys::window().unwrap().document().unwrap();
-      //Obtenemos la instancia del Canvas
-      let canvas = document.get_element_by_id("canvas").unwrap();
-      let canvas: web_sys::HtmlCanvasElement = canvas
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .map_err(|_| ())
-        .unwrap();
+#[wasm_bindgen]
+pub fn draw_canvas() {
+  //Accedemos a Document
+  let document = web_sys::window().unwrap().document().unwrap();
+  //Obtenemos la instancia del Canvas
+  let canvas = document.get_element_by_id("canvas").unwrap();
+  let canvas: web_sys::HtmlCanvasElement = canvas
+    .dyn_into::<web_sys::HtmlCanvasElement>()
+    .map_err(|_| ())
+    .unwrap();
 
-      //Otenemos el contexto, en este caso 2D
-      let context = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
+  //Otenemos el contexto, en este caso 2D
+  let context = canvas
+    .get_context("2d")
+    .unwrap()
+    .unwrap()
+    .dyn_into::<web_sys::CanvasRenderingContext2d>()
+    .unwrap();
 
-      //Comienza una nueva ruta
-      context.begin_path();
+  //Comienza una nueva ruta
+  context.begin_path();
 
-      //Elegiemos el color del cuadrado
-      context.set_fill_style(&"rgb(130,150,30)".into());
+  //Elegiemos el color del cuadrado
+  context.set_fill_style(&"rgb(130,150,30)".into());
 
-      //Rellenamos un cuadrado de 100 x 100
-      context.fill_rect(0.0, 0.0, 100.0, 100.0);
+  //Rellenamos un cuadrado de 100 x 100
+  context.fill_rect(0.0, 0.0, 100.0, 100.0);
 
-      context.stroke();
-    }
+  context.stroke();
+}
 ```
 
 Ahora desde JavaScript ya podríamos llamar a la función draw_canvas() y como podemos ver, en general todas las APIS web mantienen los mismos nombres que en su versión nativa, con la salvedad de que en Rust los métodos siempre se suelen escribir en snake case, pero los nombres son, en la mayoría de los casos, los mismos.
@@ -184,52 +184,52 @@ Ahora desde JavaScript ya podríamos llamar a la función draw_canvas() y como p
 
 Quizás no lo sepas pero en Rust también existe [async/await](https://rust-lang.github.io/async-book/01_getting_started/04_async_await_primer.html) y lógicamente también existe una entidad similar a las promesas pero que en Rust son llamados "[Futures](https://docs.rs/futures/0.3.5/futures/)" pero que en esencia funcionan de la misma forma que las promesas, lo que permite una muy buena integración entre ambos lenguajes a la hora de realizar operaciones asíncronas como llamadas a servicios. Vamos a ilustrarlo con un ejemplo donde vamos a a llamar a la [API de posts](https://pablomagaz.com/api/posts) de este blog, vamos a serializar los datos devueltos por la API a Structs (objetos de Rust) para poder hacer cálculos pesados usando entidades nátivas de Rust y vamos a devolver una promesa con los objetos serializados de JavaScript:
 
-```
-    //crate para serializar / deserializar
-    use serde::{Deserialize, Serialize};
-    // JsCast permite devolver objetos JavaScript desde Rust
-    use wasm_bindgen::JsCast;
-    //JsFuture transforma un Future de Rust en una Promesa
-    use wasm_bindgen_futures::JsFuture;
-    // Dependencias de websys
-    use web_sys::{window, Request, RequestInit, RequestMode, Response};
+```rust
+//crate para serializar / deserializar
+use serde::{Deserialize, Serialize};
+// JsCast permite devolver objetos JavaScript desde Rust
+use wasm_bindgen::JsCast;
+//JsFuture transforma un Future de Rust en una Promesa
+use wasm_bindgen_futures::JsFuture;
+// Dependencias de websys
+use web_sys::{window, Request, RequestInit, RequestMode, Response};
 
-    //Struct para el Post
-    #[derive(Debug, Serialize, Deserialize)]
-    pub struct Post {
-      pub id: String,
-      pub title: String,
-    }
-    //Array de posts
-    #[derive(Debug, Serialize, Deserialize)]
-    pub struct Posts {
-      pub posts: Vec<Post>,
-    }
+//Struct para el Post
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Post {
+  pub id: String,
+  pub title: String,
+}
+//Array de posts
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Posts {
+  pub posts: Vec<Post>,
+}
 
-    #[wasm_bindgen]
-    // Funci&oacute;n async, igual que en JS que devuelve un JsValue (valor JavaScript)
-    pub async fn load_posts() -> Result<JsValue, JsValue> {
-      let mut opts = RequestInit::new();
-      opts.method("GET");
-      opts.mode(RequestMode::Cors);
+#[wasm_bindgen]
+// Funci&oacute;n async, igual que en JS que devuelve un JsValue (valor JavaScript)
+pub async fn load_posts() -> Result<JsValue, JsValue> {
+  let mut opts = RequestInit::new();
+  opts.method("GET");
+  opts.mode(RequestMode::Cors);
 
-      //Preparamos la request
-      let request = Request::new_with_str_and_init("https://pablomagaz.com/api/posts", &opts)?;
+  //Preparamos la request
+  let request = Request::new_with_str_and_init("https://pablomagaz.com/api/posts", &opts)?;
 
-      let window = web_sys::window().unwrap();
-      //Ejecutamos la request eseperando recibir un Future / promesa
-      //El .await es el equivcalente
-      let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-      let resp: Response = resp_value.dyn_into().unwrap();
-      //Pasamos la respuesta a json
-      let json = JsFuture::from(resp.json()?).await?;
-      //Serializamos el Json a structs de Rust (Posts) esto nos permitiria
-      //manejar los datos como structs nativos de Rust.
-      let posts: Posts = json.into_serde().unwrap();
-      //... calculos pesados
-      //Pasamos nuestro struct de Posts a objetos JavaScript
-      Ok(JsValue::from_serde(&posts).unwrap())
-    }
+  let window = web_sys::window().unwrap();
+  //Ejecutamos la request eseperando recibir un Future / promesa
+  //El .await es el equivcalente
+  let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+  let resp: Response = resp_value.dyn_into().unwrap();
+  //Pasamos la respuesta a json
+  let json = JsFuture::from(resp.json()?).await?;
+  //Serializamos el Json a structs de Rust (Posts) esto nos permitiria
+  //manejar los datos como structs nativos de Rust.
+  let posts: Posts = json.into_serde().unwrap();
+  //... calculos pesados
+  //Pasamos nuestro struct de Posts a objetos JavaScript
+  Ok(JsValue::from_serde(&posts).unwrap())
+}
 ```
 
 Ahora desde nuestro código JavaScript ya podemos llamar al método load_posts() dentro de nuestra función async, ya que realmente devuelve una promesa (JsFuture). JsValue nos permite serializar esa respuesta y devolver los objetos nátivos de Js.

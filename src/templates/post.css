@@ -30,11 +30,14 @@
 }
 
 .link-tag {
-  flex: 3;
   text-align: right;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+.link-tag:first-of-type {
+  flex: 3;
 }
 
 .frontmatter-tag {
@@ -56,4 +59,10 @@
   top: 4px;
   width: 15px;
   height: 15px;
+}
+
+img {
+  max-width: 400px;
+  display: block;
+  margin: 50px auto;
 }

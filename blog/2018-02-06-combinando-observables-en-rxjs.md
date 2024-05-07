@@ -30,13 +30,11 @@ Esta es una de las partes que, en ocasiones, más cuesta entender sobre RxJs ya 
 
 Como vemos, en la última línea horizontal, que representa el Observable resultante, los valores de éste, son emitidos en el mismo orden temporal que el de los Observables de origen. Vamos a ilustrarlo mejor con un ejemplo. Tenemos dos Observables que emiten valores, uno de ellos, interval$ emite valores mapeados a "A" con mapTo cada 100 ms y interval2$ emite valores mapeados a "B" cada 200 ms. En ambos casos solo tomamos los 3 primeros valores con take.
 
-```
-    const interval$ = Rx.Observable.interval(100).mapTo('A').take(3);
-    const interval2$ = Rx.Observable.interval(200).mapTo('B').take(3);
+```js
+const interval$ = Rx.Observable.interval(100).mapTo("A").take(3);
+const interval2$ = Rx.Observable.interval(200).mapTo("B").take(3);
 
-    interval$
-      .merge(interval2$)
-      .subscribe(next => console.log(next)); // OUPUT >> A, A, B, A, B, B
+interval$.merge(interval2$).subscribe((next) => console.log(next)); // OUPUT >> A, A, B, A, B, B
 ```
 
 Como vemos en la salida los valores del Observable resultante son emitidos, en el mismo orden temporal en el que fueron emitidos en sus respectivos Observables de origen.
@@ -47,13 +45,11 @@ Como vemos en la salida los valores del Observable resultante son emitidos, en e
 
 ![merge marble diagram](http://reactivex.io/rxjs/img/concat.png)
 
-```
-    const interval$ = Rx.Observable.interval(100).mapTo('A').take(3);
-    const interval2$ = Rx.Observable.interval(200).mapTo('B').take(3);
+```js
+const interval$ = Rx.Observable.interval(100).mapTo("A").take(3);
+const interval2$ = Rx.Observable.interval(200).mapTo("B").take(3);
 
-    interval$
-      .concat(interval2$)
-      .subscribe(next => console.log(next)); // OUPUT >> A, A, A, B, B, B
+interval$.concat(interval2$).subscribe((next) => console.log(next)); // OUPUT >> A, A, A, B, B, B
 ```
 
 Como vemos en la salida, interval$ emite todos sus valores (A). Una vez ha emitido su complete, concat se suscribe al segundo observable interval2$ por lo que el resultado obtenido es diferente al que nos daría merge.
@@ -64,13 +60,11 @@ Como vemos en la salida, interval$ emite todos sus valores (A). Una vez ha emiti
 
 ![CombineLatest marble diagram](http://reactivex.io/rxjs/img/combineLatest.png)
 
-```
-    const interval$ = Rx.Observable.interval(100).mapTo('A').take(3);
-    const interval2$ = Rx.Observable.interval(200).mapTo('B').take(3);
+```js
+const interval$ = Rx.Observable.interval(100).mapTo("A").take(3);
+const interval2$ = Rx.Observable.interval(200).mapTo("B").take(3);
 
-    interval$
-      .combineLatest(interval2$)
-      .subscribe(next => console.log(next)); // OUPUT >> ["A", "B"],["A", "B"],["A", "B"]
+interval$.combineLatest(interval2$).subscribe((next) => console.log(next)); // OUPUT >> ["A", "B"],["A", "B"],["A", "B"]
 ```
 
 Como vemos, los distintos operadores de combinación existentes aplican distintos criterios a la hora de combinar los valores de cada uno de los Observables. El resultado que obtendremos será, como hemos visto, totalmente diferente. Dependiendo del resultado que queramos obtener podremos coger uno u otro.
@@ -79,23 +73,32 @@ Como vemos, los distintos operadores de combinación existentes aplican distinto
 
 A lo largo de los ejemplos que hemos ido viendo en los capítulos de la serie, hemos trabajado con Observables cuyos valores siempre eran enteros o cadenas de texto, pero es importante tener en cuenta que en RxJs un Observable, puede emitir otros Observables... Vamos a ilustrarlo con un ejemplo: Tenemos que llamar a un servicio que, por ejemplo, nos devuelve los posts que un autor ha escrito en un blog y tenemos que llamar a ese servicio (que también es un Observable) con un click:
 
-```
-    const data = { author: 'Jhon', articles: [
-      { id: 11, category: 'music' }, { id: 22, category: 'movies' }, { id: 33, category: 'music' }
-      ]};
+```js
+const data = {
+  author: "Jhon",
+  articles: [
+    { id: 11, category: "music" },
+    { id: 22, category: "movies" },
+    { id: 33, category: "music" },
+  ],
+};
 
-    const service = () => new Promise(resolve => { // Promesa que devuelve los datos
-       setTimeout(() => { resolve(data) }, 500); // Simulamos el delay de un servicio
-    });
+const service = () =>
+  new Promise((resolve) => {
+    // Promesa que devuelve los datos
+    setTimeout(() => {
+      resolve(data);
+    }, 500); // Simulamos el delay de un servicio
+  });
 
-    const data$ = Rx.Observable.fromPromise(service()); // Observable de la promesa del servicio
-    const click$ = Rx.Observable.fromEvent(document, 'click'); // Observable el evento click
+const data$ = Rx.Observable.fromPromise(service()); // Observable de la promesa del servicio
+const click$ = Rx.Observable.fromEvent(document, "click"); // Observable el evento click
 
-    click$
-      .map(x => data$) // Map no devuelve una cadena o un número, ¡devuelve un Observable!
-      .subscribe(next => console.log(next));
+click$
+  .map((x) => data$) // Map no devuelve una cadena o un número, ¡devuelve un Observable!
+  .subscribe((next) => console.log(next));
 
-     /*
+/*
      OUTPUT >>
     [object Object] {
       _isScalar: false,
@@ -108,7 +111,7 @@ A lo largo de los ejemplos que hemos ido viendo en los capítulos de la serie, h
             if (!subscriber.isUnsubscribed) {
             "
             ...
-     */
+*/
 ```
 
 No es la salida que esperábamos.... ¿Hemos roto algo? No. Lo que sucede es que el valor devuelto por map, ya no es un entero o una cadena de texto si no que es otro Observable, por lo que realmente tenemos es un ¡Observable de Observables!, que es lo que realmente son los Higher order Observables, y en estos casos, necesitamos "aplanarlo".
@@ -117,12 +120,16 @@ No es la salida que esperábamos.... ¿Hemos roto algo? No. Lo que sucede es que
 
 Para explicar un poco mejor lo que es el aplanado o flatten de Observables, vamos a pensar en Arrays en lugar de Observables. Imaginemos que tenemos un Array de Arrays, es decir, un Array multidimensional y lo que queremos recibir son los valores "en plano". Si aplicamos un criterio de devolver los valores de cada subarray exactamente en el orden en el que llegan, todos los elementos del primer subarray, luego los del segundo y así sucesivamente recibiremos un resultado (FLATTENED OUTPUT 1). Sin embargo, si cogemos el primer valor de cada subarray, luego el segundo y así sucesivamente el resultado que obtendremos será diferente (FLATTENED OUTPUT 2).
 
-```
-    const arrayOfArrays = [ [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] ];
+```js
+const arrayOfArrays = [
+  [1, 2],
+  [3, 4],
+  [5, 6],
+];
 
-    // FLATTENED OUTPUT  1 >> 1, 2, 3, 4, 5, 6
+// FLATTENED OUTPUT  1 >> 1, 2, 3, 4, 5, 6
 
-    // FLATTENED OUTPUT  2 >> 1, 3, 5, 2, 4, 6
+// FLATTENED OUTPUT  2 >> 1, 3, 5, 2, 4, 6
 ```
 
 El aplanado de Observables funciona de igual forma, dependiendo del criterio (operador) que utilicemos, obtendremos unos resultados u otros ya que estos manejan de forma diferente los valores emitidos por el Observable y la subscripción o cancelación de la misma. Vamos a volver al ejemplo previo:
@@ -135,7 +142,7 @@ El aplanado de Observables funciona de igual forma, dependiendo del criterio (op
 
 Volviendo al ejemplo previo, después del map que realiza la llamada al servicio, utilizamos el operador mergeAll() para aplanar el resultado:
 
-```
+```js
     const data = { author: 'Jhon', articles: [  { id: 11, category: 'music' }, { id: 22, category: 'movies' }, { id: 33, category: 'music' } ]; }
 
     const service = () => new Promise(resolve => { // Promesa que devuelve los datos
@@ -154,71 +161,83 @@ Volviendo al ejemplo previo, después del map que realiza la llamada al servicio
 
 Sin embargo, podemos simplificar esto un poquito y utilizar [mergeMap](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-mergeMap), que no es otra cosa que un [map](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-map) seguido de un [mergeAll](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-mergeAll)
 
-```
-    click$
-      .mergeMap(x => data$) // = map() + mergeAll()
-      .subscribe(next => console.log(next));
-      // ...
+```js
+click$
+  .mergeMap((x) => data$) // = map() + mergeAll()
+  .subscribe((next) => console.log(next));
+// ...
 ```
 
 #### SwitchMap
 
 De la misma forma que mergeMap es la combinación de map + mergeAll, [SwitchMap](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-switchMap) es la combinación de un [map](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-map) + [switch](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-switch). La particularidad que tiene [Switch](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-switch) es que cancelará la subscripción del primer Observable cuando detecta que el segundo Observable comienza a emitir valores por lo que es un operador muy útil cuando nos queremos asegurar de no hacer "pooling":
 
-```
-    const data = { author: 'Jhon', articles: [  { id: 11, category: 'music' }, { id: 22, category: 'movies' }, { id: 33, category: 'music' } ]; }
+```js
+const data = {
+  author: "Jhon",
+  articles: [
+    { id: 11, category: "music" },
+    { id: 22, category: "movies" },
+    { id: 33, category: "music" },
+  ],
+};
 
-    const service = () => new Promise(resolve => { // Promesa que devuelve los datos
-       setTimeout(() => { resolve(data) }, 500); // Simulamos el delay de un servicio
-    });
-    const click$ = Rx.Observable.fromEvent(document, 'click');
+const service = () =>
+  new Promise((resolve) => {
+    // Promesa que devuelve los datos
+    setTimeout(() => {
+      resolve(data);
+    }, 500); // Simulamos el delay de un servicio
+  });
+const click$ = Rx.Observable.fromEvent(document, "click");
 
-    click$
-      .switchMap(x => service()) // = map() + switch()
-      .subscribe(next => console.log(next));
-      // OUTPUT >> { category: "music", id: 11 }, { category: "movies", id: 22 },  { category: "music", id: 33 }
+click$
+  .switchMap((x) => service()) // = map() + switch()
+  .subscribe((next) => console.log(next));
+// OUTPUT >> { category: "music", id: 11 }, { category: "movies", id: 22 },  { category: "music", id: 33 }
 ```
 
 ### Recuperando valores de distintos Observables
 
 El tener que recuperar y aplanar valores de distintos Observables, que pueden producirse en momentos temporales diferentes, desde un único punto es una tarea a la que más tarde o más temprano vamos a tener que enfrentarnos. [ForkJoin](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#static-method-forkJoin) es un operador muy útil para esto ya que nos permite recibir el último valor de distintos Observables:
 
-```
-    const click$ = Rx.Observable.fromEvent(document, 'click');
-    const source$ = Rx.Observable.of('A');
-    const source2$ = Rx.Observable.of('B').delay(200);
-    const source3$ = Rx.Observable.interval(100).mapTo('Interval').take(3);
+```js
+const click$ = Rx.Observable.fromEvent(document, "click");
+const source$ = Rx.Observable.of("A");
+const source2$ = Rx.Observable.of("B").delay(200);
+const source3$ = Rx.Observable.interval(100).mapTo("Interval").take(3);
 
-    click$
-     .mergeMap(x =>  // Aplanamos porque forkJoin devuelve un Observable de Observables
-        Rx.Observable
-        .forkJoin(source$,source2$,source3$)
-       )
-      .subscribe(next => console.log(next));// OUTPUT >> ["A", "B", "Interval"]
+click$
+  .mergeMap(
+    (
+      x // Aplanamos porque forkJoin devuelve un Observable de Observables
+    ) => Rx.Observable.forkJoin(source$, source2$, source3$)
+  )
+  .subscribe((next) => console.log(next)); // OUTPUT >> ["A", "B", "Interval"]
 ```
 
 ### Mundo Real
 
 Después de varios capítulos de la serie donde hemos visto los [operadores básicos](https://pablomagaz.com/blog/como-funcionan-operadores-rxjs) de Rxjs creo que es buen momento para juntar todos estos operadores y lo que hemos aprendido en este post sobre combinar Observables, en un ejemplo de mundo real, que además, es muy ilustrativo de la enorme potencia que reside en RxJs: Un typAhead sobre la API de Wikipedia que nos vaya sugiriendo resultados a medida que escribimos, pero no solo eso, queremos, además que, sea "inteligente" y no queremos por ejemplo que envíe la petición a la API con cada pulsación de tecla ya que esto no sería eficiente, tampoco enviar el termino de búsqueda a no ser que tenga al menos 3 caracteres, ni tampoco enviar el termino de búsqueda si este no ha cambiado.
 
-```
-    const input = document.getElementById('searchText'); // Campo de búsqueda
-    const results = document.getElementById('results'); //Div para mostrar resultados
-    const keyUp$ = Rx.Observable.fromEvent(input, 'keyup'); // Capturamos el evento keyup
+```js
+const input = document.getElementById("searchText"); // Campo de búsqueda
+const results = document.getElementById("results"); //Div para mostrar resultados
+const keyUp$ = Rx.Observable.fromEvent(input, "keyup"); // Capturamos el evento keyup
 
-    // Usamos Observable.ajax para lanzar la petición a la API de Wikipedia
-    const search$ = searchText => Rx.Observable.ajax({
-        crossDomain: true,
-        url: `https://en.wikipedia.org/w/api.php?&search=${ searchText }&action=opensearch&origin=*`,
-      }
-    );
+// Usamos Observable.ajax para lanzar la petición a la API de Wikipedia
+const search$ = (searchText) =>
+  Rx.Observable.ajax({
+    crossDomain: true,
+    url: `https://en.wikipedia.org/w/api.php?&search=${searchText}&action=opensearch&origin=*`,
+  });
 
-    keyUp$ // Observable sobre el evento KeyUp
-      .map(e => e.target.value) // Recuperamos el valor del campo en el evento
-      .filter(text => text.length > 2)   // Filtramos los valores que no tengan más de 2 caracteres
-      .debounceTime(250) // Espera 250 ms para no enviar la petición con cada nuevo caracter
-      .distinctUntilChanged()   // Comprueba que el valor haya cambiado.
-      .switchMap(x => search$(x)) // Llamamos al servicio y aplanamos
-      .pluck('response') // Extraemos la propiedad response
-      .subscribe(result => drawResults(result));
+keyUp$ // Observable sobre el evento KeyUp
+  .map((e) => e.target.value) // Recuperamos el valor del campo en el evento
+  .filter((text) => text.length > 2) // Filtramos los valores que no tengan más de 2 caracteres
+  .debounceTime(250) // Espera 250 ms para no enviar la petición con cada nuevo caracter
+  .distinctUntilChanged() // Comprueba que el valor haya cambiado.
+  .switchMap((x) => search$(x)) // Llamamos al servicio y aplanamos
+  .pluck("response") // Extraemos la propiedad response
+  .subscribe((result) => drawResults(result));
 ```

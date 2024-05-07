@@ -2,29 +2,25 @@ import React from "react";
 import { graphql, Link } from "gatsby";
 import type { PageProps } from "gatsby";
 
-const Blog = ({ data }: PageProps<any>) => {
-  console.log({ data });
-
-  return (
-    <>
-      <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-        Blog posts:
-      </h2>
-      <ul className="max-w-md space-y-1 text-gray-900 list-disc list-inside dark:text-gray-400">
-        {data?.allMdx.nodes.map((nodeFile: any) => (
-          <li className="text-gray-500 dark:text-gray-400" key={nodeFile?.id}>
-            <Link
-              to={`/blog/${nodeFile.frontmatter.slug}`}
-              className="inline-flex items-center font-medium text-blue-700 dark:text-blue-500 hover:underline"
-            >
-              {nodeFile.frontmatter.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-};
+const Blog = ({ data }: PageProps<any>) => (
+  <>
+    <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+      Blog posts:
+    </h2>
+    <ul className="max-w-md space-y-1 text-gray-900 list-disc list-inside dark:text-gray-400">
+      {data?.allMdx.nodes.map((nodeFile: any) => (
+        <li className="text-gray-500 dark:text-gray-400" key={nodeFile?.id}>
+          <Link
+            to={`/blog/${nodeFile.frontmatter.slug}`}
+            className="inline-flex items-center font-medium text-blue-700 dark:text-blue-500 hover:underline"
+          >
+            {nodeFile.frontmatter.title}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </>
+);
 
 export const query = graphql`
   query {
@@ -35,6 +31,7 @@ export const query = graphql`
           slug
           tags
           title
+          date_published
         }
       }
     }

@@ -26,138 +26,140 @@ Como veremos a lo largo del post algunas de estas funciones ofrecen funcionalida
 
 El primer cambio importante en esta Composition Api es el nuevo método [setup](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#the-setup-function), que cobra una gran importancia y pasa a ser el centro 'neurálgico' donde residirá toda la lógica del componente y que se ejecutará cuando se cree la instancia de dicho componente, recibiendo como primer parámetro las props y como segundo context:
 
-```
-    export default {
-      props: {
-        count: Number
-      },
-      setup(props, context) {
-        console.log(props.count);
-        ...
-      }
-    };
+```js
+export default {
+  props: {
+    count: Number,
+  },
+  setup(props, context) {
+    console.log(props.count);
+    ...
+  },
+};
 ```
 
 Setup funciona de la misma forma que el actual [data()](https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function), devolviendo un objeto con las propiedades que serán usadas en el template:
 
-```
-    <template>
-      <div>{{ totalCount }}</div>
-    </template>
+```jsx
+<template>
+  <div>{{ totalCount }}</div>
+</template>;
 
-    export default {
-      props: {
-        count: Number
-      },
-      setup(props) {
-        // devolvemos la propiedad totalCount
-        return {
-          totalCount: `Total Count: ${props.count}!`
-        };
-      }
+export default {
+  props: {
+    count: Number,
+  },
+  setup(props) {
+    // devolvemos la propiedad totalCount
+    return {
+      totalCount: `Total Count: ${props.count}!`,
     };
+  },
+};
 ```
 
 Desde la función setup podremos tener acceso a todos los eventos de [ciclo de vida](https://vuejs.org/v2/api/#Options-Lifecycle-Hooks) de un componente como hacemos normalmente con la única diferencia de que cada evento pasa a llevar el prefijo ['on'](https://vue-composition-api-rfc.netlify.com/#lifecycle-hooks) antes de su nombre:
 
-```
-    import { onMounted, onUpdated, onUnmounted } from '@vue/composition-api';
+```js
+import { onMounted, onUpdated, onUnmounted } from "@vue/composition-api";
 
-    export default {
-      setup() {
-        onMounted(() => {
-          console.log('Component mounted!');
-        });
-        onUpdated(() => {
-          console.log('Component updated!');
-        });
-        onUnmounted(() => {
-          console.log('Component unmounted!');
-        });
-      }
-    };
+export default {
+  setup() {
+    onMounted(() => {
+      console.log("Component mounted!");
+    });
+    onUpdated(() => {
+      console.log("Component updated!");
+    });
+    onUnmounted(() => {
+      console.log("Component unmounted!");
+    });
+  },
+};
 ```
 
 ### Ref
 
 Otra de las novedades es [ref()](https://vue-composition-api-rfc.netlify.com/#computed-state-and-refs), una función de composición para el manejo de valores y que actúa como wrapper de valores **reactivos**. Ref devuelve un objeto con la propiedad .value y que nos permite mutar el valor pasado a dicha función usando dicha propiedad. Es importante entender que los [tipos primitivos](https://vue-composition-api-rfc.netlify.com/#computed-state-and-refs) en Js son pasados por valor y no por referencia por lo tanto con ref podemos crear una "referencia mutable" de valor único:
 
-```
-    <template>
-      <div @click="increment">{{ count }}</div>
-    </template>
+```jsx
+<template>
+  <div @click="increment">{{ count }}</div>
+</template>
 
-    import { ref } from '@vue/composition-api';
+import { ref } from '@vue/composition-api';
 
-    export default {
-      setup() {
-        // count es un valor reactivo
-        const count = ref(0);
-        const increment = () => {
-          //incrementamos el valor de count mediante la propiedad value
-          count.value = count++;
-        };
-        // count sera devuelto al template
-        return { count, increment };
-      }
+export default {
+  setup() {
+    // count es un valor reactivo
+    const count = ref(0);
+    const increment = () => {
+      //incrementamos el valor de count mediante la propiedad value
+      count.value = count++;
     };
+    // count sera devuelto al template
+    return { count, increment };
+  }
+};
 ```
 
 ### Reactive
 
 Reactive funciona de forma similar a ref con la diferencia de que los valores reactivos no son 'wrappeados', por lo que podremos acceder al valor directamente sin el wrapper de ref(). Realmente es el equivalente de [Vue.observable](https://vuejs.org/v2/api/index.html#Vue-observable) de la actual versión 2.x:
 
-```
-    import { reactive } from '@vue/composition-api';
+```js
+import { reactive } from "@vue/composition-api";
 
-    const state = reactive({
-      count: 0
-    })
+const state = reactive({
+  count: 0,
+});
 
-    state.count++;
+state.count++;
 ```
 
 ### Computed
 
 El equivalente a las [computed properties](https://vuejs.org/v2/guide/computed.html) de la versión 2.x también está presente en esta nueva y renovada API. Como su nombre indica, [computed()](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#computed-values) nos permite componer propiedades computadas que han podido ser definidas mediante un value o cualquier otro valor:
 
-```
-    <template>
-       <div>{{ square }}</div>
-    </template>
+```jsx
+<template>
+  <div>{{ square }}</div>
+</template>;
 
-    import { ref, computed } from '@vue/composition-api';
+import { ref, computed } from "@vue/composition-api";
 
-    export default {
-      setup() {
-       const num = ref(0);
-       const square = computed(() => num.value * 2);
-       return { square };
-      }
-    };
+export default {
+  setup() {
+    const num = ref(0);
+    const square = computed(() => num.value * 2);
+    return { square };
+  },
+};
 ```
 
 ### Watch
 
 Con [watch](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#watchers) podemos observar cambios en las propiedades de un componente y ejecutar side effects como llamadas asíncronas, etc en base a estos cambios. Funcionan de forma muy similar a los [watchers](https://it.vuejs.org/v2/guide/computed.html#Watchers) de la versión 2.x pero amplían un poco su funcionamiento. Como primer argumento recibimos el 'source' pudiendo ser éste, un getter, un wrapper devuelto por ref() / computed() o un array con ambos elementos. Como segundo argumento, seguimos teniendo un callback con el nuevo y viejo valor, que se ejecutará después del render y en el que podremos ejecutar los side effect:
 
-```
-    import { ref, watch } from '@vue/composition-api';
+```js
+import { ref, watch } from "@vue/composition-api";
 
-    export default {
-      props: {
-        userId: Number
-      },
-      setup(props) {
-        const userData = ref(null);
-        // source
-        watch(() => props.userId,
-        async (userId) => {
-          // side effect
-          userData.value = await fetchUserData(userId);
-        })
+export default {
+  props: {
+    userId: Number,
+  },
+  setup(props) {
+    const userData = ref(null);
+    // source
+    watch(
+      () => props.userId,
+      async (userId) => {
+        // side effect
+        userData.value = await fetchUserData(userId);
       }
-    };
+    );
+  },
+};
 ```
 
 Cabe destacar que el comportamiento del callback puede ser [configurado](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#watcher-callback-timing) para determinar en que momento se ejecuta: Después del render (comportamiento por defecto), antes de este o de forma síncrona.
@@ -168,152 +170,153 @@ Despues de haber visto los principales cambios que llegarán en la nueva Composi
 
 Imaginemos que queremos realizar la llamada a una API para, por ejemplo, recuperar los posts de un blog. También queremos mostrar un mensaje de carga mientras la petición se realiza. Para todo ello, vamos a usar ref, watch y computed:
 
-```
-    <template>
-      <div>
-        <div v-if="loading">
-          Loading....
-        </div>
-        <div v-else>
-          <div>Count: {{ count }}</div>
-          <div>Posts:</div>
-          <ul  id="v-for-object">
-            <li v-for="post in posts" :key="post.id">
-              {{ post.title }}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </template>
+```jsx
+<template>
+  <div>
+    <div v-if="loading">
+      Loading....
+    </div>
+    <div v-else>
+      <div>Count: {{ count }}</div>
+      <div>Posts:</div>
+      <ul  id="v-for-object">
+        <li v-for="post in posts" :key="post.id">
+          {{ post.title }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
 
-    import { ref, watch, computed } from '@vue/composition-api';
+import { ref, watch, computed } from '@vue/composition-api';
 
-    export default {
+export default {
 
-    setup(props) {
-        const posts = ref([]);
-        const loading = ref(true);
-        const count = computed(() => posts.value.length);
-        watch(
-          () => count,
-          async () => {
-            const res = await fetch('https://pablomagaz.com/api/posts');
-            const data = await res.json();
-            posts.value = data.posts;
-            loading.value = false;
-          });
+setup(props) {
+    const posts = ref([]);
+    const loading = ref(true);
+    const count = computed(() => posts.value.length);
+    watch(
+      () => count,
+      async () => {
+        const res = await fetch('https://pablomagaz.com/api/posts');
+        const data = await res.json();
+        posts.value = data.posts;
+        loading.value = false;
+      });
 
-        return { count, posts, loading };
+    return { count, posts, loading };
 
-      }
-    };
+  }
+};
 ```
 
 Dentro de la función setup hemos definido dos values, uno para el array de posts y otro como booleano para determinar cuando ha finalizado la carga (loading). Adicionalmente estamos usando computed para obtener el número total de posts. La función watch nos permite observar esta computed property (source) y en su callback realizamos la llamada al servicio y el seteo de la respuesta mediante posts.value.
 
 Sin embargo, nuestro ejemplo no está fino del todo. Una de las grandes ventajas de las funciones de composición es que permiten reusar lógica a lo largo de diversos componentes, sin embargo en nuestro ejemplo poco vamos a poder reusar ya que todo es encuentra dentro del propio componente. Una aproximación más acertada sería aislar toda la lógica de recuperación de los posts en una función que siguiendo un poco la nomenclatura de los hooks de React vamos a llamar useGetPosts:
 
-```
-    import { ref, watch, computed } from '@vue/composition-api';
+```js
+import { ref, watch, computed } from "@vue/composition-api";
 
-    export const useGetPosts = () => {
-      const posts = ref([]);
-      const loading = ref(true);
-      const count = computed(() => posts.value.length);
-      watch(
-        () => count,
-        async () => {
-          const res = await fetch('https://pablomagaz.com/api/posts');
-          const data = await res.json();
-          posts.value = data.posts;
-          loading.value = false;
-        });
+export const useGetPosts = () => {
+  const posts = ref([]);
+  const loading = ref(true);
+  const count = computed(() => posts.value.length);
+  watch(
+    () => count,
+    async () => {
+      const res = await fetch("https://pablomagaz.com/api/posts");
+      const data = await res.json();
+      posts.value = data.posts;
+      loading.value = false;
+    }
+  );
 
-      return { count, posts, loading };
-    };
+  return { count, posts, loading };
+};
 ```
 
 Ahora podemos usar nuestra función de composición useGetPosts en cualquier componente, pudiendo reutilizar su lógica.
 
-```
-    <template>
-      <div>
-        <div v-if="loading">
-          Loading....
-        </div>
-        <div v-else>
-          <div>Count: {{ count }}</div>
-          <div>Posts:</div>
-          <ul  id="v-for-object">
-            <li v-for="post in posts" :key="post.id">
-              {{ post.title }}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </template>
+```jsx
+<template>
+  <div>
+    <div v-if="loading">
+      Loading....
+    </div>
+    <div v-else>
+      <div>Count: {{ count }}</div>
+      <div>Posts:</div>
+      <ul  id="v-for-object">
+        <li v-for="post in posts" :key="post.id">
+          {{ post.title }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
 
-    import { useGetPosts } from './useGetPosts';
+import { useGetPosts } from './useGetPosts';
 
-    export default {
-      setup() {
-        const { count, posts, loading } = useGetPosts();
-        return { count, posts, loading };
-        //o directamente return { ...useGetPosts() };
-      }
-    };
+export default {
+  setup() {
+    const { count, posts, loading } = useGetPosts();
+    return { count, posts, loading };
+    //o directamente return { ...useGetPosts() };
+  }
+};
 ```
 
 No existe mucha diferencia entre el empleo de ref o de reactive, de hecho la version del mismo ejemplo usando reactive es practicamente igual, con la única salvedad de que con reactive se devuelve el state completo en lugar de cada una de las propiedades creadas con ref:
 
-```
-    import { reactive, watch, computed } from '@vue/composition-api';
+```jsx
+import { reactive, watch, computed } from '@vue/composition-api';
 
-    export const useGetPostsReactive = () => {
-      const state = reactive({
-        posts: [],
-        loading: true,
-      })
-      const count = computed(() => state.posts.length);
-      watch(
-        () => count,
-        async () => {
-          const res = await fetch('https://pablomagaz.com/api/posts');
-          const data = await res.json();
-          state.posts = data.posts;
-          state.loading = false;
-        });
+export const useGetPostsReactive = () => {
+  const state = reactive({
+    posts: [],
+    loading: true,
+  })
+  const count = computed(() => state.posts.length);
+  watch(
+    () => count,
+    async () => {
+      const res = await fetch('https://pablomagaz.com/api/posts');
+      const data = await res.json();
+      state.posts = data.posts;
+      state.loading = false;
+    });
 
-        return state;
-      };
+    return state;
+  };
 
-      ....
+  ....
 
-    <template>
-      <div>
-        <div v-if="state.loading">
-          Loading....
-        </div>
-        <div v-else>
-          <div>Count: {{ count }}</div>
-          <div>Posts:</div>
-          <ul  id="v-for-object">
-            <li v-for="post in state.posts" :key="post.id">
-              {{ post.title }}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </template>
+<template>
+  <div>
+    <div v-if="state.loading">
+      Loading....
+    </div>
+    <div v-else>
+      <div>Count: {{ count }}</div>
+      <div>Posts:</div>
+      <ul  id="v-for-object">
+        <li v-for="post in state.posts" :key="post.id">
+          {{ post.title }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
 
-    import { useGetPostsReactive } from '../compositions/useGetPostsReactive';
+import { useGetPostsReactive } from '../compositions/useGetPostsReactive';
 
-    export default {
-      setup() {
-        const state = useGetPostsReactive();
-        return { state };
-      }
-    };
+export default {
+  setup() {
+    const state = useGetPostsReactive();
+    return { state };
+  }
+};
 ```
 
 Como conclusión final, no ha lugar a dudas de que esta Composition API está fuertemente influenciada por los Hooks de React, algo que el equipo de Vue tampoco [esconde](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#this-looks-like-react-why-dont-i-just-use-react) pues al final Vue y React son dos librerías con muchos más parecidos que diferencias y parece bastante obvio que ambos equipos han llegado a conclusiones bastantes parecidas y es que en un entorno orientado a componentes, las clases y la orientación a objetos no acaban de ayudar del todo a la hora de reutilizar lógica, por lo que me alegro enormemente que Vue siga por ese camino.
