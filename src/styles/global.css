@@ -122,3 +122,9 @@ a {
   font-size: 2.5em;
   font-weight: 200;
 }
+
+.layout {
+  max-width: 940px;
+  margin: 20px auto;
+  padding: 0 20px;
+}

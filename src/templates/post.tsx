@@ -3,12 +3,12 @@ import { graphql, Link } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import type { PageProps } from "gatsby";
 import { Code as code } from "../components/code";
-
+import Layout from "../components/layout";
 import "../styles/global.css";
 import "./post.css";
 
 const PageTemplate = ({ data, children }: PageProps<any>) => (
-  <>
+  <Layout>
     <h1>{data.mdx.frontmatter.title}</h1>
     <div className="frontmatter-data-container">
       <span className="frontmatter-author">Pablo Magaz</span>
@@ -22,7 +22,7 @@ const PageTemplate = ({ data, children }: PageProps<any>) => (
       ))}
     </div>
     <MDXProvider components={{ code }}>{children}</MDXProvider>
-  </>
+  </Layout>
 );
 
 export default PageTemplate;
