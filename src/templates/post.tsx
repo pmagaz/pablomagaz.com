@@ -6,7 +6,7 @@ import { Code as code } from "../components/code";
 import Layout from "../components/layout";
 import "../styles/global.css";
 import "./post.css";
-import { SITE_AUTHOR, SITE_TITLE } from "../const";
+import { SITE_AUTHOR, SITE_BLOG_URL, SITE_TITLE } from "../const";
 
 type DataProps = {
   mdx: {
@@ -51,7 +51,11 @@ export const Head = ({ data }: HeadProps<DataProps>) => (
     <meta property="og:site_name" content={SITE_TITLE} />
     <meta
       property="og:url"
-      content={`https://pablomagaz.com/blog/${data.mdx.frontmatter.slug}`}
+      content={`${SITE_BLOG_URL}/${data.mdx.frontmatter.slug}`}
+    />
+    <meta
+      property="article:published_time"
+      content={data.mdx.frontmatter.date_published}
     />
   </>
 );
