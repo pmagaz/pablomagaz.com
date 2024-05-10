@@ -1,5 +1,6 @@
 ---
 title: Ivy, el nuevo motor de render de Angular
+description: Ivy, aún en fase beta, es el nuevo motor de renderizado y compilado de Angular y que llegará con interesantes mejoras. En este post te lo contamos.
 slug: ivy-nuevo-motor-render-angular
 date_published: 2018-09-02T14:26:00.000Z
 date_updated: 2020-01-03T09:47:12.000Z

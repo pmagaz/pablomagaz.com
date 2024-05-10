@@ -1,5 +1,6 @@
 ---
 title: ImmutableJs en 10 ejemplos prácticos
+description: Record y List son las estructuras básicas de datos de ImmutableJs. Los casos de uso mas habituales a través de 10 sencillos ejemplos.
 slug: immutablejs-en-10-ejemplos-practicos
 date_published: 2017-12-12T19:38:51.000Z
 date_updated: 2018-05-09T16:45:29.000Z

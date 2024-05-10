@@ -1,5 +1,6 @@
 ---
 title: Empaquetando aplicaciones con Parcel
+description: ParcelJs es un nuevo module bundler y  en este post lo vamos a poner a prueba  empaquetando una app Vue. ¿Será mejor que Webpack?
 slug: empaquetando-aplicaciones-con-parcel
 date_published: 2018-05-09T16:36:26.000Z
 date_updated: 2020-03-02T08:17:36.000Z

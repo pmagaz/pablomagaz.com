@@ -1,5 +1,6 @@
 ---
 title: Recoil, un nuevo state manager para React
+description: Recoil es el nuevo sistema de stage management creado por Facebook y que llega para competir directamente con el ultraconocido Redux.
 slug: recoil-nuevo-stage-manager-react
 date_published: 2020-06-09T07:32:23.000Z
 date_updated: 2021-02-15T17:18:31.000Z

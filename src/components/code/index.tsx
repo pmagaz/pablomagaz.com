@@ -6,7 +6,6 @@ import ts from "react-syntax-highlighter/dist/esm/languages/hljs/typescript";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import shell from "react-syntax-highlighter/dist/esm/languages/hljs/shell";
 import rust from "react-syntax-highlighter/dist/esm/languages/hljs/rust";
-import "./code.css";
 
 SyntaxHighlighter.registerLanguage("js", js);
 SyntaxHighlighter.registerLanguage("ts", ts);
@@ -15,14 +14,20 @@ SyntaxHighlighter.registerLanguage("shell", shell);
 SyntaxHighlighter.registerLanguage("rust", rust);
 
 // This is a container component to render our demos and their code
-export const Code = ({ className, children }: any) => {
+const Code = ({ className, children }: any) => {
   const match = /language-(\w+)/.exec(className);
   const language = match?.[1];
   return language ? (
-    <SyntaxHighlighter language={language} style={monokai}>
+    <SyntaxHighlighter
+      language={language}
+      style={monokai}
+      customStyle={{ padding: "1em" }}
+    >
       {String(children).trim()}
     </SyntaxHighlighter>
   ) : (
     <code>{children}</code>
   );
 };
+
+export default Code;

@@ -1,5 +1,6 @@
 ---
 title: Creando una API REST con Deno y Oak
+description: Oak es el framework para aplicaciones Web más popular en Deno y en este post aprendemos como escribir una API REST con él.
 slug: creando-api-rest-con-deno-y-oak
 date_published: 2021-01-20T08:36:37.000Z
 date_updated: 2021-01-20T08:56:19.000Z

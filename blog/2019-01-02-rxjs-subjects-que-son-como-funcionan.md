@@ -1,5 +1,6 @@
 ---
 title: RxJs Subjects. Qué son y cómo funcionan.
+description: Los Subjects de RxJs son una de las características más avanzadas y menos conocidas de RxJs y que nos permiten extender la potencia de los Observables.
 slug: rxjs-subjects-que-son-como-funcionan
 date_published: 2019-01-02T00:00:00.000Z
 date_updated: 2020-05-04T15:33:09.000Z

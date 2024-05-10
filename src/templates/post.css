@@ -4,7 +4,7 @@
 }
 
 .frontmatter-author {
-  font-size: 0.8em;
+  font-size: 1em;
   letter-spacing: 0.1em;
   line-height: 1;
   padding: 0 0.8em;
@@ -27,6 +27,18 @@
   top: 2px;
   width: 13px;
   height: 13px;
+}
+
+.frontmatter-time {
+  font-size: 1em;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  padding: 0 0.8em;
+  color: #414754;
+  height: 21px;
+  align-items: center;
+  display: flex;
+  border-left: 2px solid #414754;
 }
 
 .link-tag {

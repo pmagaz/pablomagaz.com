@@ -1,5 +1,6 @@
 ---
 title: Escribiendo microservicios con Moleculer
+description: Moleculer, es el framework para NodeJs que nos permite el desarrollo de modernas arquitecturas orientadas a Microservicios.
 slug: escribiendo-microservicios-con-moleculer
 date_published: 2020-01-02T10:12:56.000Z
 date_updated: 2020-01-07T07:29:32.000Z

@@ -1,5 +1,6 @@
 ---
 title: React Context API ¿El fin de Redux?
+descripton: React 16.3 ya está aquí y llega con la nueva Context API ¿Puede ser un reemplazo de Redux?. Descúbrelo en este post.
 slug: react-context-api-el-fin-de-redux
 date_published: 2018-04-03T20:25:44.000Z
 date_updated: 2018-05-09T16:44:28.000Z

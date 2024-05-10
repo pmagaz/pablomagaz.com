@@ -2,19 +2,23 @@ import React from "react";
 import { graphql, HeadProps, Link } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import type { PageProps } from "gatsby";
-import { Code as code } from "../components/code";
+import Code from "../components/code";
 import Layout from "../components/layout";
 import "../styles/global.css";
 import "./post.css";
-import { SITE_AUTHOR, SITE_BLOG_URL, SITE_TITLE } from "../const";
+import SEO from "../components/seo";
+import { SITE_AUTHOR } from "../const";
 
 type DataProps = {
   mdx: {
     frontmatter: {
       title: string;
-      date_published: string;
+      formatedDate: string;
+      publishedTime: string;
+      modifiedTime: string;
       tags: string;
       slug: string;
+      description: string;
     };
   };
 };
@@ -23,9 +27,9 @@ const PageTemplate = ({ data, children }: PageProps<DataProps>) => (
   <Layout>
     <h1>{data.mdx.frontmatter.title}</h1>
     <div className="frontmatter-data-container">
-      <span className="frontmatter-SITE_author">Pablo Magaz</span>
+      <span className="frontmatter-author">{SITE_AUTHOR}</span>
       <time className="frontmatter-time">
-        {data.mdx.frontmatter.date_published}
+        {data.mdx.frontmatter.formatedDate}
       </time>
       {data.mdx.frontmatter.tags?.split(", ").map((tag: string) => (
         <Link key={tag} className="link-tag" to="">
@@ -33,32 +37,27 @@ const PageTemplate = ({ data, children }: PageProps<DataProps>) => (
         </Link>
       ))}
     </div>
-    <MDXProvider components={{ code }}>{children}</MDXProvider>
+    <MDXProvider components={{ code: Code }}>{children}</MDXProvider>
   </Layout>
 );
 
 export default PageTemplate;
 
-export const Head = ({ data }: HeadProps<DataProps>) => (
-  <>
-    <title>
-      {SITE_AUTHOR} - {data.mdx.frontmatter.title}
-    </title>
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={data.mdx.frontmatter.title} />
-    <meta property="og:site_name" content={SITE_TITLE} />
-    <meta
-      property="og:url"
-      content={`${SITE_BLOG_URL}/${data.mdx.frontmatter.slug}`}
+export const Head = ({ data }: HeadProps<DataProps>) => {
+  const { publishedTime, modifiedTime, description, slug, title, tags } =
+    data.mdx.frontmatter;
+
+  return (
+    <SEO
+      title={title}
+      description={description}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      slug={slug}
     />
-    <meta
-      property="article:published_time"
-      content={data.mdx.frontmatter.date_published}
-    />
-  </>
-);
+  );
+};
 
 export const query = graphql`
   query ($id: String!) {
@@ -67,7 +66,10 @@ export const query = graphql`
         tags
         slug
         title
-        date_published(formatString: "d-MMM-YYYY", locale: "es")
+        description
+        formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "es")
+        publishedTime: date_published
+        modifiedTime: date_updated
       }
     }
   }

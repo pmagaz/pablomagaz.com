@@ -1,5 +1,6 @@
 ---
 title: Las novedades de TypeScript 4
+description: TypeScript 4 viene con soporte a algunas de las últimas features del lenguaje, mayor rapidez y una mejor integración con editores.
 slug: las-novedades-de-typescript-4
 date_published: 2020-09-14T10:55:43.000Z
 date_updated: 2020-09-15T13:02:36.000Z

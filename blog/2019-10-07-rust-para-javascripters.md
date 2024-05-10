@@ -1,5 +1,6 @@
 ---
 title: Rust para JavaScripters
+description: Rust es un lenguaje de sistema eficiente, seguro y ultra-rápido que en los últimos tiempos ha ganado mucha popularidad gracias a WebAssembly.
 slug: rust-para-javascripters
 date_published: 2019-10-07T06:30:00.000Z
 date_updated: 2020-02-25T07:37:25.000Z

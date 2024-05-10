@@ -1,5 +1,6 @@
 ---
 title: Deno. ¿El remplazo de NodeJs?
+description: Deno es un nuevo runtime basado en la V8 de Chrome, basado en TypeScript y que llega para competir directamente con NodeJs.
 slug: deno-el-remplazo-de-nodejs
 date_published: 2020-03-02T08:00:00.000Z
 date_updated: 2020-05-18T11:00:23.000Z

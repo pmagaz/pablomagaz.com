@@ -1,5 +1,6 @@
 ---
 title: Montando un servidor de notificaciones Web Push
+description: Las Progressive Web Apps permiten la recepción de notificaciones Web Push. En este post explicamos como montar tu propio servidor de envío de notificaciones.
 slug: montando-servidor-notificaciones-webpush
 date_published: 2019-04-05T16:33:26.000Z
 date_updated: 2020-03-02T08:49:30.000Z

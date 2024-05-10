@@ -1,5 +1,6 @@
 ---
 title: Estrenando Blog
+description: Primer post de El Blog Isomórfico, un blog donde podrás encontrar JavaScript, JavaScript y más JavaScript.
 slug: estrenando-blog
 date_published: 2017-10-01T18:45:00.000Z
 date_updated: 2018-05-09T16:55:57.000Z

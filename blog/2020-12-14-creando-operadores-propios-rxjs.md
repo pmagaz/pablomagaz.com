@@ -1,5 +1,6 @@
 ---
 title: Creando operadores propios en RxJs
+description: Poder implementar nuestros propios operadores de RxJs abre un mundo de posibilidades. En este post aprendemos como hacerlo.
 slug: creando-operadores-propios-rxjs
 date_published: 2020-12-14T07:44:50.000Z
 date_updated: 2020-12-14T20:23:25.000Z

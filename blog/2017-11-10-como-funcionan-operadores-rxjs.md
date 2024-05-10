@@ -1,5 +1,6 @@
 ---
 title: Como funcionan los operadores de RxJs
+description: Los operadores de RxJs son fundamentales para tratar con los valores de los Observables. Conoce como funcionan y sus distintas categorías.
 slug: como-funcionan-operadores-rxjs
 date_published: 2017-11-10T14:32:00.000Z
 date_updated: 2018-05-09T16:31:50.000Z

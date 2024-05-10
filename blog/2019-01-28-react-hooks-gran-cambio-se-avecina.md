@@ -1,5 +1,6 @@
 ---
 title: "React Hooks: Un gran cambio se avecina"
+description: La nueva API de React Hooks puede suponer un gran cambio en la forma de trabajar con React. En este post explicamos que son y cómo funcionan los Hooks.
 slug: react-hooks-gran-cambio-se-avecina
 date_published: 2019-01-28T08:49:29.000Z
 date_updated: 2019-02-08T07:30:04.000Z

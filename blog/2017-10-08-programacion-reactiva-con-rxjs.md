@@ -1,5 +1,6 @@
 ---
 title: Programación Reactiva con RxJs
+description: Primer post de la serie Programación Reactiva con RxJs en el que veremos los fundamentos de RxJs - Patrón Observer, patrón iterador y programación funcional.
 slug: programacion-reactiva-con-rxjs
 date_published: 2017-10-08T18:46:00.000Z
 date_updated: 2018-05-09T16:55:37.000Z

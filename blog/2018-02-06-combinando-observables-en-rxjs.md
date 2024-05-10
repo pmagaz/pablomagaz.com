@@ -1,5 +1,6 @@
 ---
 title: Combinando Observables en RxJs
+description: RxJs dispone de operadores para combinar dos o más observables, tarea fundamental en la programación reactiva. Aprende como usarlos en este post.
 slug: combinando-observables-en-rxjs
 date_published: 2018-02-06T17:42:30.000Z
 date_updated: 2018-06-13T19:01:42.000Z
