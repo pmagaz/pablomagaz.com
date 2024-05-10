@@ -9,6 +9,7 @@ import "./post.css";
 import SEO from "../components/seo";
 import { SITE_AUTHOR } from "../const";
 import { LOGOS } from "../const/logos";
+import PostInfo from "../components/postInfo";
 
 type DataProps = {
   mdx: {
@@ -31,18 +32,13 @@ const PageTemplate = ({ data, children }: PageProps<DataProps>) => (
     }
   >
     <h1>{data.mdx.frontmatter.title}</h1>
-    <div className="frontmatter-data-container">
-      <span className="frontmatter-author">{SITE_AUTHOR}</span>
-      <time className="frontmatter-time">
-        {data.mdx.frontmatter.formatedDate}
-      </time>
-      {data.mdx.frontmatter.tags?.split(", ").map((tag: string) => (
-        <Link key={tag} className="link-tag" to="">
-          <mark className="frontmatter-tag">{tag}</mark>
-        </Link>
-      ))}
+    <PostInfo
+      date={data.mdx.frontmatter.formatedDate}
+      tags={data.mdx.frontmatter.tags}
+    />
+    <div className="postContent">
+      <MDXProvider components={{ code: Code }}>{children}</MDXProvider>
     </div>
-    <MDXProvider components={{ code: Code }}>{children}</MDXProvider>
   </Layout>
 );
 

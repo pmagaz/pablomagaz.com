@@ -1,25 +1,39 @@
 import React from "react";
 import { graphql, Link } from "gatsby";
 import type { PageProps } from "gatsby";
+import Layout from "../components/layout";
+import PostSummary from "../components/postSummary";
 
-const Blog = ({ data }: PageProps<any>) => (
-  <>
-    <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-      Blog posts:
-    </h2>
-    <ul className="max-w-md space-y-1 text-gray-900 list-disc list-inside dark:text-gray-400">
-      {data?.allMdx.nodes.map((nodeFile: any) => (
-        <li className="text-gray-500 dark:text-gray-400" key={nodeFile?.id}>
-          <Link
-            to={`/blog/${nodeFile.frontmatter.slug}`}
-            className="inline-flex items-center font-medium text-blue-700 dark:text-blue-500 hover:underline"
-          >
-            {nodeFile.frontmatter.title}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </>
+type DataProps = {
+  allMdx: {
+    nodes: {
+      id: string;
+      frontmatter: {
+        title: string;
+        formatedDate: string;
+        publishedTime: string;
+        modifiedTime: string;
+        tags: string;
+        slug: string;
+        description: string;
+      };
+    }[];
+  };
+};
+
+const Blog = ({ data }: PageProps<DataProps>) => (
+  <Layout>
+    {data?.allMdx.nodes.map(({ frontmatter, id }) => (
+      <PostSummary
+        key={id}
+        title={frontmatter.title}
+        description={frontmatter.description}
+        date={frontmatter.formatedDate}
+        tags={frontmatter.tags}
+        slug={frontmatter.slug}
+      />
+    ))}
+  </Layout>
 );
 
 export const query = graphql`
@@ -31,7 +45,8 @@ export const query = graphql`
           slug
           tags
           title
-          date_published
+          description
+          formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "es")
         }
       }
     }
