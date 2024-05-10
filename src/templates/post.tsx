@@ -8,6 +8,7 @@ import "../styles/global.css";
 import "./post.css";
 import SEO from "../components/seo";
 import { SITE_AUTHOR } from "../const";
+import { LOGOS } from "../const/logos";
 
 type DataProps = {
   mdx: {
@@ -24,7 +25,11 @@ type DataProps = {
 };
 
 const PageTemplate = ({ data, children }: PageProps<DataProps>) => (
-  <Layout>
+  <Layout
+    logo={
+      LOGOS[data.mdx.frontmatter.tags?.split(", ")[0] as keyof typeof LOGOS]
+    }
+  >
     <h1>{data.mdx.frontmatter.title}</h1>
     <div className="frontmatter-data-container">
       <span className="frontmatter-author">{SITE_AUTHOR}</span>
