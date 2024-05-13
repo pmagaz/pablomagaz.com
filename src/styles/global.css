@@ -1,10 +1,12 @@
 @font-face {
   font-family: "Nexa Bold";
-  src: url(https://www.pablomagaz.com/static/NexaBold.otf) format("opentype");
+  src: url(https://www.pablomagaz.com/static/assets/fonts/NexaBold.otf)
+    format("opentype");
 }
 @font-face {
   font-family: "Nexa Light";
-  src: url(https://www.pablomagaz.com/static/NexaLight.otf) format("opentype");
+  src: url(https://www.pablomagaz.com/static/assets/fonts/NexaLight.otf)
+    format("opentype");
 }
 
 body {
