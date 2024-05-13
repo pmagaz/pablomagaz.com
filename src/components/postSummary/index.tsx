@@ -18,7 +18,7 @@ const PostSummary = ({ date, description, slug, tags, title }: Props) => {
       <Link className="postSummary-title" to={slug}>
         <h1>{title}</h1>
         <img
-          src={`/assets/images/header/${
+          src={`/content/images/header/${
             LOGOS[tags.split(", ")[0] as keyof typeof LOGOS]
           }`}
         />

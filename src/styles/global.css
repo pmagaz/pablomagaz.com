@@ -1,11 +1,11 @@
 @font-face {
   font-family: "Nexa Bold";
-  src: url(https://www.pablomagaz.com/static/assets/fonts/NexaBold.otf)
+  src: url(https://www.pablomagaz.com/content/fonts/NexaBold.otf)
     format("opentype");
 }
 @font-face {
   font-family: "Nexa Light";
-  src: url(https://www.pablomagaz.com/static/assets/fonts/NexaLight.otf)
+  src: url(https://www.pablomagaz.com/content/fonts/NexaLight.otf)
     format("opentype");
 }
 
@@ -150,7 +150,7 @@ header .logo {
   animation-delay: 150ms;
 
   background-size: 221px;
-  background-image: url("/assets/images/header/blog.svg");
+  background-image: url("/content/images/header/blog.svg");
 }
 
 header h1 {

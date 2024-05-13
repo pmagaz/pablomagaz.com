@@ -17,7 +17,7 @@ const config: GatsbyConfig = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        icon: "static/assets/favicon.ico",
+        icon: "static/content/favicon.ico",
       },
     },
     "gatsby-plugin-sharp",
@@ -26,7 +26,7 @@ const config: GatsbyConfig = {
       resolve: "gatsby-source-filesystem",
       options: {
         name: "images",
-        path: "static/assets/images/",
+        path: "static/content/images/",
       },
       __key: "images",
     },

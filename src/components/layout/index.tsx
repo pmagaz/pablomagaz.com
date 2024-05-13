@@ -14,7 +14,7 @@ const Layout = ({ children, logo = LOGOS.Blog }: PropsWithChildren<Props>) => (
       <Page>
         <div
           className="logo"
-          style={{ backgroundImage: `url("/assets/images/header/${logo}")` }}
+          style={{ backgroundImage: `url("/content/images/header/${logo}")` }}
         >
           <h1>
             <Link to="/blog">{SITE_TITLE}</Link>

@@ -7,4 +7,4 @@ export const SITE_AUTHOR_LINKS = [
 ];
 export const SITE_URL = "https://pablomagaz.com";
 export const SITE_BLOG_URL = `${SITE_URL}/blog`;
-export const SITE_SHARE_IMAGE = `${SITE_URL}/assets/images/share/ElBlogIsomorfico.png`;
+export const SITE_SHARE_IMAGE = `${SITE_URL}/content/images/share/ElBlogIsomorfico.png`;
