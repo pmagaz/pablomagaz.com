@@ -26,8 +26,11 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Copy src content into public
-        run: cp -Rf src/* /public
+      - name: Copy assets content into public
+        run: cp -Rf src/assets/* public
+
+      - name: Copy index content into public
+        run: cp src/index.html public
 
       - name: Verify build
         run: ls -la public
