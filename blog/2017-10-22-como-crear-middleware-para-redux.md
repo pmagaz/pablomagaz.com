@@ -1,6 +1,7 @@
 ---
 title: Como crear middleware para Redux
 description: El middleware de Redux es una funcionalidad poco conocida pero muy útil. Aprende como crear tu propio middleware para llevar tu arquitectura a otro nivel.
+full_description: Redux se ha convertido en el paradigma de los paradigmas. Ampliamente utilizado en entornos React y cada vez más en entornos Angular o Vue, posee algunas características muy potentes, pero menos conocidas como su middleware. Su empleo puede llevar nuestra arquitectura a otro nivel.
 slug: como-crear-middleware-para-redux
 date_published: 2017-10-22T16:51:00.000Z
 date_updated: 2020-01-25T09:33:11.000Z

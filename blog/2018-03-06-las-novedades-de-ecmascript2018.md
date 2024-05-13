@@ -1,6 +1,7 @@
 ---
 title: Las novedades de ECMAScript 2018
 description: Las especificaciones finales del standard ECMAScript2018 o simplemente ES2018 ya están aquí. Descubre todas las novedades en este post.
+full_description: La especificación final del lenguaje ECMAScript 2018 o simplemente ES2018 ya está aquí. En la última reunión del TC39 se seleccionó la lista de funcionalidades que pasan a stage 4 y que serán incluidas en el standard ES2018 con nuevas e interesantes funcionalidades para nuestro lenguaje favorito.
 slug: las-novedades-de-ecmascript2018
 date_published: 2018-03-06T20:17:27.000Z
 date_updated: 2019-01-14T18:10:11.000Z

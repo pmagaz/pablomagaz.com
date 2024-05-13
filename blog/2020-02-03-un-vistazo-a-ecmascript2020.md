@@ -1,6 +1,7 @@
 ---
 title: Un vistazo a ECMAScript 2020
 description: En este post analizamos a las funcionalidades más interesantes que ya han sido incluidas en la próxima especificación ECMAScript 2020.
+full_description: Aunque la próxima especificación del standard ECMAScript aún no está completamente cerrada, ya podemos comenzar a probar muchas de las funcionalidades más interesantes que van a ser incluidas en la siguiente especificación de ECMAScript y que llevará por nombre ECMAScript 2020.
 slug: un-vistazo-a-ecmascript2020
 date_published: 2020-02-03T06:17:57.000Z
 date_updated: 2020-02-13T18:05:29.000Z

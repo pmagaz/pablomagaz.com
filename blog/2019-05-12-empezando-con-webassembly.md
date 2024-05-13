@@ -1,6 +1,7 @@
 ---
 title: Empezando con WebAssembly
 description: WebAssembly es un standard que nos permite la ejecución de código compilado con lenguajes como C, C++ o Rust en la Web. En este post descubrimos cómo funciona.
+full_description: WebAssembly es un standard abierto que nos permite la ejecución de código binario, compilado con lenguajes como C, C++ o Rust en la Web y ofreciendo un nivel de performance que se acerca al de estos lenguages por lo que tiene el potencial para cambiar el panorama Web en el futuro cercano.
 slug: empezando-con-webassembly
 date_published: 2019-05-12T15:40:50.000Z
 date_updated: 2020-01-05T08:18:23.000Z

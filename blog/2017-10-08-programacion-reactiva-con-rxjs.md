@@ -1,6 +1,7 @@
 ---
 title: Programación Reactiva con RxJs
 description: Primer post de la serie Programación Reactiva con RxJs en el que veremos los fundamentos de RxJs - Patrón Observer, patrón iterador y programación funcional.
+full_description: La programación reactiva es un concepto que va ganando muchos adeptos en los últimos tiempos. RxJs es el port de la librería Reactive Extensions que ha sido portada a numerosos lenguajes y que toma lo mejor de la programación funcional, el patrón Observer y el patrón iterador.
 slug: programacion-reactiva-con-rxjs
 date_published: 2017-10-08T18:46:00.000Z
 date_updated: 2018-05-09T16:55:37.000Z

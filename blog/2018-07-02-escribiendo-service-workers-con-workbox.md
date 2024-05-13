@@ -1,6 +1,7 @@
 ---
 title: Escribiendo service workers con Workbox
 description: Los service worker son la piedra angular de las Progressive Web App y en este post veremos como crearlos usando Worbox, la librería de Google para service workers.
+full_description: Los service workers son sin duda la piedra angular de las, cada vez más extendidas, Progressive Web Apps. Workbox es una colección de distintas librerías y herramientas creadas por Google y que nos ayudan en la creación y simplificación de service workers para nuestras Progressive Web Apps.
 slug: escribiendo-service-workers-con-workbox
 date_published: 2018-07-02T11:05:00.000Z
 date_updated: 2019-04-07T15:29:35.000Z

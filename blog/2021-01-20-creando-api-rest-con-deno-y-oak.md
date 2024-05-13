@@ -1,6 +1,7 @@
 ---
 title: Creando una API REST con Deno y Oak
 description: Oak es el framework para aplicaciones Web más popular en Deno y en este post aprendemos como escribir una API REST con él.
+full_description: Los operadores de RxJs son una de las piezas clave de esta gran librería, ya que el amplio catalogo existente nos permite cubrir casi cualquier tarea imaginable. Sin embargo, en ciertas ocasiones es necesario poder implementar nuestros propios operadores. En este post aprenderemos como hacerlo.
 slug: creando-api-rest-con-deno-y-oak
 date_published: 2021-01-20T08:36:37.000Z
 date_updated: 2021-01-20T08:56:19.000Z

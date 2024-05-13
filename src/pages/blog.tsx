@@ -45,7 +45,7 @@ export const query = graphql`
           slug
           tags
           title
-          description
+          description: full_description
           formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "es")
         }
       }

@@ -1,6 +1,7 @@
 ---
 title: La nueva Composition API de Vue 3
 description: La nueva Composition API de Vue 3 trae importantes cambios en la forma de trabajar con Vue. En este post te contamos cómo funciona.
+full_description: Vue 3 aún se encuentra en desarrollo pero ya podemos empezar a probar algunas de sus novedades. Su nueva Composition API introduce importantes cambios en la forma en la que vamos a trabajar con Vue en el futuro, girando hacia un modelo más basado en el empleo de funciones de composición de lógica.
 slug: nueva-composition-api-vue-3
 date_published: 2019-09-02T07:00:00.000Z
 date_updated: 2019-09-04T07:33:43.000Z

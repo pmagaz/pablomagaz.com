@@ -1,6 +1,7 @@
 ---
 title: Las novedades de TypeScript 4
 description: TypeScript 4 viene con soporte a algunas de las últimas features del lenguaje, mayor rapidez y una mejor integración con editores.
+full_description: TypeScript es el superset para tipado estático de Microsoft cuya adopción va en meteórico aumento. La versión 4, que acaba de ser publicada, viene cargada de importantes novedades que van desde el soporte a algunas de las últimas features del lenguaje hasta una mejor integración con editores.
 slug: las-novedades-de-typescript-4
 date_published: 2020-09-14T10:55:43.000Z
 date_updated: 2020-09-15T13:02:36.000Z
