@@ -1,6 +1,7 @@
 .frontmatter-data-container {
   display: flex;
   margin: 10px 0 14px;
+  flex-flow: row wrap;
 }
 
 .frontmatter-author {
