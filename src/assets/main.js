@@ -550,7 +550,7 @@
 							// Mark as ready.
 								$body.classList.add('is-ready');
 		
-						}, 1125);
+						}, 1750);
 		
 				}, 100);
 			};
@@ -1656,9 +1656,9 @@
 		};
 	
 	// Initialize "On Visible" animations.
-		onvisible.add('#text02', { style: 'zoom-in', speed: 625, intensity: 5, threshold: 3, delay: 625, replay: false });
+		onvisible.add('#text02', { style: 'zoom-in', speed: 1000, intensity: 5, threshold: 3, delay: 1000, replay: false });
 		onvisible.add('#divider02', { style: 'fade-in', speed: 1000, intensity: 5, threshold: 3, delay: 750, replay: false });
-		onvisible.add('#text01', { style: 'fade-in', speed: 1625, intensity: 5, threshold: 3, delay: 0, replay: false });
-		onvisible.add('#icons01', { style: 'fade-in', speed: 1000, intensity: 5, threshold: 3, delay: 750, replay: false });
+		onvisible.add('#text01', { style: 'fade-in', speed: 1625, intensity: 5, threshold: 3, delay: 500, replay: false });
+		onvisible.add('#icons01', { style: 'fade-in', speed: 1000, intensity: 5, threshold: 3, delay: 1500, replay: false });
 
 })();

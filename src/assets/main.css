@@ -24,7 +24,7 @@ body:before {
 	transform: scale(1);
 	width: 100vw;
 	z-index: 0;
-	background-image: linear-gradient(to top, rgba(29,53,87,0.949), rgba(29,53,87,0.949)), url('images/bg.jpg');
+	background-image: linear-gradient(to top, rgba(29,53,87,0.878), rgba(29,53,87,0.878)), url('images/bg.jpg');
 	background-position: 0% 0%, center;
 	background-repeat: repeat, no-repeat;
 	background-size: auto, cover;
@@ -42,7 +42,7 @@ body:after {
 	position: fixed;
 	top: 0;
 	transform: scale(1);
-	transition: opacity 0.75s ease-in-out 0.25s, visibility 0.75s 0.25s;
+	transition: opacity 0.75s ease-in-out 1s, visibility 0.75s 1s;
 	visibility: hidden;
 	width: 100%;
 	z-index: 1;
@@ -169,7 +169,7 @@ deferred-script {
 	position: relative;
 	text-align: var(--alignment);
 	z-index: 1;
-	transition: opacity 0.625s ease 0.5s,transform 0.625s ease 0.5s;
+	transition: opacity 0.75s ease 0.5s,transform 0.75s ease 0.5s;
 }
 
 #main > .inner {
@@ -357,7 +357,7 @@ hr:before {
 	flex-direction: row;
 	flex-wrap: wrap;
 	font-family: 'Open Sans', sans-serif;
-	font-size: 1em;
+	font-size: 0.625em;
 	font-weight: 300;
 }
 
@@ -549,7 +549,7 @@ hr:before {
 	
 	#links01 {
 		gap: 0.5rem;
-		font-size: 1em;
+		font-size: 0.625em;
 	}
 	
 	#icons01 {
@@ -589,7 +589,7 @@ hr:before {
 	
 	#links01 {
 		gap: 0.375rem;
-		font-size: 1em;
+		font-size: 0.625em;
 	}
 	
 	#icons01 {
