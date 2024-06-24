@@ -5,11 +5,11 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
 		<meta name="color-scheme" content="light only" />
-		<meta name="description" content="Pablo Magaz&#039;s Personal Website, where you can find information about me, my thoughts in my blog and the projects I&#039;m currently working on." />
+		<meta name="description" content="Pablo Magaz&#039;s Personal Website, where you can find information about me, my thoughts in my blog and the projects I&#039;m currently working on" />
 		<meta property="og:site_name" content="Pablo Magaz&#039;s Personal Website" />
 		<meta property="og:title" content="Pablo Magaz&#039;s Personal Website" />
 		<meta property="og:type" content="website" />
-		<meta property="og:description" content="Pablo Magaz&#039;s Personal Website, where you can find information about me, my thoughts in my blog and the projects I&#039;m currently working on." />
+		<meta property="og:description" content="Pablo Magaz&#039;s Personal Website, where you can find information about me, my thoughts in my blog and the projects I&#039;m currently working on" />
 		<link href="https://fonts.googleapis.com/css2?display=swap&family=Montserrat:ital,wght@0,300;0,700;1,300;1,700&family=Raleway:ital,wght@0,700;1,700" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="assets/main.css" />
 		<noscript><link rel="stylesheet" href="assets/noscript.css" /></noscript>
@@ -124,22 +124,25 @@
 							<div class="wrapper">
 								<div class="inner">
 									<h2 id="text11" class="style3">Contact</h2>
-									<form id="form02" method="post" action="#">
+									<form enctype="multipart/form-data" id="form02" method="post" action="https://pablomagaz.com/send-form">
 										<div class="inner">
-											<div class="field">
-											<label for="form02-name">Name</label>			<input type="text" name="name" id="form02-name" placeholder="" maxlength="128" required />
+											<div class="field" data-type="text">
+												<label for="form02-name">Name</label>
+												<input type="text" name="name" id="form02-name" placeholder="" maxlength="256" required />
 											</div>
-											<div class="field">
-											<label for="form02-email">Email</label>			<input type="email" name="email" id="form02-email" placeholder="" maxlength="128" required />
+											<div class="field" data-type="text">
+												<label for="form02-email">Email</label>
+												<input type="text" name="email" id="form02-email" placeholder="" maxlength="256" required />
 											</div>
-											<div class="field">
-											<label for="form02-message">Message</label>			<textarea data-gramm_editor="false" name="message" id="form02-message" placeholder="" maxlength="16384" required></textarea>
+											<div class="field" data-type="textarea">
+												<label for="form02-message">Message</label>
+												<textarea data-gramm_editor="false" name="message" id="form02-message" placeholder="" required></textarea>
 											</div>
 											<div class="actions">
 												<button type="submit">Send</button>
 											</div>
 										</div>
-										<input type="hidden" name="id" value="form02" />
+										<input type="hidden" name="site" id="form02-site" value="pablomagaz.com" />
 									</form>
 									<ul id="buttons06" class="style1 buttons">
 										<li>
@@ -150,7 +153,7 @@
 							</div>
 						</div>
 					</section>
-					<section id="contact-done-section">
+					<section id="sent-section">
 						<div id="container04" class="style5 container default">
 							<div class="wrapper">
 								<div class="inner">
