@@ -656,6 +656,50 @@ h1.style4 span.p:nth-child(n + 2), h2.style4 span.p:nth-child(n + 2), h3.style4 
 	fill: #E63946 !important;
 }
 
+#buttons01 {
+	gap: 0rem;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+#buttons01:not(:first-child) {
+	margin-top: 0.75rem !important;
+}
+
+#buttons01:not(:last-child) {
+	margin-bottom: 0.75rem !important;
+}
+
+#buttons01 li a {
+	display: inline-block;
+	width: auto;
+	height: 1.625rem;
+	line-height: calc(1.625rem - 2px);
+	padding: 0 0.8125rem;
+	vertical-align: middle;
+	text-transform: uppercase;
+	font-family: 'Montserrat', sans-serif;
+	letter-spacing: 0.25rem;
+	padding-left: calc(0.25rem + 0.8125rem);
+	font-size: 0.5em;
+	font-weight: 300;
+	border-radius: 0.25rem;
+	direction: var(--site-language-direction);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+
+#buttons01 .button {
+	color: #CCCCCC;
+	border: solid 1px #CCCCCC;
+}
+
+#buttons01 .button:hover {
+	border-color: #E63946 !important;
+	color: #E63946 !important;
+}
+
 .image {
 	display: block;
 	line-height: 0;
@@ -2813,6 +2857,24 @@ form .actions button:disabled {
 		width: 0.625em;
 	}
 	
+	#buttons01 {
+		gap: 0rem;
+	}
+	
+	#buttons01:not(:first-child) {
+		margin-top: 0.5625rem !important;
+	}
+	
+	#buttons01:not(:last-child) {
+		margin-bottom: 0.5625rem !important;
+	}
+	
+	#buttons01 li a {
+		letter-spacing: 0.15rem;
+		padding-left: calc(0.15rem + 0.8125rem);
+		font-size: 0.5em;
+	}
+	
 	#image02 .frame {
 		height: 17.5rem !important;
 	}
@@ -3351,6 +3413,10 @@ form .actions button:disabled {
 	
 	.buttons.style1 {
 		gap: 0.9375rem;
+	}
+	
+	#buttons01 {
+		gap: 0rem;
 	}
 	
 	#image02 .frame {
