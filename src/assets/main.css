@@ -926,7 +926,7 @@ h1.style4 span.p:nth-child(n + 2), h2.style4 span.p:nth-child(n + 2), h3.style4 
 	width: 100%;
 	align-items: center;
 	justify-content: center;
-	background-image: linear-gradient(179deg, rgba(0,48,73,0.922) 50%, rgba(1,24,36,0.89) 100%);
+	background-image: linear-gradient(179deg, rgba(0,48,73,0.91) 50%, rgba(1,24,36,0.859) 100%);
 	background-position: 0% 0%;
 	background-repeat: repeat;
 	background-size: cover;
