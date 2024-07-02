@@ -157,24 +157,26 @@
 							</div>
 						</div>
 						<div id="embed02">
-							<!-- qweoqwupeoiqwuewqe --><script> var form = document.getElementById("form");
+							<!-- qweoqwupeoiqwuewqe --><script>
+							var form = document.getElementById("form");
+							if (form) {
 							var submitButton = form.querySelector('button[type="submit"]');
 							if (submitButton) {
 							submitButton.addEventListener("click", function (e) {
-							let name = form['form-name'].value;
-							let email = form['form-email'].value;
-							let msg = form['form-message'].value;
-							let resolve= form['form-resolve'].value;
+							let name = form.elements['form-name'].value;
+							let email = form.elements['form-email'].value;
+							let msg = form.elements['form-message'].value;
+							let resolve = form.elements['form-resolve'].value;
 							
-							if (name != "" && email != "" && msg != "") {
+							if (name !== "" && email !== "" && msg !== "") {
 							e.preventDefault();
 							e.stopPropagation();
 							if (resolve === "5") {
 							form.submit();
 							}
 							}
-							return false;
 							});
+							}
 							}
 							</script><!-- mnbnbxmbzxmncbzxc -->
 						</div>
