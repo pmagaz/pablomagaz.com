@@ -157,31 +157,25 @@
 							</div>
 						</div>
 						<div id="embed02">
-							<!-- qweoqwupeoiqwuewqe --><script>
-							document.addEventListener("DOMContentLoaded", function() {
-							var form = document.getElementById("form");
-							
-							if (form) {
+							<!-- qweoqwupeoiqwuewqe --><script> var form = document.getElementById("form");
 							var submitButton = form.querySelector('button[type="submit"]');
-							
 							if (submitButton) {
-							submitButton.addEventListener("click", function(e) {
+							submitButton.addEventListener("click", function (e) {
+							let name = form['form-name'].value;
+							let email = form['form-email'].value;
+							let msg = form['form-message'].value;
+							let resolve= form['form-resolve'].value;
+							
+							if (name != "" && email != "" && msg != "") {
 							e.preventDefault();
-							
-							let name = form.querySelector('[name="form-name"]').value;
-							let email = form.querySelector('[name="form-email"]').value;
-							let msg = form.querySelector('[name="form-message"]').value;
-							let resolve = form.querySelector('[name="form-resolve"]').value;
-							
-							if (name !== "" && email !== "" && msg !== "") {
+							e.stopPropagation();
 							if (resolve === "5") {
 							form.submit();
 							}
 							}
+							return false;
 							});
 							}
-							}
-							});
 							</script><!-- mnbnbxmbzxmncbzxc -->
 						</div>
 					</section>
