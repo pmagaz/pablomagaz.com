@@ -124,29 +124,29 @@
 							<div class="wrapper">
 								<div class="inner">
 									<h2 id="text11" class="style3">Contact</h2>
-									<form enctype="multipart/form-data" id="form02" method="post" action="https://pablomagaz.com/send-form">
+									<form enctype="multipart/form-data" id="form" method="post" action="https://pablomagaz.com/send-form">
 										<div class="inner">
 											<div class="field" data-type="text">
-												<label for="form02-name">Name</label>
-												<input type="text" name="name" id="form02-name" placeholder="" maxlength="256" required />
+												<label for="form-name">Name</label>
+												<input type="text" name="name" id="form-name" placeholder="" maxlength="256" required />
 											</div>
 											<div class="field" data-type="text">
-												<label for="form02-email">Email</label>
-												<input type="text" name="email" id="form02-email" placeholder="" maxlength="256" required />
+												<label for="form-email">Email</label>
+												<input type="text" name="email" id="form-email" placeholder="" maxlength="256" required />
 											</div>
 											<div class="field" data-type="textarea">
-												<label for="form02-message">Message</label>
-												<textarea data-gramm_editor="false" name="message" id="form02-message" placeholder="" required></textarea>
+												<label for="form-message">Message</label>
+												<textarea data-gramm_editor="false" name="message" id="form-message" placeholder="" required></textarea>
 											</div>
 											<div class="field" data-type="text">
-												<label for="form02-resolve">2 + 2 + 1</label>
-												<input type="text" name="resolve" id="form02-resolve" placeholder="" maxlength="256" required />
+												<label for="form-resolve">2 + 2 + 1</label>
+												<input type="text" name="resolve" id="form-resolve" placeholder="" maxlength="256" required />
 											</div>
 											<div class="actions">
 												<button type="submit">Send</button>
 											</div>
 										</div>
-										<input type="hidden" name="site" id="form02-site" value="pablomagaz.com" />
+										<input type="hidden" name="site" id="form-site" value="pablomagaz.com" />
 									</form>
 									<ul id="buttons06" class="style1 buttons">
 										<li>
@@ -155,6 +155,28 @@
 									</ul>
 								</div>
 							</div>
+						</div>
+						<div id="embed02">
+							<!-- qweoqwupeoiqwuewqe --><script> var form = document.getElementById("form");
+							var submitButton = form.querySelector('button[type="submit"]');
+							if (submitButton) {
+							submitButton.addEventListener("click", function (e) {
+							let name = form['form-name'].value;
+							let email = form['form-email'].value;
+							let msg = form['form-message'].value;
+							let resolve= form['form-resolve'].value;
+							
+							if (name != "" && email != "" && msg != "") {
+							e.preventDefault();
+							e.stopPropagation();
+							if (resolve === "5") {
+							form.submit();
+							}
+							}
+							return false;
+							});
+							}
+							</script><!-- mnbnbxmbzxmncbzxc -->
 						</div>
 					</section>
 					<section id="sent-section">
