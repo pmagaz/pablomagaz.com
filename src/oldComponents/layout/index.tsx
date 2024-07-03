@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import { SITE_TITLE } from "../../const";
 import { LOGOS } from "../../const/logos";
-import Page from "../page";
 import { Link } from "gatsby";
 import "./styles.css";
 
@@ -10,9 +9,9 @@ type Props = {
 };
 
 const Layout = ({ children, logo = LOGOS.Blog }: PropsWithChildren<Props>) => (
-  <div className="layout">
+  <div className="old-layout">
     <header>
-      <Page>
+      <div className="page">
         <div
           className="logo"
           style={{ backgroundImage: `url("/content/images/header/${logo}")` }}
@@ -21,9 +20,9 @@ const Layout = ({ children, logo = LOGOS.Blog }: PropsWithChildren<Props>) => (
             <Link to="/blog">{SITE_TITLE}</Link>
           </h1>
         </div>
-      </Page>
+      </div>
     </header>
-    <Page>{children}</Page>
+    <div className="page">{children}</div>
   </div>
 );
 

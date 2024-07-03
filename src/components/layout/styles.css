@@ -1,0 +1,149 @@
+:root {
+  --background-height: 100vh;
+  --site-language-alignment: left;
+  --site-language-direction: ltr;
+  --site-language-flex-alignment: flex-start;
+  --site-language-indent-left: 1;
+  --site-language-indent-right: 0;
+  --site-language-margin-left: 0;
+  --site-language-margin-right: auto;
+  --viewport-height: 100vh;
+}
+
+/** Montserrat Light **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 300;
+  font-style: normal;
+  src: url("/content/fonts/Montserrat-Light.woff2") format("woff2");
+}
+
+/** Montserrat Light-Italic **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 300;
+  font-style: italic;
+  src: url("/content/fonts/Montserrat-LightItalic.woff2") format("woff2");
+}
+
+/** Montserrat Regular **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-style: normal;
+  src: url("/content/fonts/Montserrat-Regular.woff2") format("woff2");
+}
+
+/** Montserrat Regular-Italic **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-style: italic;
+  src: url("/content/fonts/Montserrat-Italic.woff2") format("woff2");
+}
+
+/** Montserrat Bold **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-style: normal;
+  src: url("/content/fonts/Montserrat-Bold.woff2") format("woff2");
+}
+
+/** Montserrat Bold-Italic **/
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-style: italic;
+  src: url("/content/fonts/Montserrat-BoldItalic.woff2") format("woff2");
+}
+
+html {
+  font-size: 18pt;
+}
+
+body {
+  line-height: 1;
+  min-height: var(--viewport-height);
+  min-width: 320px;
+  overflow-x: hidden;
+}
+body {
+  -webkit-text-size-adjust: none;
+}
+body {
+  line-height: 1;
+}
+
+#wrapper {
+  -webkit-overflow-scrolling: touch;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--viewport-height);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+#wrapper:before {
+  content: "";
+  display: block;
+  background-attachment: scroll;
+  height: var(--background-height);
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transform: scale(1);
+  width: 100vw;
+  z-index: 0;
+  background-image: linear-gradient(
+      0deg,
+      rgba(247, 127, 0, 0.49) 0%,
+      rgba(234, 226, 183, 0.541) 41%
+    ),
+    url("/content/images/background.jpg");
+  background-position: 0% 0%, center;
+  background-repeat: repeat, no-repeat;
+  background-size: cover, cover;
+  background-color: #ffffff;
+}
+
+#main {
+  --alignment: center;
+  --flex-alignment: center;
+  --indent-left: 1;
+  --indent-right: 1;
+  --margin-left: auto;
+  --margin-right: auto;
+  --border-radius-tl: 0;
+  --border-radius-tr: 0;
+  --border-radius-br: 0;
+  --border-radius-bl: 0;
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
+  max-width: 100%;
+  position: relative;
+  text-align: var(--alignment);
+  z-index: 1;
+  transition: opacity 1s ease 0s, transform 1s ease 0s;
+}
+
+#main > .inner {
+  --padding-horizontal: 3rem;
+  --padding-vertical: 2rem;
+  --spacing: 2rem;
+  --width: 74rem;
+  border-radius: var(--border-radius-tl) var(--border-radius-tr)
+    var(--border-radius-br) var(--border-radius-bl);
+  max-width: 100%;
+  position: relative;
+  width: var(--width);
+  z-index: 1;
+  padding: var(--padding-vertical) var(--padding-horizontal);
+}

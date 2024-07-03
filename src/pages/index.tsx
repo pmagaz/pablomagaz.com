@@ -2,6 +2,8 @@ import React from "react";
 import { graphql } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
 import PostSummary from "../components/posts/postSummary";
+import Layout from "../components/layout";
+import Section from "../components/section";
 
 type DataProps = {
   allMdx: {
@@ -21,18 +23,25 @@ type DataProps = {
 };
 
 const IndexPage = ({ data }: PageProps<DataProps>) => (
-  <div style={{ margin: 20 }}>
-    {data?.allMdx.nodes.map(({ frontmatter, id }) => (
-      <PostSummary
-        key={id}
-        title={frontmatter.title}
-        description={frontmatter.description}
-        date={frontmatter.formatedDate}
-        tags={frontmatter.tags}
-        slug={frontmatter.slug}
-      />
-    ))}
-  </div>
+  <Layout>
+    <Section
+      title="Pablo Magaz's Blog"
+      description="A space to sharing my thoughts on software development, IT Managing and Leadership."
+    >
+      <div>
+        {data?.allMdx.nodes.map(({ frontmatter, id }) => (
+          <PostSummary
+            key={id}
+            title={frontmatter.title}
+            description={frontmatter.description}
+            date={frontmatter.formatedDate}
+            tags={frontmatter.tags}
+            slug={frontmatter.slug}
+          />
+        ))}
+      </div>
+    </Section>
+  </Layout>
 );
 
 export const query = graphql`
@@ -60,4 +69,29 @@ export const query = graphql`
 
 export default IndexPage;
 
-export const Head: HeadFC = () => <title>Home Page</title>;
+export const Head: HeadFC = () => (
+  <>
+    <title>Blog</title>
+    <link
+      rel="preload"
+      href="/content/fonts/Montserrat-Bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossOrigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/content/fonts/Montserrat-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossOrigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/content/fonts/Montserrat-Light.woff2"
+      as="font"
+      type="font/woff2"
+      crossOrigin="anonymous"
+    />
+  </>
+);
