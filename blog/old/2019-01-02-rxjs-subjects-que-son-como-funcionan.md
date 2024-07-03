@@ -12,7 +12,7 @@ tags: RxJs
 
 ¡Primer post de este nuevo año que comienza!. En los últimos tiempos he estado algo ocupado debido a diferentes [charlas](https://pablomagaz.com/#talks) en distintos eventos que han consumido gran parte de mi escaso tiempo libre, dejandome poco o nada para El Blog Isomórfico, pero, volvemos a la carga con un nuevo post de la serie [RxJs](https://pablomagaz.com/tag/rxjs).
 
-A lo largo de distintos posts de la serie [RxJS](https://pablomagaz.com/tag/rxjs) hemos visto qué es exactamente la [programacion reactiva](https://pablomagaz.com/blog/programacion-reactiva-con-rxjs), como funcionan los [operadores de RxJs](https://pablomagaz.com/blog/como-funcionan-operadores-rxjs), y también hemos aprendido como [combinar varios observables](https://pablomagaz.com/blog/combinando-observables-en-rxjs) gracias a los distintos operadores de combinación de RxJs. En este post vamos a meternos de lleno en una de las funcionalidades menos conocidas pero, que es fundamental cuando queremos abordar determinados escenarios quizás un poco mas complejos.
+A lo largo de distintos posts de la serie [RxJS](https://pablomagaz.com/tag/rxjs) hemos visto qué es exactamente la [programacion reactiva](https://pablomagaz.com/blog/old/programacion-reactiva-con-rxjs), como funcionan los [operadores de RxJs](https://pablomagaz.com/blog/old/como-funcionan-operadores-rxjs), y también hemos aprendido como [combinar varios observables](https://pablomagaz.com/blog/old/combinando-observables-en-rxjs) gracias a los distintos operadores de combinación de RxJs. En este post vamos a meternos de lleno en una de las funcionalidades menos conocidas pero, que es fundamental cuando queremos abordar determinados escenarios quizás un poco mas complejos.
 
 ### Entendiendo los Observables.
 
@@ -64,7 +64,7 @@ Como vemos en el ejemplo, ahora si recibimos en ambas subscripciones el mismo va
 
 Los subjects de RxJs son un tipo de Observable especial que nos permiten realizar diversas tareas como el multicasting, es decir, compartir exactamente el mismo stream de datos con todas las subscripciones sin preocuparnos del tipo de Observable que estamos manejando.
 
-Aparte, hay otra característica de los Subjects que les da una gran versatilidad y es que los Subjects de RxJs son [Observables](https://pablomagaz.com/blog/programacion-reactiva-con-rxjs) y [Observers](https://pablomagaz.com/blog/programacion-reactiva-con-rxjs) al mismo tiempo por lo que nos podemos subscribir a un Subject como a cualquier otro Observable, pero además disponen de los métodos next(), error() y complete() que tienen el Observer para emitir sus valores.
+Aparte, hay otra característica de los Subjects que les da una gran versatilidad y es que los Subjects de RxJs son [Observables](https://pablomagaz.com/blog/old/programacion-reactiva-con-rxjs) y [Observers](https://pablomagaz.com/blog/old/programacion-reactiva-con-rxjs) al mismo tiempo por lo que nos podemos subscribir a un Subject como a cualquier otro Observable, pero además disponen de los métodos next(), error() y complete() que tienen el Observer para emitir sus valores.
 
 Vamos a volver a reproducir el primer ejemplo usando Subjects:
 

@@ -1,7 +1,8 @@
 import React from "react";
 import { graphql } from "gatsby";
-import type { HeadFC, PageProps } from "gatsby";
-import PostSummary from "../components/posts/postSummary";
+import type { PageProps } from "gatsby";
+import Layout from "../oldComponents/layout";
+import PostSummary from "../oldComponents/postSummary";
 
 type DataProps = {
   allMdx: {
@@ -20,8 +21,8 @@ type DataProps = {
   };
 };
 
-const IndexPage = ({ data }: PageProps<DataProps>) => (
-  <div style={{ margin: 20 }}>
+const OldPosts = ({ data }: PageProps<DataProps>) => (
+  <Layout>
     {data?.allMdx.nodes.map(({ frontmatter, id }) => (
       <PostSummary
         key={id}
@@ -32,7 +33,7 @@ const IndexPage = ({ data }: PageProps<DataProps>) => (
         slug={frontmatter.slug}
       />
     ))}
-  </div>
+  </Layout>
 );
 
 export const query = graphql`
@@ -40,9 +41,7 @@ export const query = graphql`
     allMdx(
       sort: { frontmatter: { date_published: DESC } }
       limit: 1000
-      filter: {
-        internal: { contentFilePath: { regex: "/^(?!(.*/blog/old)).*$/" } }
-      }
+      filter: { internal: { contentFilePath: { regex: "/.*/blog/old.*/" } } }
     ) {
       nodes {
         id
@@ -58,6 +57,4 @@ export const query = graphql`
   }
 `;
 
-export default IndexPage;
-
-export const Head: HeadFC = () => <title>Home Page</title>;
+export default OldPosts;

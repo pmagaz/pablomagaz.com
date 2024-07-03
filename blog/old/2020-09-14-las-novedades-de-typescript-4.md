@@ -12,7 +12,7 @@ tags: TypeScript
 
 Que TypeScript se ha convertido en un standard de facto en el mundo JavaScript no es ningún secreto. Aunque ya existía varios años antes, tuvo su gran boom con Angular 2 y no fuimos pocos los que, aún viendo sus bondades, en un principio "recelamos" de TypeScript. Sin embargo a día de hoy ya no es solo un super set asociado a un framework en concreto, si no más bien, todo lo contrario. Son muchos los proyectos React (buena suerte Flow), Vue o cualquier framework que se nos ocurra que ya lo soportan y lo usan y el número de librerias que ya tiene su definición de tipos es ya casi total.
 
-Ese nivel de adopción se ve reflejado en que TypeScript se mueve en una media de unos 50 millones de descargas mensuales en [Npm](https://www.npmjs.com/) y es el lenguaje por defecto en [Deno](http://deno.land), nuevo rival de NodeJs y del que ya hablamos en este [post](https://pablomagaz.com/blog/deno-el-remplazo-de-nodejs). Hace escasas semanas se [liberó](https://devblogs.microsoft.com/typescript/announcing-typescript-4-0/#variadic-tuple-types) TypeScript 4, que viene con novedades bastante interesantes que vamos a repasar en este post. Puedes probar las novedades de TypScript 4 en el [Playground](https://www.typescriptlang.org/play) de TypeScript, aunque en este caso dado que algunas de las novedades tienen que ver con el soporte a editores, quizás sea más interesante instalarlo a nivel local. Arrancamos.
+Ese nivel de adopción se ve reflejado en que TypeScript se mueve en una media de unos 50 millones de descargas mensuales en [Npm](https://www.npmjs.com/) y es el lenguaje por defecto en [Deno](http://deno.land), nuevo rival de NodeJs y del que ya hablamos en este [post](https://pablomagaz.com/blog/old/deno-el-remplazo-de-nodejs). Hace escasas semanas se [liberó](https://devblogs.microsoft.com/typescript/announcing-typescript-4-0/#variadic-tuple-types) TypeScript 4, que viene con novedades bastante interesantes que vamos a repasar en este post. Puedes probar las novedades de TypScript 4 en el [Playground](https://www.typescriptlang.org/play) de TypeScript, aunque en este caso dado que algunas de las novedades tienen que ver con el soporte a editores, quizás sea más interesante instalarlo a nivel local. Arrancamos.
 
 ### Variadic Tuple Types
 
@@ -124,7 +124,7 @@ a *= b;
 a /= b;
 ```
 
-La novedad aquí reside en que hasta TypeScript 3.9 había 3 operadores lógicos que no soportaban asignación como && (and) y || (or) y el nullish coalescending operator del que ya hablamos el post sobre [ECMAScript 2020](https://pablomagaz.com/blog/un-vistazo-a-ecmascript2020/) por lo que ya podremos realizar operaciones como las siguentes:
+La novedad aquí reside en que hasta TypeScript 3.9 había 3 operadores lógicos que no soportaban asignación como && (and) y || (or) y el nullish coalescending operator del que ya hablamos el post sobre [ECMAScript 2020](https://pablomagaz.com/blog/old/un-vistazo-a-ecmascript2020/) por lo que ya podremos realizar operaciones como las siguentes:
 
 ```ts
 let name: string;
@@ -186,7 +186,7 @@ La integración de TypeScript con los editores es actualmente bastante buena per
 
 #### Optional Chaining
 
-Optional Chaining es una feature muy interesante de ECMAScript 2020 que ya comentamos en este [post](https://pablomagaz.com/blog/un-vistazo-a-ecmascript2020) y que nos evitaba los molestos && para comprobar si una propiedad existe antes de hacer referencia a una subpropiedad mediante el caracter ?. TypeScript 3.8 ya soportaba optional chaining pero con TypeScript 4 editores como VsCode ya nos sugerirán la conversion/refactor a optional chaining.
+Optional Chaining es una feature muy interesante de ECMAScript 2020 que ya comentamos en este [post](https://pablomagaz.com/blog/old/un-vistazo-a-ecmascript2020) y que nos evitaba los molestos && para comprobar si una propiedad existe antes de hacer referencia a una subpropiedad mediante el caracter ?. TypeScript 3.8 ya soportaba optional chaining pero con TypeScript 4 editores como VsCode ya nos sugerirán la conversion/refactor a optional chaining.
 
 ```ts
 function optionalChaining(a: any) {

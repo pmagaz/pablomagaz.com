@@ -1,0 +1,131 @@
+.postCard {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin-bottom: 40px;
+  border-radius: 10px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  font-size: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.66);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.postCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(-70deg, #424242, transparent 50%);
+  opacity: 0.07;
+}
+
+.postCard-innerbox {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.postCard-img {
+  position: absolute;
+  height: 300px;
+  width: 400px;
+  top: 0;
+  left: 0;
+  transition: transform 0.2s ease;
+  margin: 0;
+}
+
+.postCard-textbox {
+  position: absolute;
+  top: 7%;
+  bottom: 7%;
+  left: 430px;
+  width: calc(100% - 470px);
+  font-size: 17px;
+}
+
+.postCard-textbox::before {
+  content: "";
+  position: absolute;
+  display: block;
+  background: #ff0000bb;
+  background: #fff;
+  top: -20%;
+  left: -70px;
+  height: 140%;
+  width: 60px;
+  transform: rotate(8deg);
+}
+
+.postCard-title {
+  font-family: "Voces", "Open Sans", arial, sans-serif;
+  font-size: 24px;
+}
+
+.postCard-subtitle {
+  font-family: "Voces", "Open Sans", arial, sans-serif;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+}
+
+.postCard-description {
+  z-index: 10;
+  font-size: 15px;
+  color: #424242;
+  height: 125px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.postCard-tagbox {
+  position: absolute;
+  bottom: 3%;
+  font-size: 14px;
+  cursor: default;
+  user-select: none;
+  pointer-events: none;
+}
+
+.postCard-tag {
+  display: inline-block;
+  background: #e0e0e0;
+  color: #777;
+  border-radius: 3px 0 0 3px;
+  line-height: 26px;
+  padding: 0 10px 0 23px;
+  position: relative;
+  margin-right: 20px;
+  cursor: default;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.postCard-tag::before {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
+  height: 6px;
+  left: 10px;
+  width: 6px;
+  top: 10px;
+}
+
+.postCard-tag::after {
+  content: "";
+  position: absolute;
+  border-bottom: 13px solid transparent;
+  border-left: 10px solid #e0e0e0;
+  border-top: 13px solid transparent;
+  right: -10px;
+  top: 0;
+}

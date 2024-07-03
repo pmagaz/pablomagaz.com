@@ -230,4 +230,4 @@ click$
   );
 ```
 
-En algunos de los ejemplos de este post hemos utilizado operadores como [mergeMap](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-mergeMap) que son operadores algo especiales ya que además de combinar varios observables, realizan un "aplanado" de los mismos. Puedes ver el detalle en el [siguiente](https://pablomagaz.com/blog/combinando-observables-en-rxjs) capítulo, [combinando Observables en RxJs](https://pablomagaz.com/blog/combinando-observables-en-rxjs).
+En algunos de los ejemplos de este post hemos utilizado operadores como [mergeMap](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-mergeMap) que son operadores algo especiales ya que además de combinar varios observables, realizan un "aplanado" de los mismos. Puedes ver el detalle en el [siguiente](https://pablomagaz.com/blog/old/combinando-observables-en-rxjs) capítulo, [combinando Observables en RxJs](https://pablomagaz.com/blog/old/combinando-observables-en-rxjs).

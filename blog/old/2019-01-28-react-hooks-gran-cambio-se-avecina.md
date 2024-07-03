@@ -160,11 +160,11 @@ const UseReducerComponent = () => {
 export default UseReducerComponent;
 ```
 
-Como vemos en el ejemplo, useReducer se encarga de que cada vez que hagamos un dispatch de una acción, el reducer que hemos definido recibirá tanto el state inicial, pasado por useReducer, como la acción disparada. Redux en un hook. Lógicamente esto abre un nuevo debate sobre el futuro de Redux especialmente cuando lo combinamos con el [Context Api](https://pablomagaz.com/blog/react-context-api-el-fin-de-redux) y su versión en hook, useContext.
+Como vemos en el ejemplo, useReducer se encarga de que cada vez que hagamos un dispatch de una acción, el reducer que hemos definido recibirá tanto el state inicial, pasado por useReducer, como la acción disparada. Redux en un hook. Lógicamente esto abre un nuevo debate sobre el futuro de Redux especialmente cuando lo combinamos con el [Context Api](https://pablomagaz.com/blog/old/react-context-api-el-fin-de-redux) y su versión en hook, useContext.
 
 ### useContext
 
-[useContext](https://reactjs.org/docs/hooks-reference.html#usecontext) es el hook encargado de gestionar la Context Api y de la que ya hemos hablado en este [post](https://pablomagaz.com/blog/react-context-api-el-fin-de-redux) por lo que te recomiendo darle un repaso para entender bien lo que hace este hook, pero basicamente context api nos permite crear un mecanismo (provider) para el paso de contextos en una jerarquia de componentes:
+[useContext](https://reactjs.org/docs/hooks-reference.html#usecontext) es el hook encargado de gestionar la Context Api y de la que ya hemos hablado en este [post](https://pablomagaz.com/blog/old/react-context-api-el-fin-de-redux) por lo que te recomiendo darle un repaso para entender bien lo que hace este hook, pero basicamente context api nos permite crear un mecanismo (provider) para el paso de contextos en una jerarquia de componentes:
 
 ```tsx
 import React, { useContext, useState } from "react";

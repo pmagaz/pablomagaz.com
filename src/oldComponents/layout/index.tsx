@@ -3,6 +3,7 @@ import { SITE_TITLE } from "../../const";
 import { LOGOS } from "../../const/logos";
 import Page from "../page";
 import { Link } from "gatsby";
+import "./styles.css";
 
 type Props = {
   logo?: string;

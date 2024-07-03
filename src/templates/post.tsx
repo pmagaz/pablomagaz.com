@@ -1,15 +1,14 @@
 import React from "react";
-import { graphql, HeadProps, Link } from "gatsby";
+import { graphql, HeadProps } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import type { PageProps } from "gatsby";
 import Code from "../components/code";
-import Layout from "../components/layout";
+import Layout from "../oldComponents/layout";
 import "../styles/global.css";
 import "./post.css";
 import SEO from "../components/seo";
-import { SITE_AUTHOR } from "../const";
 import { LOGOS } from "../const/logos";
-import PostInfo from "../components/postInfo";
+import PostInfo from "../oldComponents/postInfo";
 
 type DataProps = {
   mdx: {

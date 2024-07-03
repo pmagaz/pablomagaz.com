@@ -1,8 +1,8 @@
 import React from "react";
-import { graphql, Link } from "gatsby";
+import { graphql } from "gatsby";
 import type { PageProps } from "gatsby";
-import Layout from "../components/layout";
-import PostSummary from "../components/postSummary";
+import Layout from "../oldComponents/layout";
+import PostSummary from "../oldComponents/postSummary";
 
 type DataProps = {
   allMdx: {

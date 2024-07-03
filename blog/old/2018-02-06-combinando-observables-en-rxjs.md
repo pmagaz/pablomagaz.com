@@ -18,7 +18,7 @@ Antes de meternos de lleno en los operadores de combinación, vale la pena expli
 
 ![merge marble diagram](http://reactivex.io/rxjs/img/from.png)
 
-En el ejemplo previo vemos como tenemos un Observable usando [from](http://reactivex.io/documentation/operators/from.html), que contiene los valores de un Array, y estos valores son emitidos a lo largo del tiempo. Cuando el Observable ha terminado de emitir valores, es decir, cuando emite su [complete](https://pablomagaz.com/blog/programacion-reactiva-con-rxjs) esto se representa con la línea vertical. Con los operadores de combinación de combinación, en lugar de ver una única línea horizontal, veremos 3 ya que estamos combinando 2 Observables, cada uno con su línea horizontal. La caja blanca representa el operador de combinación en cuestión y la última línea horizontal es el Observable resultante de la combinación.
+En el ejemplo previo vemos como tenemos un Observable usando [from](http://reactivex.io/documentation/operators/from.html), que contiene los valores de un Array, y estos valores son emitidos a lo largo del tiempo. Cuando el Observable ha terminado de emitir valores, es decir, cuando emite su [complete](https://pablomagaz.com/blog/old/programacion-reactiva-con-rxjs) esto se representa con la línea vertical. Con los operadores de combinación de combinación, en lugar de ver una única línea horizontal, veremos 3 ya que estamos combinando 2 Observables, cada uno con su línea horizontal. La caja blanca representa el operador de combinación en cuestión y la última línea horizontal es el Observable resultante de la combinación.
 
 ### Operadores de combinación.
 
@@ -220,7 +220,7 @@ click$
 
 ### Mundo Real
 
-Después de varios capítulos de la serie donde hemos visto los [operadores básicos](https://pablomagaz.com/blog/como-funcionan-operadores-rxjs) de Rxjs creo que es buen momento para juntar todos estos operadores y lo que hemos aprendido en este post sobre combinar Observables, en un ejemplo de mundo real, que además, es muy ilustrativo de la enorme potencia que reside en RxJs: Un typAhead sobre la API de Wikipedia que nos vaya sugiriendo resultados a medida que escribimos, pero no solo eso, queremos, además que, sea "inteligente" y no queremos por ejemplo que envíe la petición a la API con cada pulsación de tecla ya que esto no sería eficiente, tampoco enviar el termino de búsqueda a no ser que tenga al menos 3 caracteres, ni tampoco enviar el termino de búsqueda si este no ha cambiado.
+Después de varios capítulos de la serie donde hemos visto los [operadores básicos](https://pablomagaz.com/blog/old/como-funcionan-operadores-rxjs) de Rxjs creo que es buen momento para juntar todos estos operadores y lo que hemos aprendido en este post sobre combinar Observables, en un ejemplo de mundo real, que además, es muy ilustrativo de la enorme potencia que reside en RxJs: Un typAhead sobre la API de Wikipedia que nos vaya sugiriendo resultados a medida que escribimos, pero no solo eso, queremos, además que, sea "inteligente" y no queremos por ejemplo que envíe la petición a la API con cada pulsación de tecla ya que esto no sería eficiente, tampoco enviar el termino de búsqueda a no ser que tenga al menos 3 caracteres, ni tampoco enviar el termino de búsqueda si este no ha cambiado.
 
 ```js
 const input = document.getElementById("searchText"); // Campo de búsqueda
