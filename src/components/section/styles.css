@@ -10,10 +10,6 @@
     min-height 0.25s ease-in-out, max-height 0.25s ease-in-out;
 }
 
-#home-section {
-  height: calc(100vh - 2 * var(--padding-vertical));
-}
-
 #home-section > #container01 {
   height: 100%;
 }
@@ -70,7 +66,6 @@
   border-radius: inherit;
 }
 #container01 > .wrapper > .inner {
-  height: calc(100vh - var(--padding-vertical));
   flex-direction: row !important;
   flex-wrap: wrap !important;
 }

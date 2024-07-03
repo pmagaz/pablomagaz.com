@@ -60,7 +60,7 @@ export const query = graphql`
           tags
           title
           description: full_description
-          formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "es")
+          formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "en")
         }
       }
     }

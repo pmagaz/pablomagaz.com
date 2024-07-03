@@ -30,11 +30,13 @@ const PostSummary = ({ date, description, slug, tags, title }: Props) => {
             <time className="frontmatter-time">{date}</time>
           </div>
           <p className="postCard-description">{description}</p>
-          {tags.split(", ").map((tag: string) => (
-            <Link key={tag} className="postCard-tagbox" to="">
-              <mark className="postCard-tag">{tag}</mark>
-            </Link>
-          ))}
+          <div className="postCard-tagbox">
+            {tags.split(", ").map((tag: string) => (
+              <Link key={tag} to="">
+                <mark className="postCard-tag">{tag}</mark>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </article>

@@ -82,7 +82,6 @@ body {
   flex-direction: column;
   justify-content: center;
   min-height: var(--viewport-height);
-  overflow: hidden;
   position: relative;
   z-index: 2;
 }
