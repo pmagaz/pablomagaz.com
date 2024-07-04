@@ -24,12 +24,16 @@ const PostSummary = ({ date, description, slug, tags, title }: Props) => {
           }`}
         />
         <div className="postCard-textbox">
-          <h1 className="postCard-title">{title}</h1>
-          <div className="postCard-subtitle">
-            <span className="frontmatter-author">{SITE_AUTHOR}</span>
-            <time className="frontmatter-time">{date}</time>
+          <div className="postCard-heading">
+            <h1 className="postCard-title">{title}</h1>
+            <div className="postCard-subtitle">
+              <span className="frontmatter-author">{SITE_AUTHOR}</span>
+              <time className="frontmatter-time">{date}</time>
+            </div>
           </div>
-          <p className="postCard-description">{description}</p>
+          <div className="postCard-descriptionWrapper">
+            <p className="postCard-description">{description}</p>
+          </div>
           <div className="postCard-tagbox">
             {tags.split(", ").map((tag: string) => (
               <Link key={tag} to="">

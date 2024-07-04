@@ -34,26 +34,20 @@
 }
 
 .postCard-innerbox {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  display: flex;
 }
 
 .postCard-img {
-  position: absolute;
   height: 300px;
-  width: 400px;
+  width: auto;
   top: 0;
   left: 0;
   transition: transform 0.2s ease;
   margin: 0;
 }
 
-.postCard:nth-child(2n) .postCard-img {
-  left: initial;
-  right: 0;
+.postCard:nth-child(2n) .postCard-innerbox {
+  flex-direction: row-reverse;
 }
 
 .postCard:hover .postCard-img {
@@ -64,31 +58,24 @@
 }
 
 .postCard-textbox {
-  position: absolute;
-  top: 7%;
-  bottom: 7%;
-  left: 430px;
+  flex: 1;
+  padding: 24px;
   width: calc(100% - 470px);
   font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.postCard-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .postCard:nth-child(2n) .postCard-textbox {
   left: initial;
   right: 430px;
-}
-
-.postCard-textbox::before,
-.postCard-textbox::after {
-  content: "";
-  position: absolute;
-  display: block;
-  background: #ff0000bb;
-  background: #fff;
-  top: -20%;
-  left: -70px;
-  height: 140%;
-  width: 60px;
-  transform: rotate(8deg);
 }
 
 .postCard:nth-child(2n) .postCard-textbox::before {
@@ -112,7 +99,6 @@
   color: rgba(0, 48, 73, 0.922);
   font-weight: 700;
   font-size: 1.5em;
-  margin-bottom: 12px;
 }
 
 .postCard-subtitle {
@@ -120,7 +106,12 @@
   font-size: 1em;
   color: #888;
   display: flex;
-  margin-bottom: 24px;
+}
+
+.postCard-descriptionWrapper {
+  max-height: 68px;
+  height: 100%;
+  overflow: hidden;
 }
 
 .postCard-description {
@@ -128,14 +119,14 @@
   font-size: 1em;
   z-index: 10;
   color: #424242;
-  height: 125px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  height: 100%;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .postCard-tagbox {
-  position: absolute;
-  bottom: 3%;
   font-size: 14px;
   cursor: default;
   user-select: none;
