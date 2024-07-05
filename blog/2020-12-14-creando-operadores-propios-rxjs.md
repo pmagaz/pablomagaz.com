@@ -8,7 +8,9 @@ date_updated: 2020-12-14T20:23:25.000Z
 tags: Tag1
 ---
 
-## Los operadores de RxJs son una de las piezas clave de esta gran librería, ya que el amplio catalogo existente nos permite cubrir casi cualquier tarea imaginable. Sin embargo, en ciertas ocasiones es necesario poder implementar nuestros propios operadores. En este post aprenderemos como hacerlo.
+Los operadores de RxJs son una de las piezas clave de esta gran librería, ya que el amplio catalogo existente nos permite cubrir casi cualquier tarea imaginable. Sin embargo, en ciertas ocasiones es necesario poder implementar nuestros propios operadores. En este post aprenderemos como hacerlo.
+
+## First Major Section
 
 La [serie](https://pablomagaz.com/tag/rxjs) de RxJs de este blog es, probablemente, uno de los recursos mas amplios y variados sobre RxJs en español y alguno de los posts se encuentra siempre entre los posts más [vistados](https://pablomagaz.com/blog/old/rxjs-subjects-que-son-como-funcionan) de todo el blog, algo que es soprendente ya que alguno se escribió hace ya casi 2 años (¡cómo pasa el tiempo!). Con esta serie sobre RxJs hemos cubierto un montón de áreas de RxJs, desde conceptos [básicos](https://pablomagaz.com/blog/old/programacion-reactiva-con-rxjs) sobre programación reactiva a temas más avanzados como los [subject](https://pablomagaz.com/blog/old/rxjs-subjects-que-son-como-funcionan), pero existe un tema en concreto del que no habíamos hablado y por el que en los últimos tiempos varios lectores me han pedido un post, así que por petición popular allí vamos. En este post vamos a hablar de cómo crear nuestros propios operadores de RxJs, algo que a pesar del amplio catálogo de [operadores](https://www.learnrxjs.io/learn-rxjs/operators) puede ser necesario cuando queremos reutilizar lógica.
 

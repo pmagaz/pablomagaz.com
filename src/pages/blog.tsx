@@ -38,7 +38,11 @@ const Blog = ({ data }: PageProps<DataProps>) => (
 
 export const query = graphql`
   query {
-    allMdx(sort: { frontmatter: { date_published: DESC } }, limit: 1000) {
+    allMdx(
+      sort: { frontmatter: { date_published: DESC } }
+      limit: 1000
+      filter: { internal: { contentFilePath: { regex: "/.*/blog/old.*/" } } }
+    ) {
       nodes {
         id
         frontmatter {

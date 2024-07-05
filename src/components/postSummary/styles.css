@@ -12,11 +12,6 @@
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.postCard:hover {
-  box-shadow: 0 34px 32px -33px rgba(0, 0, 0, 0.18);
-  transform: translate(0px, -3px);
-}
-
 .postCard::before {
   content: "";
   position: absolute;
@@ -39,7 +34,7 @@
 .postCard-imgbox {
   height: 300px;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
 }
 
 @media only screen and (max-width: 992px) {
@@ -66,7 +61,7 @@
 }
 
 .postCard:hover .postCard-img {
-  transform: scale(1.05) rotate(1deg);
+  transform: scale(1.05);
 }
 .postCard:hover .postCard-bar {
   width: 70px;
@@ -74,7 +69,7 @@
 
 .postCard-textbox {
   flex: 1;
-  padding: 24px;
+  padding: 36px;
   width: 100%;
   min-width: 350px;
   font-size: 17px;
@@ -86,6 +81,7 @@
 @media only screen and (max-width: 736px) {
   .postCard-textbox {
     min-width: auto;
+    padding: 24px;
   }
 }
 
@@ -125,9 +121,11 @@
 
 .postCard-subtitle {
   font-family: "Montserrat", sans-serif;
-  font-size: 1em;
+  font-size: 0.88em;
   color: #888;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .postCard-descriptionWrapper {
@@ -149,7 +147,7 @@
 }
 
 .postCard-tagbox {
-  font-size: 14px;
+  font-size: 0.75em;
   cursor: default;
   user-select: none;
   pointer-events: none;

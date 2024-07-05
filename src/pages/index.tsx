@@ -1,7 +1,7 @@
 import React from "react";
 import { graphql } from "gatsby";
 import type { HeadFC, PageProps } from "gatsby";
-import PostSummary from "../components/posts/postSummary";
+import PostSummary from "../components/postSummary";
 import Layout from "../components/layout";
 import Section from "../components/section";
 
@@ -25,6 +25,7 @@ type DataProps = {
 const IndexPage = ({ data }: PageProps<DataProps>) => (
   <Layout>
     <Section
+      size="s"
       title="Pablo Magaz's Blog"
       description="A space to sharing my thoughts on software development, IT Managing and Leadership."
     >

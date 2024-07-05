@@ -8,7 +8,9 @@ date_updated: 2020-01-25T09:33:11.000Z
 tags: Tag1
 ---
 
-## Redux se ha convertido en el paradigma de los paradigmas. Ampliamente utilizado en entornos React y cada vez más en entornos Angular o Vue, posee algunas características muy potentes, pero menos conocidas como su middleware. Su empleo puede llevar nuestra arquitectura a otro nivel.
+Redux se ha convertido en el paradigma de los paradigmas. Ampliamente utilizado en entornos React y cada vez más en entornos Angular o Vue, posee algunas características muy potentes, pero menos conocidas como su middleware. Su empleo puede llevar nuestra arquitectura a otro nivel.
+
+## First Major Section
 
 Lo reconozco, soy un fanboy de [Redux](http://redux.js.org/). Redux es el perfecto ejemplo de la mítica frase de Ludwig Mies van der Rohe, [Less is more](https://en.wikipedia.org/wiki/Minimalism#Less_is_more_.28architecture.29). Su extrema simplicidad hace que sea fácil de implementar y adaptarse a su funcionamiento, pero hay algunos elementos propios de Redux que a veces pasan un poco desapercibidos, quizás por ser una característica un poco más avanzada. Uno de estos elementos es el middleware de su store.
 

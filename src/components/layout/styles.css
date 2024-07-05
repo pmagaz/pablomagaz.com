@@ -145,6 +145,8 @@ body {
   width: var(--width);
   z-index: 1;
   padding: var(--padding-vertical) var(--padding-horizontal);
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 736px) {

@@ -1,7 +1,7 @@
 import { Link } from "gatsby";
 import React from "react";
-import { POST_LOGOS } from "../../../const/logos";
-import { SITE_AUTHOR } from "../../../const";
+import { POST_LOGOS } from "../../const/logos";
+import { SITE_AUTHOR } from "../../const";
 import "./styles.css";
 
 type Props = {
@@ -28,10 +28,7 @@ const PostSummary = ({ date, description, slug, tags, title }: Props) => {
           <div className="postCard-textbox">
             <div className="postCard-heading">
               <h1 className="postCard-title">{title}</h1>
-              <div className="postCard-subtitle">
-                <span className="frontmatter-author">{SITE_AUTHOR}</span>
-                <time className="frontmatter-time">{date}</time>
-              </div>
+              <div className="postCard-subtitle">{date}</div>
             </div>
             <div className="postCard-descriptionWrapper">
               <p className="postCard-description">{description}</p>

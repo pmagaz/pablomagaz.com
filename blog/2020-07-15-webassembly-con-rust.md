@@ -8,7 +8,9 @@ date_updated: 2020-09-22T06:41:02.000Z
 tags: Tag3
 ---
 
-## WebAssembly ya es oficialmente el cuarto lenguaje de la Web y su uso y adopción está cada vez mas extendido. Rust, lenguaje de muy creciente popularidad, nos ofrece un amplio ecosistema para escribir WebAssembly e integrarlo con nuestras aplicaciones JavaScript de forma rápida y sencilla.
+WebAssembly ya es oficialmente el cuarto lenguaje de la Web y su uso y adopción está cada vez mas extendido. Rust, lenguaje de muy creciente popularidad, nos ofrece un amplio ecosistema para escribir WebAssembly e integrarlo con nuestras aplicaciones JavaScript de forma rápida y sencilla.
+
+## First Major Section
 
 En posts anteriores hemos hecho una [introducción](https://pablomagaz.com/blog/old/empezando-con-webassembly) a WebAssembly, que se ha convertido de forma oficial en el [cuarto lenguaje](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en) de la Web (junto a HTML, CSS y JavaScript). WebAssembly tiene una dualidad interesante que no tienen el resto de lenguajes de la Web, ya que es, por una parte, un lenguaje [en sí mismo](https://webassembly.github.io/spec/core/text/index.html) conocido como WAT (WebAssembly Text Format), pero es también un [target de compilación ](https://pablomagaz.com/blog/old/empezando-con-webassembly) por lo que podemos compilar WebAssembly desde otros lenguajes más "amigables" como C/C++, Go y lógicamente Rust que es el que nos interesa.
 

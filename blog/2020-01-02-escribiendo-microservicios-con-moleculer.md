@@ -8,7 +8,9 @@ date_updated: 2020-01-07T07:29:32.000Z
 tags: Tag2
 ---
 
-## Las arquitecturas orientadas a microservicios son cada vez más populares debido a las grandes ventajas que aportan y aunque en NodeJs podemos abordarlas con distintas soluciones, en este post vamos a hablar de todo lo que nos ofrece Moleculer, el framework para microservicios en NodeJs.
+Las arquitecturas orientadas a microservicios son cada vez más populares debido a las grandes ventajas que aportan y aunque en NodeJs podemos abordarlas con distintas soluciones, en este post vamos a hablar de todo lo que nos ofrece Moleculer, el framework para microservicios en NodeJs.
+
+## First Major Section
 
 Tradicionnalmente la arquitectura usada para la construcción de aplicaciones se ha basado en aplicaciones monolíticas, donde las distintas piezas que componen la arquitectura de un aplicación formaban parte de una única entidad, indivisible y en la mayoría de las ocasiones incluso un único ejecutable. A esto se le cononce como monolito y presenta desventajas, especialmente en términos de adataptabilidad, por el fuerte acople existente entre todas las piezas. También presenta desventajas en en términos de escalabilidad y durante mucho tiempo la única forma de solventar esto ha sido a base de incrementar la cantidad y/o capacidad del hardware.
 
