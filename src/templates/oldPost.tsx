@@ -3,12 +3,11 @@ import { graphql, HeadProps } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import type { PageProps } from "gatsby";
 import Code from "../components/code";
-import Layout from "../components/layout";
-import Section from "../components/section";
+import Layout from "../oldComponents/layout";
 import "../styles/global.css";
 import SEO from "../components/seo";
-import { SITE_AUTHOR } from "../const";
-import { POST_LOGOS } from "../const/logos";
+import { LOGOS } from "../const/logos";
+import PostInfo from "../oldComponents/postInfo";
 
 type DataProps = {
   mdx: {
@@ -24,26 +23,22 @@ type DataProps = {
   };
 };
 
-const PageTemplate = ({ data, children }: PageProps<DataProps>) => {
-  const imgFileName =
-    POST_LOGOS[
-      data.mdx.frontmatter.tags.split(", ")[0] as keyof typeof POST_LOGOS
-    ];
-  const subtitle = `${SITE_AUTHOR} | ${data.mdx.frontmatter.formatedDate} | ${data.mdx.frontmatter.tags}`;
-  return (
-    <Layout>
-      <Section
-        title={data.mdx.frontmatter.title}
-        subtitle={subtitle}
-        imgFileName={imgFileName}
-      >
-        <div className="mdxWrapper">
-          <MDXProvider components={{ code: Code }}>{children}</MDXProvider>
-        </div>
-      </Section>
-    </Layout>
-  );
-};
+const PageTemplate = ({ data, children }: PageProps<DataProps>) => (
+  <Layout
+    logo={
+      LOGOS[data.mdx.frontmatter.tags?.split(", ")[0] as keyof typeof LOGOS]
+    }
+  >
+    <h1>{data.mdx.frontmatter.title}</h1>
+    <PostInfo
+      date={data.mdx.frontmatter.formatedDate}
+      tags={data.mdx.frontmatter.tags}
+    />
+    <div style={{ marginTop: "3em" }}>
+      <MDXProvider components={{ code: Code }}>{children}</MDXProvider>
+    </div>
+  </Layout>
+);
 
 export default PageTemplate;
 
@@ -71,7 +66,7 @@ export const query = graphql`
         slug
         title
         description
-        formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "en")
+        formatedDate: date_published(formatString: "d-MMM-YYYY", locale: "es")
         publishedTime: date_published
         modifiedTime: date_updated
       }

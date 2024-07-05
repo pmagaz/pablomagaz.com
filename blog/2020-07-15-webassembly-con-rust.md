@@ -1,11 +1,11 @@
 ---
 title: WebAssembly con Rust
 description: Rust es uno de los lenguajes preferidos para escribir WebAssembly gracias a su amplio ecosistema e integración con JavaScript.
-full_descriptiob: WebAssembly ya es oficialmente el cuarto lenguaje de la Web y su uso y adopción está cada vez mas extendido. Rust, lenguaje de muy creciente popularidad, nos ofrece un amplio ecosistema para escribir WebAssembly e integrarlo con nuestras aplicaciones JavaScript de forma rápida y sencilla.
+full_description: WebAssembly ya es oficialmente el cuarto lenguaje de la Web y su uso y adopción está cada vez mas extendido. Rust, lenguaje de muy creciente popularidad, nos ofrece un amplio ecosistema para escribir WebAssembly e integrarlo con nuestras aplicaciones JavaScript de forma rápida y sencilla.
 slug: webassembly-con-rust
 date_published: 2020-07-15T07:59:49.000Z
 date_updated: 2020-09-22T06:41:02.000Z
-tags: WebAssembly, Rust
+tags: Tag3
 ---
 
 ## WebAssembly ya es oficialmente el cuarto lenguaje de la Web y su uso y adopción está cada vez mas extendido. Rust, lenguaje de muy creciente popularidad, nos ofrece un amplio ecosistema para escribir WebAssembly e integrarlo con nuestras aplicaciones JavaScript de forma rápida y sencilla.

@@ -1,4 +1,5 @@
 const path = require("path");
+const oldPostTemplate = path.resolve(`./src/templates/oldPost.tsx`);
 const postTemplate = path.resolve(`./src/templates/post.tsx`);
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
@@ -35,7 +36,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
         // like slugify to create a slug
         path: `old-posts/${node.frontmatter.slug}`,
         // Provide the path to the MDX content file so webpack can pick it up and transform it into JSX
-        component: `${postTemplate}?__contentFilePath=${node.internal.contentFilePath}`,
+        component: `${oldPostTemplate}?__contentFilePath=${node.internal.contentFilePath}`,
         // You can use the values in this context in
         // our page layout component
         context: { id: node.id },

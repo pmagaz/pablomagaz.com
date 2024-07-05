@@ -106,3 +106,41 @@ nav,
 section {
   display: block;
 }
+
+.mdxWrapper h2 {
+  margin-bottom: 2rem !important;
+  margin-top: 2rem !important;
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25em;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.mdxWrapper h3 {
+  margin-bottom: 2rem !important;
+  margin-top: 2rem !important;
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  letter-spacing: -0.025rem;
+  width: 100%;
+  font-size: 0.875em;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.mdxWrapper p {
+  margin-bottom: 1.25rem !important;
+  margin-top: 1.25rem !important;
+  color: rgba(255, 255, 255, 0.671);
+  font-family: "Montserrat", sans-serif;
+  letter-spacing: 0.025rem;
+  width: 100%;
+  font-size: 0.75em;
+  line-height: 1.875;
+  font-weight: 300;
+}
+
+.mdxWrapper pre {
+  font-size: 0.88em;
+}

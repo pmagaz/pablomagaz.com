@@ -146,3 +146,33 @@ body {
   z-index: 1;
   padding: var(--padding-vertical) var(--padding-horizontal);
 }
+
+@media (max-width: 736px) {
+  #main > .inner {
+    --padding-horizontal: 1.25rem;
+    --padding-vertical: 1.25rem;
+    --spacing: 2rem;
+  }
+}
+
+@media (max-width: 736px) {
+  html {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 980px) {
+  html {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 1680px) {
+  html {
+    font-size: 13pt;
+  }
+}
+
+a {
+  text-decoration: none;
+}

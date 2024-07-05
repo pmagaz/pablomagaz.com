@@ -5,7 +5,7 @@ full_description: Las arquitecturas orientadas a microservicios son cada vez má
 slug: escribiendo-microservicios-con-moleculer
 date_published: 2020-01-02T10:12:56.000Z
 date_updated: 2020-01-07T07:29:32.000Z
-tags: NodeJs
+tags: Tag2
 ---
 
 ## Las arquitecturas orientadas a microservicios son cada vez más populares debido a las grandes ventajas que aportan y aunque en NodeJs podemos abordarlas con distintas soluciones, en este post vamos a hablar de todo lo que nos ofrece Moleculer, el framework para microservicios en NodeJs.

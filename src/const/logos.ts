@@ -16,3 +16,9 @@ export const LOGOS = {
   TypeScript: "typescript.svg",
   Deno: "deno.svg",
 } as const;
+
+export const POST_LOGOS = {
+  Tag1: "tag1.png",
+  Tag2: "tag2.png",
+  Tag3: "tag3.png",
+} as const;

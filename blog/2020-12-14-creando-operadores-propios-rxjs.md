@@ -5,7 +5,7 @@ full_description: Los operadores de RxJs son una de las piezas clave de esta gra
 slug: creando-operadores-propios-rxjs
 date_published: 2020-12-14T07:44:50.000Z
 date_updated: 2020-12-14T20:23:25.000Z
-tags: RxJs
+tags: Tag1
 ---
 
 ## Los operadores de RxJs son una de las piezas clave de esta gran librería, ya que el amplio catalogo existente nos permite cubrir casi cualquier tarea imaginable. Sin embargo, en ciertas ocasiones es necesario poder implementar nuestros propios operadores. En este post aprenderemos como hacerlo.

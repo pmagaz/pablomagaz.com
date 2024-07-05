@@ -1,9 +1,8 @@
 import { Link } from "gatsby";
 import React from "react";
-import PostInfo from "../postInfo";
-import "./styles.css";
-import { LOGOS } from "../../../const/logos";
+import { POST_LOGOS } from "../../../const/logos";
 import { SITE_AUTHOR } from "../../../const";
+import "./styles.css";
 
 type Props = {
   title: string;
@@ -16,33 +15,37 @@ type Props = {
 const PostSummary = ({ date, description, slug, tags, title }: Props) => {
   return (
     <article className="postCard">
-      <div className="postCard-innerbox">
-        <img
-          className="postCard-img"
-          src={`/content/images/header/${
-            LOGOS[tags.split(", ")[0] as keyof typeof LOGOS]
-          }`}
-        />
-        <div className="postCard-textbox">
-          <div className="postCard-heading">
-            <h1 className="postCard-title">{title}</h1>
-            <div className="postCard-subtitle">
-              <span className="frontmatter-author">{SITE_AUTHOR}</span>
-              <time className="frontmatter-time">{date}</time>
+      <Link to={slug}>
+        <div className="postCard-innerbox">
+          <div className="postCard-imgbox">
+            <img
+              className="postCard-img"
+              src={`/content/images/${
+                POST_LOGOS[tags.split(", ")[0] as keyof typeof POST_LOGOS]
+              }`}
+            />
+          </div>
+          <div className="postCard-textbox">
+            <div className="postCard-heading">
+              <h1 className="postCard-title">{title}</h1>
+              <div className="postCard-subtitle">
+                <span className="frontmatter-author">{SITE_AUTHOR}</span>
+                <time className="frontmatter-time">{date}</time>
+              </div>
+            </div>
+            <div className="postCard-descriptionWrapper">
+              <p className="postCard-description">{description}</p>
+            </div>
+            <div className="postCard-tagbox">
+              {tags.split(", ").map((tag: string) => (
+                <mark key={tag} className="postCard-tag">
+                  {tag}
+                </mark>
+              ))}
             </div>
           </div>
-          <div className="postCard-descriptionWrapper">
-            <p className="postCard-description">{description}</p>
-          </div>
-          <div className="postCard-tagbox">
-            {tags.split(", ").map((tag: string) => (
-              <Link key={tag} to="">
-                <mark className="postCard-tag">{tag}</mark>
-              </Link>
-            ))}
-          </div>
         </div>
-      </div>
+      </Link>
     </article>
   );
 };
