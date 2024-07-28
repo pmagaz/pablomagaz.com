@@ -137,7 +137,7 @@ a[onclick]:not([href]) {
 	cursor: pointer;
 }
 
-deferred-script {
+unloaded-script {
 	display: none;
 }
 
