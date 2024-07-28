@@ -171,7 +171,8 @@
 							if (name !== "" && email !== "" && msg !== "") {
 							e.preventDefault();
 							e.stopPropagation();
-							if (resolve === "5") {
+							if (resolve === "5" || resolve.toLowerCase()
+							=== "five") {
 							form.submit();
 							}
 							}
