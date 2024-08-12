@@ -175,7 +175,7 @@
 							const email = form.elements['form-email'].value;
 							const msg = form.elements['form-message'].value;
 							
-							const reCatpcha = form.elements['g-recaptcha-response']
+							const reCatpcha = form.elements['g-recaptcha-response'];
 							
 							if (name !== '' && email !== '' && msg !== '') {
 							if (!reCatpcha) {
@@ -190,7 +190,7 @@
 							
 							const form = document.getElementById('form');
 							if (form) {
-							form.firstChild.insertBefore(createReCaptchaField(), form.firstChild.lastChild);
+							form.firstElementChild.insertBefore(createReCaptchaField(), form.firstElementChild.lastElementChild);
 							const submitButton = form.querySelector('button[type="submit"]');
 							if (submitButton) {
 							submitButton.addEventListener('click', submitForm);
