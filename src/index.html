@@ -13,6 +13,7 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&family=Montserrat:ital,wght@0,300;0,700;1,300;1,700&family=Raleway:ital,wght@0,700;1,700" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="assets/main.css" />
 		<noscript><link rel="stylesheet" href="assets/noscript.css" /></noscript>
+		<!-- qweoqwupeoiqwuewqe --><script src="https://www.google.com/recaptcha/api.js" async defer></script><!-- mnbnbxmbzxmncbzxc -->
 	</head>
 	<body class="is-loading">
 		<div id="wrapper">
@@ -138,10 +139,6 @@
 												<label for="form-message">Message</label>
 												<textarea data-gramm_editor="false" name="message" id="form-message" placeholder="" required></textarea>
 											</div>
-											<div class="field" data-type="text">
-												<label for="form-resolve">How much is two plus three?</label>
-												<input type="text" name="resolve" id="form-resolve" placeholder="" maxlength="256" required />
-											</div>
 											<div class="actions">
 												<button type="submit">Send</button>
 											</div>
@@ -158,25 +155,45 @@
 						</div>
 						<div id="embed02">
 							<!-- qweoqwupeoiqwuewqe --><script>
-							var form = document.getElementById("form");
-							if (form) {
-							var submitButton = form.querySelector('button[type="submit"]');
-							if (submitButton) {
-							submitButton.addEventListener("click", function (e) {
-							let name = form.elements['form-name'].value;
-							let email = form.elements['form-email'].value;
-							let msg = form.elements['form-message'].value;
-							let resolve = form.elements['form-resolve'].value;
+							const reCaptchaFieldId = 'reCaptcha_field';
+							const SITE_KEY = '6LeVxCQqAAAAAKjJgKpKThLAIzgwhpYq7DvPV_4y';
 							
-							if (name !== "" && email !== "" && msg !== "") {
+							function createReCaptchaField() {
+							const reCaptchaField = document.createElement('div');
+							reCaptchaField.id = reCaptchaFieldId;
+							reCaptchaField.classList.add('field');
+							reCaptchaField.setAttribute('data-type', 'text');
+							return reCaptchaField;
+							}
+							
+							function submitForm(e) {
 							e.preventDefault();
 							e.stopPropagation();
-							if (resolve === "5" || resolve.toLowerCase()
-							=== "five") {
+							
+							const form = document.getElementById('form');
+							const name = form.elements['form-name'].value;
+							const email = form.elements['form-email'].value;
+							const msg = form.elements['form-message'].value;
+							
+							const reCatpcha = form.elements['g-recaptcha-response']
+							
+							if (name !== '' && email !== '' && msg !== '') {
+							if (!reCatpcha) {
+							grecaptcha.render(reCaptchaFieldId, {
+							sitekey: SITE_KEY,
+							});
+							} else if (reCatpcha.value !== '') {
 							form.submit();
 							}
 							}
-							});
+							}
+							
+							const form = document.getElementById('form');
+							if (form) {
+							form.firstChild.insertBefore(createReCaptchaField(), form.firstChild.lastChild);
+							const submitButton = form.querySelector('button[type="submit"]');
+							if (submitButton) {
+							submitButton.addEventListener('click', submitForm);
 							}
 							}
 							</script><!-- mnbnbxmbzxmncbzxc -->
