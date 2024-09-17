@@ -35,6 +35,15 @@ jobs:
       - name: Verify build
         run: ls -la public
 
+      - name: Create artifact
+        run: tar -czvf static-content.tar.gz -C public .
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: public
+          path: public
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh/
