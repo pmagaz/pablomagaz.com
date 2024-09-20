@@ -35,9 +35,6 @@ jobs:
       - name: Verify build
         run: ls -la public
 
-      # - name: Create artifact
-      #   run: tar -czvf site.tar.gz -C public .
-      
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
