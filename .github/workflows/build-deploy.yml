@@ -36,13 +36,13 @@ jobs:
         run: ls -la public
 
       - name: Create artifact
-        run: tar -czvf static-content.tar.gz -C public .
+        run: tar -czvf site.tar.gz -C public .
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: static-content
-          path: static-content.tar.gz
+          name: site
+          path: site.tar.gz
 
       - name: Setup SSH
         run: |
