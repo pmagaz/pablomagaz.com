@@ -70,30 +70,36 @@ jobs:
           sudo ip link set up dev wg0
 
           # Display WireGuard configuration for verification
-          echo "WireGuard configuration:"
-          sudo wg show wg0
+          # echo "WireGuard configuration:"
+          # sudo wg show wg0
 
-          # Display network interfaces
-          echo "Network interfaces:"
-          ip addr show
+          # # Display network interfaces
+          # echo "Network interfaces:"
+          # ip addr show
 
-          # Display routing table
-          echo "Routing table:"
-          ip route
+          # # Display routing table
+          # echo "Routing table:"
+          # ip route
 
-      - name: Test Connection
+      # - name: Test Connection
+      #   run: |
+      #     # Extract the first IP from WIREGUARD_ALLOWED_IPS to test
+      #     TEST_IP=$(echo ${{ secrets.WIREGUARD_ALLOWED_IPS }} | cut -d',' -f1 | cut -d'/' -f1)
+      #     echo "Attempting to curl $TEST_IP"
+      #     curl -vvv http://$TEST_IP || echo "Curl failed, but continuing workflow"
+
+      - name: Configure Dockerregistry
         run: |
-          # Extract the first IP from WIREGUARD_ALLOWED_IPS to test
-          TEST_IP=$(echo ${{ secrets.WIREGUARD_ALLOWED_IPS }} | cut -d',' -f1 | cut -d'/' -f1)
-          echo "Attempting to curl $TEST_IP"
-          curl -vvv http://$TEST_IP || echo "Curl failed, but continuing workflow"
+          echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:30000"] }' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
+
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
 
       - name: Push Docker image
         run: |
-          docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
+          docker push ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
       
       - name: Cleanup WireGuard
         if: always()
