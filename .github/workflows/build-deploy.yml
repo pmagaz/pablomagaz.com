@@ -60,30 +60,30 @@ jobs:
           sudo ip address add dev wg0 $WIREGUARD_IPS peer $REGISTRY_HOST
           sudo wg set wg0 listen-port 48123 private-key privatekey peer $WIREGUARD_PUBLIC_KEY allowed-ips $WIREGUARD_ALLOWED_IPS endpoint $WIREGUARD_ENDPOINT
           sudo ip link set up dev wg0
-          curl -vvv http://$REGISTRY_HOST:30000/v2/
+          #curl -vvv http://$REGISTRY_HOST:30000/v2/
           
           # Cleanup
-          sudo ip link delete dev wg0
-          rm privatekey
+          #sudo ip link delete dev wg0
+          #rm privatekey
       
-      - name: Enhanced WireGuard Diagnostics
-        run: |
-          echo "WireGuard Configuration:"
-          sudo wg show wg0
-          echo "Routing Table:"
-          ip route
-          echo "Pinging WireGuard Server (without VPN):"
-          ping -c 4 $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
-          echo "Traceroute to WireGuard Server:"
-          traceroute $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
-          echo "Checking UDP Connectivity to WireGuard Server:"
-          nc -zu -v $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | tr ':' ' ') 
-          echo "Firewall Rules:"
-          sudo iptables -L -n -v
-          echo "WireGuard Kernel Module Status:"
-          lsmod | grep wireguard
-          echo "System Logs Related to WireGuard:"
-          sudo journalctl -xe | grep -i wireguard
+      # - name: Enhanced WireGuard Diagnostics
+      #   run: |
+      #     echo "WireGuard Configuration:"
+      #     sudo wg show wg0
+      #     echo "Routing Table:"
+      #     ip route
+      #     echo "Pinging WireGuard Server (without VPN):"
+      #     ping -c 4 $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
+      #     echo "Traceroute to WireGuard Server:"
+      #     traceroute $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
+      #     echo "Checking UDP Connectivity to WireGuard Server:"
+      #     nc -zu -v $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | tr ':' ' ') 
+      #     echo "Firewall Rules:"
+      #     sudo iptables -L -n -v
+      #     echo "WireGuard Kernel Module Status:"
+      #     lsmod | grep wireguard
+      #     echo "System Logs Related to WireGuard:"
+      #     sudo journalctl -xe | grep -i wireguard
 
       - name: Configure Dockerregistry
         run: |
