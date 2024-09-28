@@ -44,7 +44,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
-      - name: Setup WireGuard Interface
+      - name: Setup WireGuard
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
@@ -52,46 +52,41 @@ jobs:
           WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
         run: |
+          sudo apt-get update && sudo apt-get install -y wireguard
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
-
           sudo ip link add dev wg0 type wireguard
-
-          # Set the IP address from WIREGUARD_IPS
           sudo ip address add dev wg0 $WIREGUARD_IPS
-
-          # Setup WireGuard with the provided configuration
           sudo wg set wg0 \
             private-key privatekey \
             peer $WIREGUARD_PUBLIC_KEY \
             allowed-ips $WIREGUARD_ALLOWED_IPS \
             endpoint $WIREGUARD_ENDPOINT
-
           sudo ip link set up dev wg0
+          sudo ip route add ${{ secrets.WIREGUARD_ALLOWED_IPS }} dev wg0
+          echo "WireGuard configuration:"
+          sudo wg show wg0
+          echo "Network interfaces:"
+          ip addr show
+          echo "Routing table:"
+          ip route
 
-          # Display WireGuard configuration for verification
-          # echo "WireGuard configuration:"
-          # sudo wg show wg0
-
-          # # Display network interfaces
-          # echo "Network interfaces:"
-          # ip addr show
-
-          # # Display routing table
-          # echo "Routing table:"
-          # ip route
-
-      # - name: Test Connection
-      #   run: |
-      #     # Extract the first IP from WIREGUARD_ALLOWED_IPS to test
-      #     TEST_IP=$(echo ${{ secrets.WIREGUARD_ALLOWED_IPS }} | cut -d',' -f1 | cut -d'/' -f1)
-      #     echo "Attempting to curl $TEST_IP"
-      #     curl -vvv http://$TEST_IP || echo "Curl failed, but continuing workflow"
+      - name: WireGuard Connection Test
+        run: |
+          echo "Testing WireGuard connection..."
+          ping -c 4 -I wg0 ${{ secrets.REGISTRY_HOST }}
+          echo "Tracing route through WireGuard..."
+          sudo traceroute -i wg0 ${{ secrets.REGISTRY_HOST }}
 
       - name: Configure Dockerregistry
         run: |
           echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:30000"] }' | sudo tee /etc/docker/daemon.json
           sudo systemctl restart docker
+
+      - name: Test Registry Connection
+        run: |
+          echo "Testing connection to registry..."
+          curl -v --max-time 10 http://${{ secrets.REGISTRY_HOST }}:30000/v2/ || echo "Curl failed, but continuing workflow"
 
       - name: Network diagnostics
         run: |
