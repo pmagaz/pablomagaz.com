@@ -49,25 +49,11 @@ jobs:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard resolvconf
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
           sudo mkdir -p /etc/wireguard
           echo "$WIREGUARD_CONFIG" > github.conf
           sudo cp github.conf /etc/wireguard/
           sudo wg-quick up github || exit 1
-
-          echo "WireGuard interface status:"
-          sudo wg show github
-
-          echo "Current network interfaces:"
-          ip addr show
-
-          echo "Current routing table:"
-          ip route
-
-          echo "Attempting to ping the WireGuard endpoint..."
-          ENDPOINT=$(grep Endpoint /etc/wireguard/github.conf | awk '{print $3}' | cut -d: -f1)
-          ping -c 4 $ENDPOINT
-
           echo "WireGuard setup completed."
    
       - name: Build Docker image
