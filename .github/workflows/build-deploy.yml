@@ -45,27 +45,22 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
-      # - name: Setup WireGuard Interface
-      #   env:
-      #     WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
-      #     WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
-      #     WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
-      #     WIREWARD_PEER_KEY: ${{ secrets.WIREWARD_PEER_KEY }}
-      #     WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
-      #     WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
-      #     REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
-      #   run: |
-      #     echo "$WIREGUARD_PRIVATE_KEY" > privatekey
-      #     sudo ip link add dev wg0 type wireguard
-      #     sudo ip address add dev wg0 10.0.0.2/32 peer 10.0.0.1
-      #     #sudo ip address add dev wg0 10.0.0.2/32 peer 172.104.202.186
-      #     sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREWARD_PEER_KEY allowed-ips 0.0.0.0/0 endpoint 172.104.202.186:51820
-      #     sudo ip link set up dev wg0
+      - name: Setup WireGuard Interface
+        env:
+          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+        run: |
+              sudo apt install resolvconf
+              sudo apt install wireguard
+              echo "${{ inputs.WG_CONFIG_FILE }}" > wg0.conf
+              sudo chmod 600 wg0.conf
+              echo "setting config"
+              sudo wg-quick up ./wg0.conf
+        shell: bash
           
-      - name: Set up WireGuard Connection
-        uses: niklaskeerl/easy-wireguard-action@v2
-        with:
-          WG_CONFIG_FILE: ${{ secrets.WIREGUARD_CONFIG }}
+      # - name: Set up WireGuard Connection
+      #   uses: niklaskeerl/easy-wireguard-action@v2
+      #   with:
+      #     WG_CONFIG_FILE: ${{ secrets.WIREGUARD_CONFIG }}
 
       - name: Configure Dockerregistry
         run: |
