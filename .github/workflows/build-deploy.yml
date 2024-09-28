@@ -48,28 +48,49 @@ jobs:
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
+          REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           sudo chmod 600 /etc/wireguard/wg0.conf
+          
+          # Bring up WireGuard interface
           sudo wg-quick up wg0
           
-          # Verify WireGuard interface is up
-          if ! ip a show wg0 up > /dev/null 2>&1; then
-            echo "WireGuard interface wg0 is not up"
+          # Function to check WireGuard status
+          check_wg_status() {
+            if sudo wg show wg0 | grep -q "latest handshake" > /dev/null 2>&1; then
+              echo "WireGuard connection established"
+              return 0
+            else
+              echo "No recent handshake detected"
+              return 1
+            fi
+          }
+          
+          # Wait for WireGuard to establish connection (up to 30 seconds)
+          for i in {1..6}; do
+            if check_wg_status; then
+              break
+            fi
+            echo "Waiting for WireGuard to establish connection... (attempt $i)"
+            sleep 5
+          done
+          
+          # Final check and diagnostics
+          if ! check_wg_status; then
+            echo "WireGuard connection failed to establish. Diagnostics:"
+            echo "Network interfaces:"
+            ip -br addr show
+            echo "Default route:"
+            ip route | grep default
             exit 1
           fi
           
-          # Check WireGuard connection status
-          if ! sudo wg show wg0 | grep -q "latest handshake"; then
-            echo "No recent handshake detected for WireGuard connection"
-            sudo wg show
-            exit 1
-          fi
-          
-          # Verify connectivity to the target IP (adjust if necessary)
-          if ! ping -c 4 172.104.202.186 > /dev/null 2>&1; then
-            echo "Cannot ping target IP through WireGuard tunnel"
-            ip route
+          # Verify connectivity to the target host
+          if ! ping -c 4 $REGISTRY_HOST > /dev/null 2>&1; then
+            echo "Cannot ping target host through WireGuard tunnel"
+            echo "Traceroute to target host (IP addresses only):"
+            traceroute -n $REGISTRY_HOST
             exit 1
           fi
           
