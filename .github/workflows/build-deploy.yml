@@ -50,18 +50,17 @@ jobs:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
           WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
+          WIREWARD_PEER_KEY: ${{ secrets.WIREWARD_PEER_KEY }}
           WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
           REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
         run: |
-          sudo apt install wireguard
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo ip link add dev wg0 type wireguard
           sudo ip address add dev wg0 10.0.0.2/32 peer 10.0.0.1
-          #sudo ip address add dev wg0 $WIREGUARD_IPS peer $REGISTRY_HOST
-          sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREGUARD_PUBLIC_KEY allowed-ips $WIREGUARD_ALLOWED_IPS endpoint $REGISTRY_HOST
+          #sudo ip address add dev wg0 10.0.0.2/32 peer 172.104.202.186
+          sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREWARD_PEER_KEY allowed-ips 0.0.0.0/0 endpoint 172.104.202.186:51820
           sudo ip link set up dev wg0
-          #curl -vvv http://$REGISTRY_HOST:30000/v2/
           
           # Cleanup
           #sudo ip link delete dev wg0
