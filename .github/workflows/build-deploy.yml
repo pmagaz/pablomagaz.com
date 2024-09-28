@@ -1,12 +1,10 @@
 name: Build and Deploy
-
 on:
   push:
     branches: [main]
-
 jobs:
   build-and-deploy:
-    name: Deploy Static site
+    name: Deploy Static Site and Docker Container
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -41,12 +39,31 @@ jobs:
           name: site
           path: public
 
-      - name: Setup SSH
+      - name: Install WireGuard
         run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          sudo chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${{ secrets.HOST }}" > ~/.ssh/known_hosts
+          sudo apt-get update
+          sudo apt-get install -y wireguard
 
-      - name: SFTP upload
-        run: sftp -i ~/.ssh/deploy_key ${{ secrets.DEPLOY_USER }}@${{ secrets.HOST }} <<< $'cd ${{ secrets.DESTINATION_PATH }} \n put -r public/*'
+      - name: Setup WireGuard
+        env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
+        run: |
+          echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
+          sudo chmod 600 /etc/wireguard/wg0.conf
+          sudo wg-quick up wg0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
+
+      - name: Cleanup WireGuard
+        if: always()
+        run: sudo wg-quick down wg0
