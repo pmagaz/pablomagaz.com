@@ -10,34 +10,34 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2.3.1
 
-      - name: Install Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: "18.x"
+      # - name: Install Node.js
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: "18.x"
 
-      - name: Install Project Dependencies
-        run: npm ci
+      # - name: Install Project Dependencies
+      #   run: npm ci
 
-      - name: Install Gatsby CLI
-        run: npm install -g gatsby-cli@5.13.2
+      # - name: Install Gatsby CLI
+      #   run: npm install -g gatsby-cli@5.13.2
 
-      - name: Build
-        run: npm run build
+      # - name: Build
+      #   run: npm run build
 
-      - name: Copy assets content into public
-        run: cp -Rf src/assets public
+      # - name: Copy assets content into public
+      #   run: cp -Rf src/assets public
 
-      - name: Copy index content into public
-        run: cp src/index.html public
+      # - name: Copy index content into public
+      #   run: cp src/index.html public
 
-      - name: Verify build
-        run: ls -la public
+      # - name: Verify build
+      #   run: ls -la public
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site
-          path: public
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: site
+      #     path: public
 
       - name: Install WireGuard
         run: |
@@ -51,6 +51,9 @@ jobs:
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           sudo chmod 600 /etc/wireguard/wg0.conf
+          sudo sed -i '/^DNS/d' /etc/wireguard/wg0.conf  # Remove DNS line if present
+          echo "PostUp = echo 'nameserver 1.1.1.1' | resolvconf -a wg0 -m 0 -x" | sudo tee -a /etc/wireguard/wg0.conf
+          echo "PostDown = resolvconf -d wg0" | sudo tee -a /etc/wireguard/wg0.conf
           sudo wg-quick up wg0
 
       - name: Set up Docker Buildx
