@@ -59,7 +59,7 @@ jobs:
           sudo ip link add dev wg0 type wireguard
           sudo ip address add dev wg0 10.0.0.2/32 peer 10.0.0.1
           #sudo ip address add dev wg0 $WIREGUARD_IPS peer $REGISTRY_HOST
-          sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREGUARD_PUBLIC_KEY allowed-ips $WIREGUARD_ALLOWED_IPS endpoint $WIREGUARD_ENDPOINT
+          sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREGUARD_PUBLIC_KEY allowed-ips $WIREGUARD_ALLOWED_IPS endpoint $REGISTRY_HOST
           sudo ip link set up dev wg0
           #curl -vvv http://$REGISTRY_HOST:30000/v2/
           
