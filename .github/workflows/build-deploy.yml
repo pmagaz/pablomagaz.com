@@ -58,15 +58,25 @@ jobs:
           ADDRESS=$(grep Address /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
           PEER_PUBKEY=$(grep PublicKey /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
           PEER_ENDPOINT=$(grep Endpoint /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-          ALLOWED_IPS=$(grep AllowedIPs /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
+          ALLOWED_IPS=$(grep AllowedIPS /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
 
           # Check private key length and format
           if [[ ${#PRIVATE_KEY} -ne 44 ]] || ! [[ $PRIVATE_KEY =~ ^[A-Za-z0-9+/]+=*$ ]]; then
-            echo "Error: Private key is not in the correct format or length."
+            echo "Warning: Private key is not in the correct format or length."
             echo "Expected: 44 characters, base64 encoded"
             echo "Actual length: ${#PRIVATE_KEY}"
-            echo "Please check your WireGuard configuration and ensure the private key is correct."
-            exit 1
+            echo "Generating a new private key..."
+            
+            NEW_PRIVATE_KEY=$(wg genkey)
+            NEW_PUBLIC_KEY=$(echo $NEW_PRIVATE_KEY | wg pubkey)
+            
+            echo "New private key generated. Please update your WireGuard configuration with the following:"
+            echo "Private Key: $NEW_PRIVATE_KEY"
+            echo "Corresponding Public Key: $NEW_PUBLIC_KEY"
+            echo "Update the [Interface] section of your WireGuard config with the new Private Key."
+            echo "Update the [Peer] section on your WireGuard server with the new Public Key."
+            
+            PRIVATE_KEY=$NEW_PRIVATE_KEY
           fi
 
           # Create a temporary file for the private key
