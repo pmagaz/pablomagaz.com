@@ -49,12 +49,27 @@ jobs:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard resolvconf
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
+
           sudo mkdir -p /etc/wireguard
-          echo "$WIREGUARD_CONFIG" > github.conf
-          sudo cp github.conf /etc/wireguard/
+          echo "$WIREGUARD_CONFIG" | sed '/^DNS/d' > github.conf
+          sudo mv github.conf /etc/wireguard/
+          
+          # Disable automatic DNS configuration in wg-quick
+          sudo sed -i 's/^DNS/#DNS/' /etc/wireguard/github.conf
+
           sudo wg-quick up github || exit 1
-          echo "WireGuard setup completed."
+
+          echo "WireGuard interface status:"
+          sudo wg show github
+
+          echo "Current network interfaces:"
+          ip addr show
+
+          echo "Current routing table:"
+          ip route
+
+          echo "WireGuard setup completed." 
    
       - name: Build Docker image
         run: |
