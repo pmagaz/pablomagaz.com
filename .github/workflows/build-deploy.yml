@@ -10,10 +10,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2.3.1
 
-      # - name: Install Node.js
-      #   uses: actions/setup-node@v1
-      #   with:
-      #     node-version: "18.x"
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
 
       # - name: Install Project Dependencies
       #   run: npm ci
@@ -46,7 +46,6 @@ jobs:
 
       - name: Setup and Verify WireGuard
         env:
-          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
@@ -66,31 +65,13 @@ jobs:
             fi
           }
           
-          # Wait for WireGuard to establish connection (up to 30 seconds)
-          for i in {1..3}; do
-            if check_wg_status; then
-              break
-            fi
-            echo "Waiting for WireGuard to establish connection... (attempt $i)"
-            sleep 3
-          done
-          
-          if ! check_wg_status; then
-            echo "WireGuard connection failed to establish."
-            exit 1
-          fi
-          
-          echo "WireGuard connection verified successfully"
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
 
-   
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
-
-      - name: Push Docker image
-        run: |
-          docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
-      
+      # - name: Push Docker image
+      #   run: |
+      #     docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
       
       - name: Cleanup WireGuard
         if: always()
