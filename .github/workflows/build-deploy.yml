@@ -44,6 +44,17 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf traceroute
 
+      name: Build and Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  build-and-deploy:
+    name: Deploy Static Site and Docker Container
+    runs-on: ubuntu-latest
+    steps:
+      # ... (previous steps remain the same)
+
       - name: Setup WireGuard Manually
         env:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
@@ -60,6 +71,15 @@ jobs:
           PEER_ENDPOINT=$(grep Endpoint /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
           ALLOWED_IPS=$(grep AllowedIPs /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
 
+          # Check private key length and format
+          if [[ ${#PRIVATE_KEY} -ne 44 ]] || ! [[ $PRIVATE_KEY =~ ^[A-Za-z0-9+/]+=*$ ]]; then
+            echo "Error: Private key is not in the correct format or length."
+            echo "Expected: 44 characters, base64 encoded"
+            echo "Actual length: ${#PRIVATE_KEY}"
+            echo "Please check your WireGuard configuration and ensure the private key is correct."
+            exit 1
+          fi
+
           # Create a temporary file for the private key
           PRIVATE_KEY_FILE=$(mktemp)
           echo "$PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
@@ -68,7 +88,12 @@ jobs:
           # Set up the WireGuard interface
           sudo ip link add dev wg0 type wireguard
           sudo ip address add dev wg0 $ADDRESS
-          sudo wg set wg0 private-key "$PRIVATE_KEY_FILE" peer $PEER_PUBKEY allowed-ips $ALLOWED_IPS endpoint $PEER_ENDPOINT
+          if ! sudo wg set wg0 private-key "$PRIVATE_KEY_FILE" peer $PEER_PUBKEY allowed-ips $ALLOWED_IPS endpoint $PEER_ENDPOINT; then
+            echo "Error: Failed to set WireGuard configuration. Check the values in your config."
+            sudo ip link delete dev wg0
+            rm "$PRIVATE_KEY_FILE"
+            exit 1
+          fi
           sudo ip link set up dev wg0
 
           # Add routing for allowed IPs
