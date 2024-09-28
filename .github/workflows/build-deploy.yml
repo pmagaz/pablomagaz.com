@@ -46,41 +46,40 @@ jobs:
 
       - name: Setup and Verify WireGuard
         env:
-          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           sudo chmod 600 /etc/wireguard/wg0.conf
           
-          # Bring up WireGuard interface
+          echo "WireGuard config file contents (excluding private key):"
+          sudo grep -v PrivateKey /etc/wireguard/wg0.conf
+          
+          echo "Bringing up WireGuard interface..."
           sudo wg-quick up wg0
           
-          # # Function to check WireGuard status
-          # check_wg_status() {
-          #   if sudo wg show wg0 | grep -q "latest handshake" > /dev/null 2>&1; then
-          #     echo "WireGuard connection established"
-          #     return 0
-          #   else
-          #     echo "No recent handshake detected"
-          #     return 1
-          #   fi
-          # }
+          echo "WireGuard interface status:"
+          sudo wg show wg0
           
-          # # Wait for WireGuard to establish connection (up to 30 seconds)
-          # for i in {1..6}; do
-          #   if check_wg_status; then
-          #     break
-          #   fi
-          #   echo "Waiting for WireGuard to establish connection... (attempt $i)"
-          #   sleep 5
-          # done
+          echo "Current network interfaces:"
+          ip addr show
           
-          # if ! check_wg_status; then
-          #   echo "WireGuard connection failed to establish."
-          #   exit 1
-          # fi
+          echo "Current routing table:"
+          ip route
           
-          # echo "WireGuard connection verified successfully"
+          echo "Attempting to ping the WireGuard endpoint..."
+          ENDPOINT=$(sudo grep Endpoint /etc/wireguard/wg0.conf | awk '{print $3}' | cut -d: -f1)
+          ping -c 4 $ENDPOINT
+          
+          echo "Checking for WireGuard handshake..."
+          if sudo wg show wg0 | grep -q "latest handshake"; then
+            echo "WireGuard handshake detected. Connection seems to be established."
+          else
+            echo "No WireGuard handshake detected. Connection may not be fully established."
+            echo "This could be due to firewall issues, incorrect configuration, or the remote peer not responding."
+            echo "Please check your WireGuard configuration and the status of your WireGuard server."
+          fi
+          
+          echo "WireGuard setup completed. Proceeding with next steps regardless of connection status."
    
       - name: Build Docker image
         run: |
