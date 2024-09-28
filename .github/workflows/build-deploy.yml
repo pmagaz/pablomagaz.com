@@ -46,53 +46,37 @@ jobs:
 
       - name: Setup and Verify WireGuard
         env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           sudo chmod 600 /etc/wireguard/wg0.conf
           
-          echo "Bringing up WireGuard interface..."
+          # Bring up WireGuard interface
           sudo wg-quick up wg0
           
-          echo "WireGuard interface status:"
-          sudo wg show wg0
+          # Function to check WireGuard status
+          check_wg_status() {
+            if sudo wg show wg0 | grep -q "latest handshake" > /dev/null 2>&1; then
+              echo "WireGuard connection established"
+              return 0
+            else
+              echo "No recent handshake detected"
+              return 1
+            fi
+          }
           
-          echo "Current network interfaces:"
-          ip addr show
+          # Wait for WireGuard to establish connection (up to 30 seconds)
+          for i in {1..6}; do
+            if check_wg_status; then
+              break
+            fi
+            echo "Waiting for WireGuard to establish connection... (attempt $i)"
+            sleep 5
+          done
           
-          echo "Current routing table:"
-          ip route
-          
-          echo "Waiting for WireGuard to establish connection (up to 30 seconds)..."
-          timeout 30s bash << EOF
-            check_wg_status() {
-              if sudo wg show wg0 | grep -q "latest handshake"; then
-                echo "WireGuard connection established"
-                return 0
-              else
-                echo "No recent handshake detected"
-                return 1
-              fi
-            }
-            
-            while ! check_wg_status; do
-              echo "Attempting to ping the endpoint..."
-              ping -c 1 $(sudo wg show wg0 endpoints | awk '{print $2}' | cut -d: -f1)
-              echo "Waiting for 3 seconds before next attempt..."
-              sleep 3
-            done
-          EOF
-          
-          if [ $? -eq 124 ]; then
-            echo "Timeout waiting for WireGuard connection."
-            echo "Final WireGuard status:"
-            sudo wg show wg0
-            echo "Final network interfaces:"
-            ip addr show
-            echo "Final routing table:"
-            ip route
-            echo "Attempting to ping the endpoint:"
-            ping -c 4 $(sudo wg show wg0 endpoints | awk '{print $2}' | cut -d: -f1)
+          if ! check_wg_status; then
+            echo "WireGuard connection failed to establish."
             exit 1
           fi
           
