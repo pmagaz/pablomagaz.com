@@ -62,10 +62,6 @@ jobs:
       #     sudo wg set wg0 listen-port 51820 private-key privatekey peer $WIREWARD_PEER_KEY allowed-ips 0.0.0.0/0 endpoint 172.104.202.186:51820
       #     sudo ip link set up dev wg0
           
-      #     # Cleanup
-      #     #sudo ip link delete dev wg0
-      #     #rm privatekey
-
       - name: Set up WireGuard Connection
         uses: niklaskeerl/easy-wireguard-action@v2
         with:
