@@ -74,7 +74,7 @@ jobs:
           ips: '${{ secrets.IPS }}'
           allowed_ips: '${{ secrets.WIREGUARD_ALLOWED_IPS }}'
           private_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
-          #preshared_key: '${{ secrets.PRESHARED }}'
+          preshared_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
       
       # - name: Enhanced WireGuard Diagnostics
       #   run: |
