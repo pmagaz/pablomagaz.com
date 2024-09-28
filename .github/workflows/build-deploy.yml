@@ -42,7 +42,7 @@ jobs:
       - name: Install WireGuard
         run: |
           sudo apt-get update
-          sudo apt-get install -y wireguard resolvconf
+          sudo apt-get install -y wireguard resolvconf traceroute
 
       - name: Setup and Verify WireGuard
         env:
