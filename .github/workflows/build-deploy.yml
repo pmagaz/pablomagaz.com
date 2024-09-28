@@ -51,7 +51,6 @@ jobs:
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
           DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
 
-          sudo mkdir -p /etc/wireguard
           echo "$WIREGUARD_CONFIG" > /tmp/wg0.conf
 
           # Extract necessary information from the config
@@ -62,14 +61,22 @@ jobs:
           PEER_ENDPOINT=$(grep Endpoint /tmp/wg0.conf | cut -d ' ' -f 3)
           ALLOWED_IPS=$(grep AllowedIPs /tmp/wg0.conf | cut -d ' ' -f 3)
 
+          # Create a temporary file for the private key
+          PRIVATE_KEY_FILE=$(mktemp)
+          echo "$PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
+          chmod 600 "$PRIVATE_KEY_FILE"
+
           # Set up the WireGuard interface
           sudo ip link add dev wg0 type wireguard
           sudo ip address add dev wg0 $ADDRESS
-          sudo wg set wg0 private-key <(echo $PRIVATE_KEY) listen-port $LISTEN_PORT peer $PEER_PUBKEY allowed-ips $ALLOWED_IPS endpoint $PEER_ENDPOINT
+          sudo wg set wg0 private-key "$PRIVATE_KEY_FILE" listen-port $LISTEN_PORT peer $PEER_PUBKEY allowed-ips $ALLOWED_IPS endpoint $PEER_ENDPOINT
           sudo ip link set up dev wg0
 
           # Add routing for allowed IPs
           sudo ip route add $ALLOWED_IPS dev wg0
+
+          # Clean up the temporary private key file
+          rm "$PRIVATE_KEY_FILE"
 
           echo "WireGuard interface status:"
           sudo wg show wg0
