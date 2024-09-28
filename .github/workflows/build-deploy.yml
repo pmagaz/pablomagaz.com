@@ -44,17 +44,6 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf traceroute
 
-      name: Build and Deploy
-on:
-  push:
-    branches: [main]
-jobs:
-  build-and-deploy:
-    name: Deploy Static Site and Docker Container
-    runs-on: ubuntu-latest
-    steps:
-      # ... (previous steps remain the same)
-
       - name: Setup WireGuard Manually
         env:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
@@ -112,6 +101,7 @@ jobs:
           ip route
 
           echo "WireGuard setup completed manually."
+
    
       - name: Build Docker image
         run: |
