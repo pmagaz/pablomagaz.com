@@ -46,12 +46,10 @@ jobs:
       #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
       - name: Setup WireGuard 
-        env:
-          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
               sudo apt install resolvconf
               sudo apt install wireguard
-              echo "${{ WIREGUARD_CONFIG }}" > wg0.conf
+              echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
               sudo chmod 600 wg0.conf
               echo "setting config"
               sudo wg-quick up ./wg0.conf
