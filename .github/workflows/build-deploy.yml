@@ -49,7 +49,7 @@ jobs:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
           WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
-          WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
+          WIREGUARD_IPS: ${{ secrets.WIREGUARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
         run: |
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
@@ -70,12 +70,22 @@ jobs:
           echo "Routing table:"
           ip route
 
-      - name: WireGuard Connection Test
+      - name: Enhanced WireGuard Diagnostics
         run: |
-          echo "Testing WireGuard connection..."
-          ping -c 4 -I wg0 ${{ secrets.REGISTRY_HOST }}
-          echo "Tracing route through WireGuard..."
-          sudo traceroute -i wg0 ${{ secrets.REGISTRY_HOST }}
+          echo "WireGuard Configuration:"
+          sudo wg show wg0
+          echo "Routing Table:"
+          ip route
+          echo "Pinging WireGuard Server:"
+          ping -c 4 ${{ secrets.WIREGUARD_ENDPOINT }}
+          echo "Tracing route to Registry Host:"
+          sudo traceroute -I ${{ secrets.REGISTRY_HOST }}
+          echo "Checking WireGuard Logs:"
+          sudo journalctl -xeu wg-quick@wg0
+          echo "Firewall Rules:"
+          sudo iptables -L -n -v
+          echo "Testing Registry Connection:"
+          curl -v --max-time 10 http://${{ secrets.REGISTRY_HOST }}:30000/v2/ || echo "Curl failed"
 
       - name: Configure Dockerregistry
         run: |
