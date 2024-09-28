@@ -85,11 +85,21 @@ jobs:
    
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form-app:latest .
-
+          if [ -z "${{ secrets.REGISTRY_HOST }}" ]; then
+            echo "Error: REGISTRY_HOST secret is not set"
+            exit 1
+          fi
+          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
+        
       - name: Push Docker image
         run: |
-          docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form-app:latest
+          if [ -z "${{ secrets.REGISTRY_HOST }}" ]; then
+            echo "Error: REGISTRY_HOST secret is not set"
+            exit 1
+          fi
+          docker push ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
+      
+      
       - name: Cleanup WireGuard
         if: always()
         run: sudo wg-quick down wg0
