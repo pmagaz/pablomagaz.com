@@ -39,20 +39,54 @@ jobs:
       #     name: site
       #     path: public
 
-      # - name: Install Dependencies 
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y wireguard resolvconf traceroute
+      - name: Install Dependencies 
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wireguard resolvconf
 
-      - name: Set up WireGuard
-        uses: egor-tensin/setup-wireguard@v1
-        with:
-          endpoint: '${{ secrets.WIREGUARD_ENDPOINT }}'
-          endpoint_public_key: '${{ secrets.WIREGUARD_PUBLIC_KEY }}'
-          ips: '${{ secrets.WIREWARD_IPS }}'
-          allowed_ips: '${{ secrets.WIREGUARD_ALLOWED_IPS }}'
-          private_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
-   
+      - name: Setup WireGuard Interface
+        env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+          WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
+          WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
+          WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
+          WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
+        run: |
+          echo "$WIREGUARD_PRIVATE_KEY" > privatekey
+          sudo chmod 600 privatekey
+
+          sudo ip link add dev wg0 type wireguard
+
+          # Set the IP address from WIREGUARD_IPS
+          sudo ip address add dev wg0 $WIREGUARD_IPS
+
+          # Setup WireGuard with the provided configuration
+          sudo wg set wg0 \
+            private-key privatekey \
+            peer $WIREGUARD_PUBLIC_KEY \
+            allowed-ips $WIREGUARD_ALLOWED_IPS \
+            endpoint $WIREGUARD_ENDPOINT
+
+          sudo ip link set up dev wg0
+
+          # Display WireGuard configuration for verification
+          echo "WireGuard configuration:"
+          sudo wg show wg0
+
+          # Display network interfaces
+          echo "Network interfaces:"
+          ip addr show
+
+          # Display routing table
+          echo "Routing table:"
+          ip route
+
+      - name: Test Connection
+        run: |
+          # Extract the first IP from WIREGUARD_ALLOWED_IPS to test
+          TEST_IP=$(echo ${{ secrets.WIREGUARD_ALLOWED_IPS }} | cut -d',' -f1 | cut -d'/' -f1)
+          echo "Attempting to curl $TEST_IP"
+          curl -vvv http://$TEST_IP || echo "Curl failed, but continuing workflow"
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
