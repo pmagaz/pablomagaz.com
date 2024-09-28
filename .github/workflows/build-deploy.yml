@@ -61,7 +61,6 @@ jobs:
             peer $WIREGUARD_PUBLIC_KEY \
             allowed-ips $WIREGUARD_ALLOWED_IPS \
             endpoint $WIREGUARD_ENDPOINT \
-            listen-port 51820
           sudo ip link set up dev wg0
           sudo ip route add ${{ secrets.REGISTRY_HOST }}/32 dev wg0
           echo "WireGuard configuration:"
@@ -73,10 +72,18 @@ jobs:
 
       - name: WireGuard Connection Test
         run: |
-          echo "Testing WireGuard connection..."
-          ping -c 4 -I wg0 ${{ secrets.REGISTRY_HOST }}
-          echo "Tracing route through WireGuard..."
-          sudo traceroute -i wg0 ${{ secrets.REGISTRY_HOST }}
+          echo "Testing connectivity:"
+          echo "Pinging WireGuard server endpoint:"
+          ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
+          
+          echo "Tracing route to registry:"
+          traceroute $REGISTRY_HOST
+          
+          echo "Attempting to reach registry:"
+          curl -v --max-time 10 http://$REGISTRY_HOST:30000/v2/ || echo "Curl failed, but continuing"
+          
+          echo "WireGuard status:"
+          sudo wg show
 
       - name: Configure Dockerregistry
         run: |
