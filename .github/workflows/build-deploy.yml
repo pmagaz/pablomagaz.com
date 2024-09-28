@@ -65,7 +65,6 @@ jobs:
           echo "WIREGUARD_IPS: $WIREGUARD_IPS"
           echo "WIREGUARD_ALLOWED_IPS: $WIREGUARD_ALLOWED_IPS"
           echo "REGISTRY_HOST: $REGISTRY_HOST"
-          echo "REGISTRY_PORT: $REGISTRY_PORT"
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
 
@@ -94,12 +93,10 @@ jobs:
           echo "Routing table:"
           ip route
 
-      - name: WireGuard Connection Test
-        run: |
           echo "Testing connectivity:"
           echo "Pinging WireGuard server endpoint:"
           ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
-          
+
           echo "Tracing route to registry:"
           traceroute $REGISTRY_HOST
           
@@ -108,6 +105,21 @@ jobs:
           
           echo "WireGuard status:"
           sudo wg show
+
+      # - name: WireGuard Connection Test
+      #   run: |
+      #     echo "Testing connectivity:"
+      #     echo "Pinging WireGuard server endpoint:"
+      #     ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
+          
+      #     echo "Tracing route to registry:"
+      #     traceroute $REGISTRY_HOST
+          
+      #     echo "Attempting to reach registry:"
+      #     curl -v --max-time 10 http://$REGISTRY_HOST:30000/v2/ || echo "Curl failed, but continuing"
+          
+      #     echo "WireGuard status:"
+      #     sudo wg show
 
       - name: Configure Dockerregistry
         run: |
