@@ -49,7 +49,7 @@ jobs:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard resolvconf
           sudo mkdir -p /etc/wireguard
           echo "$WIREGUARD_CONFIG" > github.conf
           sudo cp github.conf /etc/wireguard/
