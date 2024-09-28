@@ -61,10 +61,7 @@ jobs:
           if [ -z "$WIREGUARD_IPS" ]; then echo "WIREGUARD_IPS is not set"; exit 1; fi
           if [ -z "$WIREGUARD_ALLOWED_IPS" ]; then echo "WIREGUARD_ALLOWED_IPS is not set"; exit 1; fi
           if [ -z "$REGISTRY_HOST" ]; then echo "REGISTRY_HOST is not set"; exit 1; fi
-          echo "WIREGUARD_ENDPOINT: $WIREGUARD_ENDPOINT"
-          echo "WIREGUARD_IPS: $WIREGUARD_IPS"
-          echo "WIREGUARD_ALLOWED_IPS: $WIREGUARD_ALLOWED_IPS"
-          echo "REGISTRY_HOST: $REGISTRY_HOST"
+          
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
 
@@ -93,33 +90,37 @@ jobs:
           echo "Routing table:"
           ip route
 
-          echo "Testing connectivity:"
-          echo "Pinging WireGuard server endpoint:"
-          ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
+          # echo "Testing connectivity:"
+          # echo "Pinging WireGuard server endpoint:"
+          # ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
 
-          echo "Tracing route to registry:"
-          traceroute $REGISTRY_HOST
+          # echo "Tracing route to registry:"
+          # traceroute $REGISTRY_HOST
           
-          echo "Attempting to reach registry:"
-          curl -v --max-time 10 http://$REGISTRY_HOST:30000/v2/ || echo "Curl failed, but continuing"
+          # echo "Attempting to reach registry:"
+          # curl -v --max-time 10 http://$REGISTRY_HOST:30000/v2/ || echo "Curl failed, but continuing"
           
-          echo "WireGuard status:"
-          sudo wg show
+          # echo "WireGuard status:"
+          # sudo wg show
 
-      # - name: WireGuard Connection Test
-      #   run: |
-      #     echo "Testing connectivity:"
-      #     echo "Pinging WireGuard server endpoint:"
-      #     ping -c 4 $(echo $WIREGUARD_ENDPOINT | cut -d: -f1)
-          
-      #     echo "Tracing route to registry:"
-      #     traceroute $REGISTRY_HOST
-          
-      #     echo "Attempting to reach registry:"
-      #     curl -v --max-time 10 http://$REGISTRY_HOST:30000/v2/ || echo "Curl failed, but continuing"
-          
-      #     echo "WireGuard status:"
-      #     sudo wg show
+      - name: Enhanced WireGuard Diagnostics
+        run: |
+          echo "WireGuard Configuration:"
+          sudo wg show wg0
+          echo "Routing Table:"
+          ip route
+          echo "Pinging WireGuard Server (without VPN):"
+          ping -c 4 $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
+          echo "Traceroute to WireGuard Server:"
+          traceroute $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | cut -d: -f1)
+          echo "Checking UDP Connectivity to WireGuard Server:"
+          nc -zu -v $(echo ${{ secrets.WIREGUARD_ENDPOINT }} | tr ':' ' ') 
+          echo "Firewall Rules:"
+          sudo iptables -L -n -v
+          echo "WireGuard Kernel Module Status:"
+          lsmod | grep wireguard
+          echo "System Logs Related to WireGuard:"
+          sudo journalctl -xe | grep -i wireguard
 
       - name: Configure Dockerregistry
         run: |
