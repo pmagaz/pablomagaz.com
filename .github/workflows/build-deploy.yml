@@ -44,74 +44,14 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf traceroute
 
-      - name: Setup WireGuard Manually
-        env:
-          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
-        run: |
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
-
-          echo "$WIREGUARD_CONFIG" > /tmp/wg0.conf
-
-          # Extract necessary information from the config
-          PRIVATE_KEY=$(grep PrivateKey /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-          ADDRESS=$(grep Address /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-          PEER_PUBKEY=$(grep PublicKey /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-          PEER_ENDPOINT=$(grep Endpoint /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-          ALLOWED_IPS=$(grep AllowedIPS /tmp/wg0.conf | cut -d '=' -f 2 | tr -d ' ')
-
-          # Check private key length and format
-          if [[ ${#PRIVATE_KEY} -ne 44 ]] || ! [[ $PRIVATE_KEY =~ ^[A-Za-z0-9+/]+=*$ ]]; then
-            echo "Warning: Private key is not in the correct format or length."
-            echo "Expected: 44 characters, base64 encoded"
-            echo "Actual length: ${#PRIVATE_KEY}"
-            echo "Generating a new private key..."
-            
-            NEW_PRIVATE_KEY=$(wg genkey)
-            NEW_PUBLIC_KEY=$(echo $NEW_PRIVATE_KEY | wg pubkey)
-            
-            echo "New private key generated. Please update your WireGuard configuration with the following:"
-            echo "Private Key: $NEW_PRIVATE_KEY"
-            echo "Corresponding Public Key: $NEW_PUBLIC_KEY"
-            echo "Update the [Interface] section of your WireGuard config with the new Private Key."
-            echo "Update the [Peer] section on your WireGuard server with the new Public Key."
-            
-            PRIVATE_KEY=$NEW_PRIVATE_KEY
-          fi
-
-          # Create a temporary file for the private key
-          PRIVATE_KEY_FILE=$(mktemp)
-          echo "$PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
-          chmod 600 "$PRIVATE_KEY_FILE"
-
-          # Set up the WireGuard interface
-          sudo ip link add dev wg0 type wireguard
-          sudo ip address add dev wg0 $ADDRESS
-          if ! sudo wg set wg0 private-key "$PRIVATE_KEY_FILE" peer $PEER_PUBKEY allowed-ips $ALLOWED_IPS endpoint $PEER_ENDPOINT; then
-            echo "Error: Failed to set WireGuard configuration. Check the values in your config."
-            sudo ip link delete dev wg0
-            rm "$PRIVATE_KEY_FILE"
-            exit 1
-          fi
-          sudo ip link set up dev wg0
-
-          # Add routing for allowed IPs
-          sudo ip route add $ALLOWED_IPS dev wg0
-
-          # Clean up the temporary private key file
-          rm "$PRIVATE_KEY_FILE"
-
-          echo "WireGuard interface status:"
-          sudo wg show wg0
-
-          echo "Current network interfaces:"
-          ip addr show
-
-          echo "Current routing table:"
-          ip route
-
-          echo "WireGuard setup completed manually."
-
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1
+        with:
+          endpoint: '${{ secrets.WIREGUARD_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.WIREGUARD_PUBLIC_KEY }}'
+          ips: '${{ secrets.WIREWARD_IPS }}'
+          allowed_ips: '${{ secrets.WIREGUARD_ALLOWED_IPS }}'
+          private_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
    
       - name: Build Docker image
         run: |
