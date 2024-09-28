@@ -54,11 +54,11 @@ jobs:
               echo "setting config"
               sudo wg-quick up ./wg0.conf
         shell: bash
-          
-      # - name: Set up WireGuard Connection
-      #   uses: niklaskeerl/easy-wireguard-action@v2
-      #   with:
-      #     WG_CONFIG_FILE: ${{ secrets.WIREGUARD_CONFIG }}
+
+      - name: Test Connection
+        run: |
+          sudo apt install -y netcat
+          nc -zv ${{ secrets.REGISTRY_HOST }} 30000
 
       - name: Configure Dockerregistry
         run: |
