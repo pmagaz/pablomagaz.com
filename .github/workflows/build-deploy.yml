@@ -65,13 +65,13 @@ jobs:
             fi
           }
           
-      # - name: Build Docker image
-      #   run: |
-      #     docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
 
-      # - name: Push Docker image
-      #   run: |
-      #     docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
+      - name: Push Docker image
+        run: |
+          docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
       
       - name: Cleanup WireGuard
         if: always()
