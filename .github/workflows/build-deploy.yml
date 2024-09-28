@@ -54,19 +54,31 @@ jobs:
         run: |
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
+
           sudo ip link add dev wg0 type wireguard
+
+          # Set the IP address from WIREGUARD_IPS
           sudo ip address add dev wg0 $WIREGUARD_IPS
+
+          # Setup WireGuard with the provided configuration
           sudo wg set wg0 \
             private-key privatekey \
             peer $WIREGUARD_PUBLIC_KEY \
             allowed-ips $WIREGUARD_ALLOWED_IPS \
-            endpoint $WIREGUARD_ENDPOINT \
+            endpoint $WIREGUARD_ENDPOINT
+
           sudo ip link set up dev wg0
           sudo ip route add ${{ secrets.REGISTRY_HOST }}/32 dev wg0
+
+          # Display WireGuard configuration for verification
           echo "WireGuard configuration:"
           sudo wg show wg0
+
+          # Display network interfaces
           echo "Network interfaces:"
           ip addr show
+
+          # Display routing table
           echo "Routing table:"
           ip route
 
