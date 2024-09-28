@@ -9,7 +9,7 @@ jobs:
     environment: production  # Define an environment
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2.3.1
+        uses: actions/checkout@v4
 
       # - name: Install Node.js
       #   uses: actions/setup-node@v1
@@ -66,15 +66,10 @@ jobs:
       #     #sudo ip link delete dev wg0
       #     #rm privatekey
 
-      - name: Set up WireGuard
-        uses: egor-tensin/setup-wireguard@v1
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@v2
         with:
-          endpoint: '${{ secrets.WIREGUARD_ENDPOINT }}'
-          endpoint_public_key: '${{ secrets.WIREWARD_PEER_KEY }}'
-          ips: '${{ secrets.IPS }}'
-          allowed_ips: '${{ secrets.WIREGUARD_ALLOWED_IPS }}'
-          private_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
-          preshared_key: '${{ secrets.WIREGUARD_PRIVATE_KEY }}'
+          WG_CONFIG_FILE: ${{ secrets.WIREGUARD_CONFIG }}
       
       # - name: Enhanced WireGuard Diagnostics
       #   run: |
