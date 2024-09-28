@@ -44,17 +44,36 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wireguard resolvconf
 
-      - name: Setup WireGuard
+      - name: Setup and Verify WireGuard
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           sudo chmod 600 /etc/wireguard/wg0.conf
-          sudo sed -i '/^DNS/d' /etc/wireguard/wg0.conf  # Remove DNS line if present
-          echo "PostUp = echo 'nameserver 1.1.1.1' | resolvconf -a wg0 -m 0 -x" | sudo tee -a /etc/wireguard/wg0.conf
-          echo "PostDown = resolvconf -d wg0" | sudo tee -a /etc/wireguard/wg0.conf
           sudo wg-quick up wg0
+          
+          # Verify WireGuard interface is up
+          if ! ip a show wg0 up > /dev/null 2>&1; then
+            echo "WireGuard interface wg0 is not up"
+            exit 1
+          fi
+          
+          # Check WireGuard connection status
+          if ! sudo wg show wg0 | grep -q "latest handshake"; then
+            echo "No recent handshake detected for WireGuard connection"
+            sudo wg show
+            exit 1
+          fi
+          
+          # Verify connectivity to the target IP (adjust if necessary)
+          if ! ping -c 4 172.104.202.186 > /dev/null 2>&1; then
+            echo "Cannot ping target IP through WireGuard tunnel"
+            ip route
+            exit 1
+          fi
+          
+          echo "WireGuard connection verified successfully"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
