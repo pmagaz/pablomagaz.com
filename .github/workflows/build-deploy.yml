@@ -51,6 +51,7 @@ jobs:
           WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
           WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
+          REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
         run: |
 
           # Check if required variables are set
@@ -65,8 +66,6 @@ jobs:
           sudo chmod 600 privatekey
 
           sudo ip link add dev wg0 type wireguard
-
-          # Set the IP address from WIREGUARD_IPS
           sudo ip address add dev wg0 $WIREGUARD_IPS
 
           # Setup WireGuard with the provided configuration
