@@ -63,21 +63,22 @@ jobs:
           echo "Current routing table:"
           ip route
           
-          # Function to check WireGuard status
-          check_wg_status() {
-            if sudo wg show wg0 | grep -q "latest handshake" > /dev/null 2>&1; then
-              echo "WireGuard connection established"
-              return 0
-            else
-              echo "No recent handshake detected"
-              return 1
-            fi
-          }
-          
-          # Wait for WireGuard to establish connection (up to 30 seconds)
+          echo "Waiting for WireGuard to establish connection (up to 30 seconds)..."
           timeout 30s bash << EOF
-            until check_wg_status; do
-              echo "Waiting for WireGuard to establish connection..."
+            check_wg_status() {
+              if sudo wg show wg0 | grep -q "latest handshake"; then
+                echo "WireGuard connection established"
+                return 0
+              else
+                echo "No recent handshake detected"
+                return 1
+              fi
+            }
+            
+            while ! check_wg_status; do
+              echo "Attempting to ping the endpoint..."
+              ping -c 1 $(sudo wg show wg0 endpoints | awk '{print $2}' | cut -d: -f1)
+              echo "Waiting for 3 seconds before next attempt..."
               sleep 3
             done
           EOF
@@ -90,6 +91,8 @@ jobs:
             ip addr show
             echo "Final routing table:"
             ip route
+            echo "Attempting to ping the endpoint:"
+            ping -c 4 $(sudo wg show wg0 endpoints | awk '{print $2}' | cut -d: -f1)
             exit 1
           fi
           
