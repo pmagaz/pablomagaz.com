@@ -61,7 +61,11 @@ jobs:
           if [ -z "$WIREGUARD_IPS" ]; then echo "WIREGUARD_IPS is not set"; exit 1; fi
           if [ -z "$WIREGUARD_ALLOWED_IPS" ]; then echo "WIREGUARD_ALLOWED_IPS is not set"; exit 1; fi
           if [ -z "$REGISTRY_HOST" ]; then echo "REGISTRY_HOST is not set"; exit 1; fi
-
+          echo "WIREGUARD_ENDPOINT: $WIREGUARD_ENDPOINT"
+          echo "WIREGUARD_IPS: $WIREGUARD_IPS"
+          echo "WIREGUARD_ALLOWED_IPS: $WIREGUARD_ALLOWED_IPS"
+          echo "REGISTRY_HOST: $REGISTRY_HOST"
+          echo "REGISTRY_PORT: $REGISTRY_PORT"
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
 
