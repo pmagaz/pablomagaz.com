@@ -42,7 +42,7 @@ jobs:
       - name: Install Dependencies 
         run: |
           sudo apt-get update
-          sudo apt-get install -y wireguard resolvconf
+          sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
       - name: Setup WireGuard Interface
         env:
@@ -92,6 +92,15 @@ jobs:
         run: |
           echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:30000"] }' | sudo tee /etc/docker/daemon.json
           sudo systemctl restart docker
+
+      - name: Network diagnostics
+        run: |
+          echo "Pinging registry host..."
+          ping -c 4 ${{ secrets.REGISTRY_HOST }}
+          echo "Tracing route to registry host..."
+          traceroute ${{ secrets.REGISTRY_HOST }}
+          echo "Checking registry connection..."
+          nc -zv ${{ secrets.REGISTRY_HOST }} 30000
 
       - name: Build Docker image
         run: |
