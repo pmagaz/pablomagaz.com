@@ -83,19 +83,13 @@ jobs:
           echo "WireGuard connection verified successfully"
 
    
-      - name: Configure Docker for insecure registry
-        run: |
-          echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:30000"] }' | sudo tee /etc/docker/daemon.json
-          sudo systemctl restart docker
-
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest .
+          docker build -t ${{ secrets.REGISTRY_HOST }}:30000/contact-form-app:latest .
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.REGISTRY_HOST }}:30000/contact-form:latest
-
+          docker push --insecure-registry ${{ secrets.REGISTRY_HOST }}:30000/contact-form-app:latest
       - name: Cleanup WireGuard
         if: always()
         run: sudo wg-quick down wg0
