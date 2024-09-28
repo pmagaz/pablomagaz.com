@@ -1,0 +1,33 @@
+.errorBackground {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #444;
+  height: 100vh;
+  width: 100vw;
+}
+
+.errorBox {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 45px 50px;
+  flex-direction: column;
+  color: #fefefe;
+  background-color: #f72354;
+}
+
+.errorBox h1 {
+  color: #fefefe;
+  font-size: 3.5em;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.errorBox span {
+  font-size: 2.5em;
+  font-weight: 200;
+}
