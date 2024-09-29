@@ -76,7 +76,6 @@ jobs:
 
       - name: Test Connection
         run: |
-          sudo apt install -y netcat
           curl -v https://172.104.202.186:30000/v2/_catalog
 
       - name: Configure Dockerregistry
