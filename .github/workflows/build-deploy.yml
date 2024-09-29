@@ -63,6 +63,7 @@ jobs:
           WIREGUARD_IPS: ${{ secrets.WIREWARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
         run: |
+          sudo apt-get update && sudo apt-get install -y wireguard
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
           sudo chmod 600 privatekey
           sudo ip link add dev wg0 type wireguard
