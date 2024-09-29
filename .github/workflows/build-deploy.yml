@@ -63,15 +63,57 @@ jobs:
           WIREGUARD_IPS: ${{ secrets.WIREGUARD_IPS }}
           WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
         run: |
-          sudo apt install wireguard
-          echo "$WIREGUARD_PRIVATE_KEY" > privatekey
-          sudo ip link add dev wg0 type wireguard
-          sudo ip address add dev wg0 $WIREGUARD_IPS
-          sudo wg set wg0 listen-port 51820 private-key privatekey \
-            peer $WIREGUARD_PUBLIC_KEY \
-            allowed-ips $WIREGUARD_ALLOWED_IPS \
-            endpoint $WIREGUARD_ENDPOINT
-          sudo ip link set up dev wg0
+            # Install WireGuard
+            sudo apt-get update
+            sudo apt-get install -y wireguard
+
+            # Setup WireGuard Configuration
+            echo "$WIREGUARD_PRIVATE_KEY" > privatekey
+            sudo chmod 600 privatekey
+
+            # Log configuration (masking sensitive data)
+            echo "WireGuard configuration (sensitive info masked):"
+            echo "Public Key: $WIREGUARD_PUBLIC_KEY"
+            echo "Allowed IPs: $WIREGUARD_ALLOWED_IPS"
+            echo "Endpoint: $WIREGUARD_ENDPOINT"
+            echo "Interface IPs: $WIREGUARD_IPS"
+
+            # Setup WireGuard interface
+            sudo ip link add dev wg0 type wireguard
+            sudo ip address add dev wg0 $WIREGUARD_IPS
+            sudo wg set wg0 listen-port 51820 private-key privatekey \
+              peer $WIREGUARD_PUBLIC_KEY \
+              allowed-ips $WIREGUARD_ALLOWED_IPS \
+              endpoint $WIREGUARD_ENDPOINT
+            sudo ip link set up dev wg0
+
+            # Check WireGuard Status
+            echo "WireGuard interface status:"
+            sudo wg show wg0
+
+            # Check Network Configuration
+            echo "Network interfaces:"
+            ip a
+            echo "Routing table:"
+            ip route
+
+            # Test Connection
+            echo "Pinging WireGuard peer (assuming it's 10.0.0.1):"
+            ping -c 4 10.0.0.1 || true
+            echo "Checking internet connectivity:"
+            ping -c 4 8.8.8.8 || true
+
+            # Troubleshooting Information
+            echo "Kernel version:"
+            uname -a
+            echo "WireGuard tools version:"
+            wg --version
+            echo "IPTables rules:"
+            sudo iptables -L -v -n
+            echo "System logs related to networking:"
+            sudo journalctl -u systemd-networkd -u networkd-dispatcher -u systemd-resolved -n 50
+
+
 
 
       - name: Configure Dockerregistry
