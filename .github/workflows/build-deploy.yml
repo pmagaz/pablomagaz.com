@@ -45,44 +45,44 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
-      - name: Setup WireGuard 
-        run: |
-              sudo apt install resolvconf
-              sudo apt install wireguard
-              echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
-              sudo chmod 600 wg0.conf
-              sudo cp wg0.conf /etc/wireguard/wg0.conf 
-              echo "setting config"
-              #sudo wg-quick up
-              echo "Checking configuration file:"
-              sudo cat /etc/wireguard/wg0.conf | sed 's/^PrivateKey.*$/PrivateKey = [MASKED]/'
-              sudo chmod 600 /etc/wireguard/wg0.conf
+      # - name: Setup WireGuard 
+      #   run: |
+      #         sudo apt install resolvconf
+      #         sudo apt install wireguard
+      #         echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
+      #         sudo chmod 600 wg0.conf
+      #         sudo cp wg0.conf /etc/wireguard/wg0.conf 
+      #         echo "setting config"
+      #         #sudo wg-quick up
+      #         echo "Checking configuration file:"
+      #         sudo cat /etc/wireguard/wg0.conf | sed 's/^PrivateKey.*$/PrivateKey = [MASKED]/'
+      #         sudo chmod 600 /etc/wireguard/wg0.conf
 
-              echo "Verifying WireGuard module:"
-              lsmod | grep wireguard
-              sudo modprobe wireguard
+      #         echo "Verifying WireGuard module:"
+      #         lsmod | grep wireguard
+      #         sudo modprobe wireguard
 
-              echo "Checking existing interfaces:"
-              ip a
+      #         echo "Checking existing interfaces:"
+      #         ip a
 
-              echo "Attempting WireGuard setup with verbose output:"
-              sudo wg-quick up wg0 --verbose
+      #         echo "Attempting WireGuard setup with verbose output:"
+      #         sudo wg-quick up wg0 --verbose
 
-              echo "Checking system logs:"
-              sudo journalctl -xe | grep -i wireguard
+      #         echo "Checking system logs:"
+      #         sudo journalctl -xe | grep -i wireguard
 
-              echo "Verifying network namespaces:"
-              sudo ip netns list
+      #         echo "Verifying network namespaces:"
+      #         sudo ip netns list
 
-              echo "Checking for port conflicts:"
-              sudo ss -tulpn | grep 51820
+      #         echo "Checking for port conflicts:"
+      #         sudo ss -tulpn | grep 51820
 
-              echo "Verifying routing:"
-              ip route
+      #         echo "Verifying routing:"
+      #         ip route
 
-              echo "Checking firewall rules:"
-              sudo iptables -L -n -v
-        shell: bash
+      #         echo "Checking firewall rules:"
+      #         sudo iptables -L -n -v
+      #   shell: bash
 
       # - name: Setup WireGuard
       #   env:
@@ -151,27 +151,19 @@ jobs:
 
       #     # Check WireGuard logs
       #     echo "WireGuard-related log messages:"
-      #     sudo journalctl -xe | grep -i wireguard
+      #     sudo journalctl -xe | grep -i wireguar
 
 
-
-
-
-      - name: Configure Dockerregistry
-        run: |
-          echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
-          sudo systemctl restart docker
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
         run: |
-          docker build -t 172.104.202.186:30000/contact-form:latest .
-          #docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/contact-form:latest .
 
       - name: Push Docker image
         run: |
-          docker push 172.104.202.186:30000/contact-form:latest
-          #docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
-      
-      - name: Cleanup WireGuard
-        if: always()
-        run: sudo wg-quick down wg0
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/contact-form:latest
