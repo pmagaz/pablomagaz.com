@@ -44,71 +44,34 @@ jobs:
       #   run: |
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
-      - name: Set up WireGuard Connection
-        uses: niklaskeerl/easy-wireguard-action@v2
-        with:
-          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
-      # # - name: Setup WireGuard 
-      # #   run: |
-      # #         sudo apt install resolvconf
-      # #         sudo apt install wireguard
-      # #         echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
-      # #         sudo chmod 600 wg0.conf
-      # #         echo "setting config"
-      # #         sudo wg-quick up ./wg0.conf
-      # #   shell: bash
 
-      # - name: Setup and Verify WireGuard
-      #   env:
-      #     WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
-      #     WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
-      #     REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
+      # - name: Setup WireGuard 
       #   run: |
-      #     echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
-      #     sudo chmod 600 /etc/wireguard/wg0.conf
-          
-      #     # Bring up WireGuard interface
-      #     sudo wg-quick up wg0
-          
-      #     # Function to check WireGuard status
-      #     check_wg_status() {
-      #       if sudo wg show wg0 | grep -q "latest handshake" > /dev/null 2>&1; then
-      #         echo "WireGuard connection established"
-      #         return 0
-      #       else
-      #         echo "No recent handshake detected"
-      #         return 1
-      #       fi
-      #     }
-          
-      #     # Wait for WireGuard to establish connection (up to 30 seconds)
-      #     for i in {1..6}; do
-      #       if check_wg_status; then
-      #         break
-      #       fi
-      #       echo "Waiting for WireGuard to establish connection... (attempt $i)"
-      #       sleep 5
-      #     done
-          
-      #     # Final check and diagnostics
-      #     if ! check_wg_status; then
-      #       echo "WireGuard connection failed to establish. Diagnostics:"
-      #       echo "Network interfaces:"
-      #       ip -br addr show
-      #       echo "Default route:"
-      #       ip route | grep default
-      #       exit 1
-      #     fi
-          
-      #     # Verify connectivity to the target host
-      #     if ! ping -c 4 $REGISTRY_HOST > /dev/null 2>&1; then
-      #       echo "Cannot ping target host through WireGuard tunnel"
-      #       echo "Traceroute to target host (IP addresses only):"
-      #       traceroute -n $REGISTRY_HOST
-      #       exit 1
-      #     fi
-          
-      #     echo "WireGuard connection verified successfully"
+      #         sudo apt install resolvconf
+      #         sudo apt install wireguard
+      #         echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
+      #         sudo chmod 600 wg0.conf
+      #         echo "setting config"
+      #         sudo wg-quick up ./wg0.conf
+      #   shell: bash
+
+      - name: Setup WireGuard
+        env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+          WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
+          WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
+          WIREGUARD_IPS: ${{ secrets.WIREGUARD_IPS }}
+          WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
+        run: |
+          sudo apt install wireguard
+          echo "$WIREGUARD_PRIVATE_KEY" > privatekey
+          sudo ip link add dev wg0 type wireguard
+          sudo ip address add dev wg0 $WIREGUARD_IPS
+          sudo wg set wg0 listen-port 51820 private-key privatekey \
+            peer $WIREGUARD_PUBLIC_KEY \
+            allowed-ips $WIREGUARD_ALLOWED_IPS \
+            endpoint $WIREGUARD_ENDPOINT
+          sudo ip link set up dev wg0
 
 
       - name: Configure Dockerregistry
