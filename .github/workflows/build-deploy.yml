@@ -50,10 +50,10 @@ jobs:
               sudo apt install resolvconf
               sudo apt install wireguard
               echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
-              cp wg0.conf /etc/wireguard/wg0.conf 
               sudo chmod 600 wg0.conf
+              sudo cp wg0.conf /etc/wireguard/wg0.conf 
               echo "setting config"
-              #sudo wg-quick up ./wg0.conf
+              #sudo wg-quick up
               echo "Checking configuration file:"
               sudo cat /etc/wireguard/wg0.conf | sed 's/^PrivateKey.*$/PrivateKey = [MASKED]/'
               sudo chmod 600 /etc/wireguard/wg0.conf
