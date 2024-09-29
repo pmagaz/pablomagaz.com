@@ -65,7 +65,7 @@ jobs:
         run: |
           # Install WireGuard
           sudo apt-get update
-          sudo apt-get install -y wireguard
+          sudo apt-get install -y wireguard resolvconf iputils-ping traceroute netcat
 
           # Setup WireGuard Configuration
           echo "$WIREGUARD_PRIVATE_KEY" > privatekey
@@ -95,9 +95,8 @@ jobs:
           echo "WireGuard interface status:"
           sudo wg show all | sed 's/\(private key\s*:\s*\)\S\+/\1[MASKED]/'
 
-          # Check if WireGuard server is reachable
           echo "Checking if WireGuard server is reachable:"
-          telnet $WIREGUARD_ENDPOINT || nc -zv ${WIREGUARD_ENDPOINT%:*} ${WIREGUARD_ENDPOINT#*:}
+          nc -zu -w5 ${WIREGUARD_ENDPOINT%:*} ${WIREGUARD_ENDPOINT#*:} && echo "UDP port open" || echo "UDP port closed"
 
           # Check Network Configuration
           echo "Network interfaces:"
