@@ -1792,32 +1792,35 @@
 				loadHandler = function() {
 		
 					var i = this,
-						p = this.parentElement;
+						p = this.parentElement,
+						duration = 375;
 		
 					// Not "done" yet? Bail.
 						if (i.dataset.src !== 'done')
 							return;
 		
+					// Image loaded faster than expected? Reduce transition duration.
+						if (Date.now() - i._startLoad < duration)
+							duration = 175;
+		
+					// Set transition duration.
+						i.style.transitionDuration = (duration / 1000.00) + 's';
+		
 					// Show image.
-						if (Date.now() - i._startLoad < 375) {
+						p.classList.remove('loading');
+						i.style.opacity = 1;
 		
-							p.classList.remove('loading');
-							p.style.backgroundImage = 'none';
-							i.style.transition = '';
-							i.style.opacity = 1;
+						setTimeout(function() {
 		
-						}
-						else {
-		
-							p.classList.remove('loading');
-							i.style.opacity = 1;
-		
-							setTimeout(function() {
+							// Clear background image.
 								i.style.backgroundImage = 'none';
-								i.style.transition = '';
-							}, 375);
 		
-						}
+							// Clear transition properties.
+								i.style.transitionProperty = '';
+								i.style.transitionTimingFunction = '';
+								i.style.transitionDuration = '';
+		
+						}, duration);
 		
 				};
 		
@@ -1860,7 +1863,10 @@
 		
 					// Hide image.
 						i.style.opacity = 0;
-						i.style.transition = 'opacity 0.375s ease-in-out';
+		
+					// Set transition properties.
+						i.style.transitionProperty = 'opacity';
+						i.style.transitionTimingFunction = 'ease-in-out';
 		
 					// Load event.
 						i.addEventListener('load', loadHandler);
@@ -2492,7 +2498,7 @@
 			 * Regex.
 			 * @var {RegExp}
 			 */
-			regex: new RegExp('([a-zA-Z0-9\.\,\-\_\"\'\?\!\:\;\#\@\#$\%\&\(\)\{\}]+)', 'g'),
+			regex: new RegExp('([^\\s]+)', 'g'),
 		
 			/**
 			 * Adds one or more animatable elements.
