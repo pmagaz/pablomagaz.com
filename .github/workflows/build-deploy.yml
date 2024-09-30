@@ -45,125 +45,32 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
 
-      # - name: Setup WireGuard 
-      #   run: |
-      #         sudo apt install resolvconf
-      #         sudo apt install wireguard
-      #         echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
-      #         sudo chmod 600 wg0.conf
-      #         sudo cp wg0.conf /etc/wireguard/wg0.conf 
-      #         echo "setting config"
-      #         #sudo wg-quick up
-      #         echo "Checking configuration file:"
-      #         sudo cat /etc/wireguard/wg0.conf | sed 's/^PrivateKey.*$/PrivateKey = [MASKED]/'
-      #         sudo chmod 600 /etc/wireguard/wg0.conf
+      - name: Setup WireGuard 
+        run: |
+              sudo apt install resolvconf
+              sudo apt install wireguard
+              echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
+              sudo chmod 600 wg0.conf
+              echo "setting config"
+              #sudo wg-quick up ./wg0.conf
+              sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
+        shell: bash
 
-      #         echo "Verifying WireGuard module:"
-      #         lsmod | grep wireguard
-      #         sudo modprobe wireguard
-
-      #         echo "Checking existing interfaces:"
-      #         ip a
-
-      #         echo "Attempting WireGuard setup with verbose output:"
-      #         sudo wg-quick up wg0 --verbose
-
-      #         echo "Checking system logs:"
-      #         sudo journalctl -xe | grep -i wireguard
-
-      #         echo "Verifying network namespaces:"
-      #         sudo ip netns list
-
-      #         echo "Checking for port conflicts:"
-      #         sudo ss -tulpn | grep 51820
-
-      #         echo "Verifying routing:"
-      #         ip route
-
-      #         echo "Checking firewall rules:"
-      #         sudo iptables -L -n -v
-      #   shell: bash
-
-      # - name: Setup WireGuard
-      #   env:
-      #     WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
-      #     WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
-      #     WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
-      #     WIREGUARD_IPS: ${{ secrets.WIREGUARD_IPS }}
-      #     WIREGUARD_ALLOWED_IPS: ${{ secrets.WIREGUARD_ALLOWED_IPS }}
-      #   run: |
-      #     # Install WireGuard
-      #     sudo apt-get update
-      #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute netcat
-
-      #     # Setup WireGuard Configuration
-      #     echo "$WIREGUARD_PRIVATE_KEY" > privatekey
-      #     sudo chmod 600 privatekey
-
-      #     # Log configuration (masking sensitive data)
-      #     echo "WireGuard configuration (sensitive info masked):"
-      #     echo "Private Key: [MASKED]"
-      #     echo "Public Key: $WIREGUARD_PUBLIC_KEY"
-      #     echo "Allowed IPs: $WIREGUARD_ALLOWED_IPS"
-      #     echo "Endpoint: $WIREGUARD_ENDPOINT"
-      #     echo "Interface IPs: $WIREGUARD_IPS"
-
-      #     # Setup WireGuard interface
-      #     sudo ip link add dev wg0 type wireguard
-      #     sudo ip address add dev wg0 $WIREGUARD_IPS
-      #     sudo wg set wg0 listen-port 51820 private-key privatekey \
-      #       peer $WIREGUARD_PUBLIC_KEY \
-      #       allowed-ips $WIREGUARD_ALLOWED_IPS \
-      #       endpoint $WIREGUARD_ENDPOINT
-      #     sudo ip link set up dev wg0
-
-      #     # Add specific route for WireGuard peer's network
-      #     sudo ip route add 10.0.0.0/24 dev wg0
-
-      #     # Check WireGuard Status
-      #     echo "WireGuard interface status:"
-      #     sudo wg show all | sed 's/\(private key\s*:\s*\)\S\+/\1[MASKED]/'
-
-      #     echo "Checking if WireGuard server is reachable:"
-      #     nc -zu -w5 ${WIREGUARD_ENDPOINT%:*} ${WIREGUARD_ENDPOINT#*:} && echo "UDP port open" || echo "UDP port closed"
-
-      #     # Check Network Configuration
-      #     echo "Network interfaces:"
-      #     ip a
-      #     echo "Routing table:"
-      #     ip route
-
-      #     # Test Connection
-      #     echo "Pinging WireGuard peer (assuming it's 10.0.0.1):"
-      #     ping -c 4 10.0.0.1 || true
-      #     echo "Checking internet connectivity:"
-      #     ping -c 4 8.8.8.8 || true
-
-      #     # Troubleshooting Information
-      #     echo "Kernel version:"
-      #     uname -a
-      #     echo "WireGuard tools version:"
-      #     wg --version
-      #     echo "IPTables rules:"
-      #     sudo iptables -L -v -n
-      #     echo "System logs related to networking:"
-      #     sudo journalctl -u systemd-networkd -u networkd-dispatcher -u systemd-resolved -n 50
-
-      #     # Check WireGuard logs
-      #     echo "WireGuard-related log messages:"
-      #     sudo journalctl -xe | grep -i wireguar
-
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Configure Dockerregistry
+        run: |
+          echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/contact-form:latest .
+          docker build -t 172.104.202.186:30000/contact-form:latest .
+          #docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/contact-form:latest
+          docker push 172.104.202.186:30000/contact-form:latest
+          #docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
+      
+      - name: Cleanup WireGuard
+        if: always()
+        run: sudo wg-quick down wg0
