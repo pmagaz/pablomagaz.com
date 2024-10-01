@@ -18,12 +18,15 @@ jobs:
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_ADDRESS: ${{ secrets.WIREGUARD_ADDRESS }}
+          WIREGUARD_DNS: ${{ secrets.WIREGUARD_DNS }}
           WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
           WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
         run: |
+          echo "Creating WireGuard configuration..."
           echo "[Interface]
           PrivateKey = $WIREGUARD_PRIVATE_KEY
           Address = $WIREGUARD_ADDRESS
+          DNS = $WIREGUARD_DNS
 
           [Peer]
           PublicKey = $WIREGUARD_PUBLIC_KEY
@@ -32,13 +35,17 @@ jobs:
           
           sudo chmod 600 /etc/wireguard/wg0.conf
           
-          echo "WireGuard configuration:"
-          sudo cat /etc/wireguard/wg0.conf
+          echo "WireGuard configuration (redacted):"
+          sudo sed 's/\(PrivateKey\s*=\s*\).*$/\1[REDACTED]/' /etc/wireguard/wg0.conf
           
           echo "Setting up WireGuard interface..."
           sudo ip link add dev wg0 type wireguard
           sudo wg setconf wg0 /etc/wireguard/wg0.conf
+          
+          echo "Setting interface address..."
           sudo ip address add dev wg0 $WIREGUARD_ADDRESS
+          
+          echo "Bringing up WireGuard interface..."
           sudo ip link set up dev wg0
           
           echo "WireGuard interface status:"
@@ -57,6 +64,7 @@ jobs:
           
           echo "WireGuard status:"
           sudo wg show
+
 
       # - name: Configure Dockerregistry
       #   run: |
