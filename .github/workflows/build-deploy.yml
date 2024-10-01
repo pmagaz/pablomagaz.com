@@ -1,12 +1,15 @@
-name: Build and Deploy
+name: Build, Deploy, and Connect with WireGuard
+
 on:
   push:
     branches: [main]
+
 jobs:
-  build-and-deploy:
-    name: Deploy Static Site and Docker Container
+  build-deploy-connect:
+    name: Deploy and Setup WireGuard
     runs-on: ubuntu-latest
-    environment: production  # Define an environment
+    environment: production
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -54,7 +57,6 @@ jobs:
           
           echo "WireGuard status:"
           sudo wg show
-
       # - name: Configure Dockerregistry
       #   run: |
       #     echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
