@@ -13,26 +13,7 @@ jobs:
 
       - name: Install WireGuard
         run: sudo apt install wireguard
-
-  name: Build, Deploy, and Connect with WireGuard
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  build-deploy-connect:
-    name: Deploy and Setup WireGuard
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install WireGuard
-        run: sudo apt install wireguard
-
+      
       - name: Setup WireGuard
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
