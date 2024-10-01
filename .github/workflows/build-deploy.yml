@@ -14,26 +14,31 @@ jobs:
       - name: Install WireGuard
         run: sudo apt-get update && sudo apt-get install -y wireguard resolvconf
       
+      name: Build, Deploy, and Connect with WireGuard
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy-connect:
+    name: Deploy and Setup WireGuard
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install WireGuard
+        run: sudo apt-get update && sudo apt-get install -y wireguard
+
       - name: Setup WireGuard
         env:
-          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
-          WIREGUARD_ADDRESS: ${{ secrets.WIREGUARD_ADDRESS }}
-          WIREGUARD_DNS: ${{ secrets.WIREGUARD_DNS }}
-          WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
-          WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
+          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
           echo "Creating WireGuard configuration..."
-          cat << EOF | sudo tee /etc/wireguard/wg0.conf > /dev/null
-          [Interface]
-          PrivateKey = $WIREGUARD_PRIVATE_KEY
-          Address = $WIREGUARD_ADDRESS
-          DNS = $WIREGUARD_DNS
-
-          [Peer]
-          PublicKey = $WIREGUARD_PUBLIC_KEY
-          AllowedIPs = 0.0.0.0/0
-          Endpoint = $WIREGUARD_ENDPOINT
-          EOF
+          echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           
           sudo chmod 600 /etc/wireguard/wg0.conf
           
@@ -45,6 +50,7 @@ jobs:
           sudo wg setconf wg0 /etc/wireguard/wg0.conf
           
           echo "Setting interface address..."
+          WIREGUARD_ADDRESS=$(grep Address /etc/wireguard/wg0.conf | cut -d '=' -f2 | tr -d ' ')
           sudo ip address add dev wg0 $WIREGUARD_ADDRESS
           
           echo "Bringing up WireGuard interface..."
@@ -56,10 +62,11 @@ jobs:
       - name: Test WireGuard Connection
         run: |
           echo "Attempting to ping server..."
-          ping -c 4 10.0.0.1 || echo "Ping failed, but continuing..."
+          SERVER_IP=$(grep Endpoint /etc/wireguard/wg0.conf | cut -d '=' -f2 | cut -d ':' -f1 | tr -d ' ')
+          ping -c 4 $SERVER_IP || echo "Ping failed, but continuing..."
           
           echo "Curl test to server..."
-          curl -v --connect-timeout 10 http://10.0.0.1 || echo "Curl failed, but continuing..."
+          curl -v --connect-timeout 10 http://$SERVER_IP || echo "Curl failed, but continuing..."
           
           echo "Network route:"
           ip route
