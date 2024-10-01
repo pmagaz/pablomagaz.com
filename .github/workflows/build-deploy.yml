@@ -50,17 +50,6 @@ jobs:
           echo "WireGuard client status:"
           sudo wg show
 
-      # Add your build steps here
-      - name: Build Project
-        run: echo "Add commands to build your project"
-
-      # Add your deployment steps here
-      - name: Deploy Project
-        run: echo "Add commands to deploy your project"
-
-      - name: Tear Down WireGuard Client
-        if: always()
-        run: sudo wg-quick down wg0
       # - name: Configure Dockerregistry
       #   run: |
       #     echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
@@ -68,14 +57,12 @@ jobs:
 
       # - name: Build Docker image
       #   run: |
-      #     docker build -t 172.104.202.186:30000/contact-form:latest .
-      #     #docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
+      #     docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
 
       # - name: Push Docker image
       #   run: |
-      #     docker push 172.104.202.186:30000/contact-form:latest
-      #     #docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
+      #     docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
       
-      # - name: Cleanup WireGuard
-      #   if: always()
-      #   run: sudo wg-quick down wg0
+      - name: Cleanup WireGuard
+        if: always()
+        run: sudo wg-quick down wg0
