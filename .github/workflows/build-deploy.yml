@@ -12,20 +12,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install WireGuard
-        run: sudo apt install wireguard
+        run: sudo apt-get update && sudo apt-get install -y wireguard resolvconf
       
       - name: Setup WireGuard
         env:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           WIREGUARD_ADDRESS: ${{ secrets.WIREGUARD_ADDRESS }}
-          WIREGUARD_DNS: ${{ secrets.WIREGUARD_DNS }}
           WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
           WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
         run: |
           echo "[Interface]
           PrivateKey = $WIREGUARD_PRIVATE_KEY
           Address = $WIREGUARD_ADDRESS
-          DNS = $WIREGUARD_DNS
 
           [Peer]
           PublicKey = $WIREGUARD_PUBLIC_KEY
@@ -34,8 +32,14 @@ jobs:
           
           sudo chmod 600 /etc/wireguard/wg0.conf
           
-          echo "Starting WireGuard connection..."
-          sudo wg-quick up wg0 || (echo "wg-quick failed, falling back to manual setup" && sudo ip link add dev wg0 type wireguard && sudo wg setconf wg0 /etc/wireguard/wg0.conf && sudo ip link set up dev wg0)
+          echo "WireGuard configuration:"
+          sudo cat /etc/wireguard/wg0.conf
+          
+          echo "Setting up WireGuard interface..."
+          sudo ip link add dev wg0 type wireguard
+          sudo wg setconf wg0 /etc/wireguard/wg0.conf
+          sudo ip address add dev wg0 $WIREGUARD_ADDRESS
+          sudo ip link set up dev wg0
           
           echo "WireGuard interface status:"
           sudo wg show
