@@ -11,50 +11,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: "18.x"
+      - name: Install WireGuard
+        run: sudo apt install wireguard
 
-      - name: Install Project Dependencies
-        run: npm ci
+      - name: Setup WireGuard
+        env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+          WIREGUARD_ADDRESS: ${{ secrets.WIREGUARD_ADDRESS }}
+          WIREGUARD_DNS: ${{ secrets.WIREGUARD_DNS }}
+          WIREGUARD_PUBLIC_KEY: ${{ secrets.WIREGUARD_PUBLIC_KEY }}
+          WIREGUARD_ENDPOINT: ${{ secrets.WIREGUARD_ENDPOINT }}
+        run: |
+          echo "[Interface]
+          PrivateKey = $WIREGUARD_PRIVATE_KEY
+          Address = $WIREGUARD_ADDRESS
+          DNS = $WIREGUARD_DNS
 
-      - name: Install Gatsby CLI
-        run: npm install -g gatsby-cli@5.13.2
+          [Peer]
+          PublicKey = $WIREGUARD_PUBLIC_KEY
+          AllowedIPs = 0.0.0.0/0
+          Endpoint = $WIREGUARD_ENDPOINT" | sudo tee /etc/wireguard/wg0.conf > /dev/null
+          
+          sudo chmod 600 /etc/wireguard/wg0.conf
+          sudo wg-quick up wg0
 
-      - name: Build
-        run: npm run build
-
-      - name: Copy assets content into public
-        run: cp -Rf src/assets public
-
-      - name: Copy index content into public
-        run: cp src/index.html public
-
-      - name: Verify build
-        run: ls -la public
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site
-          path: public
-      
-      # - name: Install Dependencies 
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
-
-      # - name: Setup WireGuard 
-      #   run: |
-      #         sudo apt install resolvconf
-      #         sudo apt install wireguard
-      #         echo "${{ secrets.WIREGUARD_CONFIG }}" > wg0.conf
-      #         sudo chmod 600 wg0.conf
-      #         echo "setting config"
-      #         #sudo wg-quick up ./wg0.conf
-      #         sudo apt-get install -y wireguard resolvconf iputils-ping traceroute
-      #   shell: bash
+      - name: Test WireGuard Connection
+        run: curl -vvv http://10.0.0.1
 
       # - name: Configure Dockerregistry
       #   run: |
