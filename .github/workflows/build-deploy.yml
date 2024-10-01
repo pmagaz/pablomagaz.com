@@ -1,4 +1,4 @@
-name: Build, Deploy, and Connect with WireGuard
+name: Build, Deploy, and Connect with WireGuard Client
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-deploy-connect:
-    name: Deploy and Setup WireGuard
+    name: Deploy and Setup WireGuard Client
     runs-on: ubuntu-latest
     environment: production
 
@@ -17,11 +17,11 @@ jobs:
       - name: Install WireGuard
         run: sudo apt-get update && sudo apt-get install -y wireguard
 
-      - name: Setup WireGuard
+      - name: Setup WireGuard Client
         env:
           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
         run: |
-          echo "Creating WireGuard configuration..."
+          echo "Creating WireGuard client configuration..."
           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
           
           sudo chmod 600 /etc/wireguard/wg0.conf
@@ -29,18 +29,10 @@ jobs:
           echo "WireGuard configuration (redacted):"
           sudo sed 's/\(PrivateKey\s*=\s*\).*$/\1[REDACTED]/' /etc/wireguard/wg0.conf
           
-          echo "Setting up WireGuard interface..."
-          sudo ip link add dev wg0 type wireguard
-          sudo wg setconf wg0 /etc/wireguard/wg0.conf
+          echo "Starting WireGuard client..."
+          sudo wg-quick up wg0
           
-          echo "Setting interface address..."
-          WIREGUARD_ADDRESS=$(grep Address /etc/wireguard/wg0.conf | cut -d '=' -f2 | tr -d ' ')
-          sudo ip address add dev wg0 $WIREGUARD_ADDRESS
-          
-          echo "Bringing up WireGuard interface..."
-          sudo ip link set up dev wg0
-          
-          echo "WireGuard interface status:"
+          echo "WireGuard client status:"
           sudo wg show
 
       - name: Test WireGuard Connection
@@ -55,8 +47,20 @@ jobs:
           echo "Network route:"
           ip route
           
-          echo "WireGuard status:"
+          echo "WireGuard client status:"
           sudo wg show
+
+      # Add your build steps here
+      - name: Build Project
+        run: echo "Add commands to build your project"
+
+      # Add your deployment steps here
+      - name: Deploy Project
+        run: echo "Add commands to deploy your project"
+
+      - name: Tear Down WireGuard Client
+        if: always()
+        run: sudo wg-quick down wg0
       # - name: Configure Dockerregistry
       #   run: |
       #     echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
