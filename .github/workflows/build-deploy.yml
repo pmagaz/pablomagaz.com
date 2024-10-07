@@ -1,67 +1,45 @@
-name: Build, Deploy, and Connect with WireGuard Client
+name: Build and Deploy
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build-deploy-connect:
-    name: Deploy and Setup WireGuard Client
+  build-and-deploy:
+    name: Deploy Static site
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2.3.1
 
-      - name: Install WireGuard
-        run: sudo apt-get update && sudo apt-get install -y wireguard resolvconf
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
 
-      - name: Setup WireGuard Client
-        env:
-          WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
-        run: |
-          echo "Creating WireGuard client configuration..."
-          echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
-          
-          sudo chmod 600 /etc/wireguard/wg0.conf
-          
-          echo "WireGuard configuration (redacted):"
-          sudo sed 's/\(PrivateKey\s*=\s*\).*$/\1[REDACTED]/' /etc/wireguard/wg0.conf
-          
-          echo "Starting WireGuard client..."
-          sudo wg-quick up wg0
-          
-          echo "WireGuard client status:"
-          sudo wg show
+      - name: Install Project Dependencies
+        run: npm ci
 
-      - name: Test WireGuard Connection
-        run: |
-          echo "Attempting to ping server..."
-          SERVER_IP=$(grep Endpoint /etc/wireguard/wg0.conf | cut -d '=' -f2 | cut -d ':' -f1 | tr -d ' ')
-          ping -c 4 $SERVER_IP || echo "Ping failed, but continuing..."
-          
-          echo "Curl test to server..."
-          curl -v --connect-timeout 10 http://$SERVER_IP || echo "Curl failed, but continuing..."
-          
-          echo "Network route:"
-          ip route
-          
-          echo "WireGuard client status:"
-          sudo wg show
+      - name: Install Gatsby CLI
+        run: npm install -g gatsby-cli@5.13.2
 
-      # - name: Configure Dockerregistry
-      #   run: |
-      #     echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
-      #     sudo systemctl restart docker
+      - name: Build
+        run: npm run build
 
-      # - name: Build Docker image
-      #   run: |
-      #     docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
+      - name: Copy assets content into public
+        run: cp -Rf src/assets public
 
-      # - name: Push Docker image
-      #   run: |
-      #     docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
+      - name: Copy index content into public
+        run: cp src/index.html public
+
+      - name: Verify build
+        run: ls -la public
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: public
       
       - name: Cleanup WireGuard
         if: always()
