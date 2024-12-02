@@ -1,5 +1,8 @@
 name: Build and Deploy
 
+env:
+  vpn_server_ip: "10.0.0.1"
+
 on:
   push:
     branches: [main]
