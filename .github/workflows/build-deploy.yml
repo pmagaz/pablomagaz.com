@@ -40,6 +40,21 @@ jobs:
         with:
           name: site
           path: public
+
+      - name: Configure Dockerregistry
+        run: |
+          echo '{ "insecure-registries" : ["${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}"] }' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
+
+      - name: Build Docker image
+        run: |
+          docker build -t 172.104.202.186:30000/contact-form:latest .
+          #docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push 172.104.202.186:30000/contact-form:latest
+          #docker push ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest
       
       - name: Cleanup WireGuard
         if: always()
