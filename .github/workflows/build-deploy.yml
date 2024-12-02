@@ -51,6 +51,18 @@ jobs:
           docker build -t 172.104.202.186:30000/contact-form:latest .
           #docker build -t ${{ secrets.REGISTRY_HOST }}:${{ secrets.REGISTRY_PORT }}/contact-form:latest .
 
+      - name: Setup WireGuard Client
+         env:
+           WIREGUARD_CONFIG: ${{ secrets.WIREGUARD_CONFIG }}
+         run: |
+           sudo apt-get update && sudo apt-get install -y wireguard resolvconf
+           echo "$WIREGUARD_CONFIG" | sudo tee /etc/wireguard/wg0.conf > /dev/null
+           sudo chmod 600 /etc/wireguard/wg0.conf
+           sudo wg-quick up wg0
+           set -e
+           echo "Attempting to ping server..."
+           ping -c 3 ${{ env.vpn_server_ip }}
+      
       - name: Push Docker image
         run: |
           docker push 172.104.202.186:30000/contact-form:latest
