@@ -1,11 +1,14 @@
 [build]
-  command = "npm ci && npm install -g gatsby-cli@5.13.2 && npm run build && cp -Rf src/assets public && cp src/index.html public"
+  command = "npm run build"
   publish = "public"
 
 # Environment settings
 [build.environment]
   NODE_VERSION = "18.12.0"
 
-# Required for Gatsby sites
+# Copy static files
+[[plugins]]
+  package = "netlify-plugin-gatsby-cache"
+
 [[plugins]]
   package = "@netlify/plugin-gatsby"
