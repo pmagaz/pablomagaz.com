@@ -1,5 +1,5 @@
 [build]
-  command = "cp -Rf src/assets public && cp src/index.html public"
+  command = "npm run build && cp -Rf src/assets public && cp src/index.html public"
   publish = "public"
 
 # Environment settings
